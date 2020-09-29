@@ -1,0 +1,4 @@
+git+https://github.com/adsabs/adsabs-pyingest.git@v1.0.9
+requests==2.20.0
+
+

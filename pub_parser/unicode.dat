@@ -1,0 +1,968 @@
+"32"	"blank"	" "	"~"	S
+"33"	"excl"	"!"	"!"	P
+"34"	"quot"	"""	"''"	P
+"35"	"num"	"#"	"\#"	P
+"36"	"dollar"	"$"	"\$"	P
+"37"	"percent"	"%"	"\%"
+"37"	"percnt"	"%"	"\%"	P
+"38"	"amp"	"&"	"\&"	P
+"39"	"apos"	"'"	"'"	P
+"40"	"lpar"	"("	"("	P
+"40"	"parl0"	"("	"("
+"41"	"parr0"	")"	")"
+"41"	"rpar"	")"	")"	P
+"42"	"ast"	"*"	"*"	P
+"43"	"plus"	"+"	"+"	P
+"44"	"comma"	","	","	P
+"45"	"hyphen"	"-"	"-"	P
+"46"	"period"	"."	"."	P
+"47"	"sol"	"/"	"/"	P
+"47"	"solm0"	"/"	"/"
+"58"	"colon"	":"	":"	P
+"59"	"semi"	";"	";"	P
+"60"	"lt"	"<"	"\<"	P
+"61"	"equals"	"="	"="	P
+"62"	"gt"	">"	"\>"	P
+"63"	"quest"	"?"	"?"	P
+"64"	"commat"	"@"	"\@"	P
+"91"	"lsqb"	"["	"["	P
+"91"	"sqbl0"	"["	"["
+"92"	"bsol"	"\"	"\\"
+"92"	"bsolm0"	"\"	"$\backslash$"	P
+"93"	"rsqb"	"]"	"]"	P
+"93"	"sqbr0"	"]"	"]"
+"95"	"lowbar"	"_"	"\_"	P
+"105"	"i"	"i"	"i"	L
+"123"	"cubl0"	"{"	"\{"
+"123"	"lcub"	"{"	"\{"	P
+"124"	"vbm0"	"|"	"$\vert$"	P
+"124"	"verbar"	"|"	"|"
+"124"	"vert"	"|"	"|"
+"125"	"cubr0"	"}"	"\}"
+"125"	"rcub"	"}"	"\}"	P
+"160"	"nbsp"	" "	"~"	S
+"161"	"iexcl"	"!"	"!`"	P
+"162"	"cent"	"c"	"\rlap/c"	P
+"163"	"pound"	"#"	"\pounds"	P
+"164"	"curren"	"currency"	"currency"	P
+"165"	"yen"	"Y"	"Y"	P
+"166"	"brvbar"	"|"	"$\vert$"	P
+"167"	"sect"	"#"	"\S"	P
+"168"	"Dot"	"&Dot;"	"$\ddot{\phantom{o}}$"	P
+"169"	"copy"	"(C)"	"\copyright"	P
+"170"	"ordf"	"a"	"\b a"	P
+"171"	"laquo"	"<<"	"$\ll$"	P
+"172"	"not"	"-"	"$\neg$"	P
+"173"	"shy"	"-"	"-"	P
+"174"	"reg"	"(R)"	"$\circledR$"	P
+"175"	"macr"	"-"	"\textasciimacron"	P
+"176"	"deg"	"deg"	"$^o$"	P
+"176"	"deg"	"deg"	"$\fdg$"
+"177"	"plusmn"	"+/-"	"$\pm$"	P
+"177"	"PlusMinus"	"+/-"	"$\pm$"
+"178"	"sup2"	"^2"	"$^{2}$"	P
+"179"	"sup3"	"^3"	"$^{3}$"	P
+"180"	"acute"	"'"	"\textasciiacute"	P
+"181"	"micro"	"micro"	"$\mu$"	L
+"182"	"para"	"q"	"\P"	P
+"183"	"middot"	"."	"$\cdot$"	P
+"184"	"cedil"	","	"$\c{}$"	P
+"185"	"sup1"	"^1"	"$^{1}$"	P
+"186"	"ordm"	"o"	"\b o"	P
+"187"	"raquo"	">>"	"$\gg$"	P
+"188"	"frac14"	"1/4"	"$\slantfrac{1}{4}$"	P
+"189"	"frac12"	"1/2"	"$\slantfrac{1}{2}$"	P
+"190"	"frac34"	"3/4"	"$\slantfrac{3}{4}$"	P
+"191"	"iquest"	"?"	"?`"	P
+"192"	"Agrave"	"A"	"\`{A}"	U
+"193"	"Aacute"	"A"	"\'{A}"	U
+"194"	"Acirc"	"A"	"\^{A}"	U
+"195"	"Atilde"	"A"	"\~{A}"	U
+"196"	"Auml"	"A"	"\"{A}"	U
+"197"	"Aring"	"A"	"\AA"	U
+"198"	"AElig"	"Ae"	"\AE"	U
+"199"	"Ccedil"	"C"	"\c{C}"	U
+"200"	"Egrave"	"E"	"\`{E}"	U
+"201"	"Eacute"	"E"	"\'{E}"	U
+"202"	"Ecirc"	"E"	"\^{E}"	U
+"203"	"Euml"	"E"	"\"{E}"	U
+"204"	"Igrave"	"I"	"\`{I}"	U
+"205"	"Iacute"	"I"	"\'{I}"	U
+"206"	"Icirc"	"I"	"\^{I}"	U
+"207"	"Iuml"	"I"	"\"{I}"	U
+"208"	"ETH"	"D"	"D"	U
+"209"	"Ntilde"	"N"	"\~{N}"	U
+"210"	"Ograve"	"O"	"\`{O}"	U
+"211"	"Oacute"	"O"	"\'{O}"	U
+"212"	"Ocirc"	"O"	"\^{O}"	U
+"213"	"Otilde"	"O"	"\~{O}"	U
+"214"	"Ouml"	"O"	"\"{O}"	U
+"215"	"times"	"x"	"$\times$"	P
+"215"	"times"	"x"	"$\CenterDot$"
+"216"	"Oslash"	"O"	"\O"	U
+"217"	"Ugrave"	"U"	"\`{U}"	U
+"218"	"Uacute"	"U"	"\'{U}"	U
+"219"	"Ucirc"	"U"	"\^{U}"	U
+"220"	"Uuml"	"U"	"\"{U}"	U
+"221"	"Yacute"	"Y"	"\'{Y}"	U
+"222"	"THORN"	"Th"	"Th"	U
+"223"	"szlig"	"ss"	"\ss"	L
+"224"	"agrave"	"a"	"\`{a}"	L
+"225"	"aacute"	"a"	"\'{a}"	L
+"226"	"acirc"	"a"	"\^{a}"	L
+"227"	"atilde"	"a"	"\~{a}"	L
+"228"	"auml"	"a"	"\"{a}"	L
+"229"	"aring"	"a"	"\aa"	L
+"230"	"aelig"	"ae"	"\ae"	L
+"231"	"ccedil"	"c"	"\c{c}"	L
+"232"	"egrave"	"e"	"\`{e}"	L
+"233"	"eacute"	"e"	"\'{e}"	L
+"234"	"ecirc"	"e"	"\^{e}"	L
+"235"	"euml"	"e"	"\"{e}"	L
+"236"	"igrave"	"i"	"\`{i}"	L
+"237"	"iacute"	"i"	"\'{\i}"	L
+"238"	"icirc"	"i"	"\^{i}"	L
+"239"	"yicy"	"i"	"\"{i}"
+"239"	"iuml"	"i"	"\"{i}"	L
+"240"	"eth"	"d"	"d"	L
+"241"	"ntilde"	"n"	"\~{n}"	L
+"242"	"ograve"	"o"	"\`{o}"	L
+"243"	"oacute"	"o"	"\'{o}"	L
+"244"	"ocirc"	"o"	"\^{o}"	L
+"245"	"otilde"	"o"	"\~{o}"	L
+"246"	"ouml"	"o"	"\"{o}"	L
+"247"	"divide"	"/"	"$\div$"	P
+"248"	"oslash"	"o"	"\o"	L
+"249"	"ugrave"	"u"	"\`{u}"	L
+"250"	"uacute"	"u"	"\'{u}"	L
+"251"	"ucirc"	"u"	"\^{u}"	L
+"252"	"uuml"	"u"	"\"{u}"	L
+"253"	"yacute"	"y"	"\'{y}"	L
+"254"	"thorn"	"th"	"th"	L
+"255"	"yuml"	"y"	"\"{y}"	L
+"256"	"Amacr"	"A"	"\={A}"	U
+"257"	"amacr"	"a"	"\={a}"	L
+"258"	"Abreve"	"A"	"\u{A}"	U
+"259"	"abreve"	"a"	"\u{a}"	L
+"260"	"Aogon"	"A"	"\c{A}"	U
+"261"	"aogon"	"a"	"\c{a}"	L
+"262"	"Cacute"	"C"	"\'{C}"	U
+"263"	"cacute"	"c"	"\'{c}"	L
+"264"	"Ccirc"	"C"	"\^{C}"	U
+"265"	"ccirc"	"c"	"\^{c}"	L
+"266"	"Cdot"	"C"	"\.{C}"	U
+"267"	"cdot"	"c"	"\.{c}"	L
+"268"	"Ccaron"	"C"	"\v{C}"	U
+"269"	"ccaron"	"c"	"\v{c}"	L
+"270"	"Dcaron"	"D"	"\v{D}"	U
+"271"	"dcaron"	"d"	"\v{d}"	L
+"272"	"Dstrok"	"D"	"\D"	U
+"273"	"dstrok"	"d"	"\d"	L
+"274"	"Emacr"	"E"	"\={E}"	U
+"275"	"emacr"	"e"	"\={e}"	L
+"276"	"Ebreve"	"E"	"\u{E}"	U
+"277"	"ebreve"	"e"	"\u{e}"	L
+"278"	"Edot"	"E"	"\.{E}"	U
+"279"	"edot"	"e"	"\.{e}"	L
+"280"	"Eogon"	"E"	"\c{E}"	U
+"281"	"eogon"	"e"	"\c{e}"	L
+"282"	"Ecaron"	"E"	"\v{E}"	U
+"283"	"ecaron"	"e"	"\v{e}"	L
+"284"	"Gcirc"	"G"	"\^{G}"	U
+"285"	"gcirc"	"g"	"\^{g}"	L
+"286"	"Gbreve"	"G"	"\u{G}"	U
+"287"	"gbreve"	"g"	"\u{g}"	L
+"288"	"Gdot"	"G"	"\.{G}"	U
+"289"	"gdot"	"g"	"\.{g}"	L
+"290"	"Gcedil"	"G"	"\c{G}"	U
+"291"	"gcedil"	"g"	"\c{g}"	L
+"292"	"Hcirc"	"H"	"\^{H}"	U
+"293"	"hcirc"	"h"	"\^{h}"	L
+"294"	"Hstrok"	"H"	"\H"	U
+"295"	"hstrok"	"h"	"\h"	L
+"296"	"Itilde"	"I"	"\~{I}"	U
+"297"	"itilde"	"i"	"\~{i}"	L
+"298"	"Imacr"	"I"	"\={I}"	U
+"299"	"imacr"	"i"	"\={i}"	L
+"300"	"Ibreve"	"I"	"\u{I}"	U
+"301"	"ibreve"	"i"	"\u{i}"	L
+"302"	"Iogon"	"I"	"\c{I}"	U
+"303"	"iogon"	"i"	"\c{i}"	L
+"304"	"Idot"	"I"	"\.{I}"	U
+"305"	"imath"	"i"	"\i"
+"305"	"inodot"	"i"	"\i"	L
+"306"	"IJlig"	"IJ"	"IJ"	U
+"307"	"ijlig"	"ij"	"ij"	L
+"308"	"Jcirc"	"J"	"\^{J}"	U
+"309"	"jcirc"	"j"	"\^{j}"	L
+"310"	"Kcedil"	"K"	"\c{K}"	U
+"311"	"kcedil"	"k"	"\c{k}"	L
+"312"	"kgreen"	"k"	"k"	L
+"313"	"Lacute"	"L"	"\'{L}"	U
+"314"	"lacute"	"l"	"\'{l}"	L
+"315"	"Lcedil"	"L"	"\c{L}"	U
+"316"	"lcedil"	"l"	"\c{l}"	L
+"317"	"Lcaron"	"L"	"\v{L}"	U
+"318"	"lcaron"	"l"	"\v{l}"	L
+"319"	"Lmidot"	"L"	"L"	U
+"320"	"lmidot"	"l"	"l"	L
+"321"	"Lstrok"	"L"	"\L"	U
+"322"	"lstrok"	"l"	"\l"	L
+"323"	"Nacute"	"N"	"\'{N}"	U
+"324"	"nacute"	"n"	"\'{n}"	L
+"325"	"Ncedil"	"N"	"\c{N}"	U
+"326"	"ncedil"	"n"	"\c{n}"	L
+"327"	"Ncaron"	"N"	"\v{N}"	U
+"328"	"ncaron"	"n"	"\v{n}"	L
+"329"	"napos"	"n"	"\'{n}"	L
+"330"	"ENG"	"NG"	"E"	U
+"331"	"eng"	"ng"	"e"	L
+"332"	"Omacr"	"O"	"\={O}"	U
+"333"	"omacr"	"o"	"\={o}"	L
+"334"	"Obreve"	"O"	"\u{O}"	U
+"335"	"obreve"	"o"	"\u{o}"	L
+"336"	"Odblac"	"O"	"\H{O}"	U
+"337"	"odblac"	"o"	"\H{o}"	L
+"338"	"OElig"	"OE"	"\OE"	U
+"339"	"oelig"	"oe"	"\oe"	L
+"340"	"Racute"	"R"	"\'{R}"	U
+"341"	"racute"	"r"	"\'{r}"	L
+"342"	"Rcedil"	"R"	"\c{R}"	U
+"343"	"rcedil"	"r"	"\c{r}"	L
+"344"	"Rcaron"	"R"	"\v{R}"	U
+"345"	"rcaron"	"r"	"\v{r}"	L
+"346"	"Sacute"	"S"	"\'{S}"	U
+"347"	"sacute"	"s"	"\'{s}"	L
+"348"	"Scirc"	"S"	"\^{S}"	U
+"349"	"scirc"	"s"	"\^{s}"	L
+"350"	"Scedil"	"S"	"\c{S}"	U
+"351"	"scedil"	"s"	"\c{s}"	L
+"352"	"Scaron"	"S"	"\v{S}"	U
+"353"	"scaron"	"s"	"\v{s}"	L
+"354"	"Tcedil"	"T"	"\c{T}"	U
+"355"	"tcedil"	"t"	"\c{t}"	L
+"356"	"Tcaron"	"T"	"\v{T}"	U
+"357"	"tcaron"	"t"	"\v{t}"	L
+"358"	"Tstrok"	"T"	"\T"	U
+"359"	"tstrok"	"t"	"\t"	L
+"360"	"Utilde"	"U"	"\~{U}"	U
+"361"	"utilde"	"u"	"\~{u}"	L
+"362"	"Umacr"	"U"	"\={U}"	U
+"363"	"umacr"	"u"	"\={u}"	L
+"364"	"Ubreve"	"U"	"\u{U}"	U
+"365"	"ubreve"	"u"	"\u{u}"	L
+"366"	"Uring"	"U"	"\UU"	U
+"367"	"uring"	"u"	"\uu"	L
+"368"	"Udblac"	"U"	"\H{U}"	U
+"369"	"udblac"	"u"	"\H{u}"	L
+"370"	"Uogon"	"U"	"\c{U}"	U
+"371"	"uogon"	"u"	"\c{u}"	L
+"372"	"Wcirc"	"W"	"\^{W}"	U
+"373"	"wcirc"	"w"	"\^{w}"	L
+"374"	"Ycirc"	"Y"	"\^{Y}"	U
+"375"	"ycirc"	"y"	"\^{y}"	L
+"376"	"Yuml"	"Y"	"\"{Y}"	U
+"377"	"Zacute"	"Z"	"\'{Z}"	U
+"378"	"zacute"	"z"	"\'{z}"	L
+"379"	"Zdot"	"Z"	"\.{Z}"	U
+"380"	"zdot"	"z"	"\.{z}"	L
+"381"	"Zcaron"	"Z"	"\v{Z}"	U
+"382"	"zcaron"	"z"	"\v{z}"	L
+"402"	"fnof"	"f"	"${\cal f}$"	L
+"461"	"Acaron"	"A"	"\v{A}"	U
+"462"	"acaron"	"a"	"\v{a}"	L
+"463"	"Icaron"	"I"	"\v{I}"	U
+"464"	"icaron"	"i"	"\v{i}"	L
+"465"	"Ocaron"	"O"	"\v{O}"	U
+"466"	"ocaron"	"o"	"\v{o}"	L
+"467"	"Ucaron"	"U"	"\v{U}"	U
+"468"	"ucaron"	"u"	"\v{u}"	L
+"486"	"Gcaron"	"G"	"\v{G}"	U
+"487"	"gcaron"	"g"	"\v{g}"	L
+"488"	"Kcaron"	"K"	"\v{K}"	U
+"489"	"kcaron"	"k"	"\v{k}"	L
+"490"	"Oogon"	"O"	"\c{O}"	U
+"491"	"oogon"	"o"	"\c{o}"	L
+"496"	"jcaron"	"j"	"\v{j}"	L
+"500"	"Gacute"	"G"	"\'{G}"	U
+"501"	"gacute"	"g"	"\'{g}"	L
+"504"	"Ngrave"	"N"	"\`{N}"	U
+"505"	"ngrave"	"n"	"\`{n}"	L
+"537"	"scedil"	"s"	"\c{s}"	U
+"542"	"Hcaron"	"H"	"\v{H}"	U
+"543"	"hcaron"	"h"	"\v{h}"	L
+"550"	"Adot"	"A"	"\.{A}"	U
+"551"	"adot"	"a"	"\.{a}"	L
+"552"	"Ecedil"	"E"	"\c{E}"	U
+"553"	"ecedil"	"e"	"\c{e}"	L
+"558"	"Odot"	"O"	"\.{O}"	U
+"559"	"odot"	"o"	"\.{o}"	L
+"562"	"Ymacr"	"Y"	"\={Y}"	U
+"563"	"ymacr"	"y"	"\={y}"	L
+"603"	"epsi"	"&epsilon;"	"$\epsilon$"
+"603"	"epsilon"	"&epsilon;"	"$\epsilon$"	P
+"604"	"backeps"	"&backeps;"	"$\backepsilon$"	P
+"604"	"bepsi"	"&bepsi;"	"$\backepsilon$"
+"607"	"jnodot"	"j"	"\j"	L
+"699"	"acute"	"&acute;"	"$\acute{\phantom{o}}$"	P
+"700"	"acute"	"&acute;"	"$\'$"	P
+"711"	"caron"	"&caron;"	"$\v{\phantom{o}}$"	P
+"729"	"dot"	"&dot;"	"$\.$"	P
+"730"	"ring"	"&ring;"	"$\circ$"	P
+"731"	"ogon"	"&ogon;"	"$\c{\phantom{o}}$"	P
+"732"	"sim"	"&sim;"	"$\~{\phantom{o}}$"	
+"732"	"sim"	"&sim;"	"$\~{\phantom{o}}$"	P
+"733"	"dblac"	"&dblac;"	"$\long{\phantom{o}}$"	P
+"768"	"d13"	"&grave;"	"$\grave{\phantom{o}}$"
+"768"	"grave"	"&grave;"	"$\grave{\phantom{o}}$"	P
+"769"	"acute"	"&acute;"	"$\acute{\phantom{o}}$"	P
+"769"	"d12"	"&acute;"	"$\acute{\phantom{o}}$"
+"770"	"circ"	"&circ;"	"$\hat{\phantom{o}$"	P
+"770"	"d4"	"&circ;"	"$\hat{\phantom{o}$"
+"771"	"d5"	"&sim;"	"$\tilde{\phantom{o}}$"
+"771"	"sim"	"&sim;"	"$\tilde{\phantom{o}}$"	P
+"772"	"d1"	"&macr;"	"$\bar{\phantom{o}}$"
+"772"	"macr"	"&macr;"	"$\bar{\phantom{o}}$"	P
+"774"	"breve"	"&breve;"	"$\breve{\phantom{o}}$"	P
+"774"	"d11"	"&breve;"	"$\breve{\phantom{o}}$"
+"775"	"d2"	"&dot;"	"$\dot{\phantom{o}}$"
+"775"	"dot"	"&dot;"	"$\dot{\phantom{o}}$"	P
+"776"	"d3"	"&die;"	"$\ddot{\phantom{o}}$"
+"776"	"die"	"&die;"	"$\ddot{\phantom{o}}$"
+"776"	"uml"	"&uml;"	"$\ddot{\phantom{o}}$"	P
+"780"	"caron"	"&caron;"	"$\check{\phantom{o}}$"	P
+"780"	"d9"	"&caron;"	"$\check{\phantom{o}}$"
+"803"	"dotbelow"	"."	"$\d{\phantom{o}}$"	P
+"807"	"cedil"	"&cedil;"	"$\c{\phantom{o}}$"	P
+"817"	"barbelow"	"&barbelow;"	"$\b{\phantom{o}}$"	P
+"824"	"solidus"	"/"	"/"	P
+"913"	"Acy"	"Alpha"	"A"
+"913"	"Agr"	"Alpha"	"A"
+"913"	"Alpha"	"Alpha"	"A"	U
+"914"	"Bgr"	"Beta"	"B"
+"914"	"Beta"	"Beta"	"B"	U
+"915"	"Ggr"	"Gamma"	"$\Gamma$"
+"915"	"Gcy"	"Gamma"	"$\Gamma$"
+"915"	"Gamma"	"Gamma"	"$\Gamma$"	U
+"916"	"Dgr"	"Delta"	"$\Delta$"
+"916"	"Dcy"	"Delta"	"$\Delta$"
+"916"	"Delta"	"Delta"	"$\Delta$"	U
+"917"	"Egr"	"Epsilon"	"E"
+"917"	"Epsilon"	"Epsilon"	"E"	U
+"918"	"Zgr"	"Zeta"	"Z"
+"918"	"Zeta"	"Zeta"	"Z"	U
+"919"	"EEgr"	"Eta"	"H"
+"919"	"Eta"	"Eta"	"H"	U
+"920"	"THgr"	"Theta"	"$\Theta$"
+"920"	"Theta"	"Theta"	"$\Theta$"	U
+"921"	"Igr"	"Iota"	"I"
+"921"	"Iota"	"Iota"	"I"	U
+"922"	"Kgr"	"Kappa"	"K"
+"922"	"Kappa"	"Kappa"	"K"	U
+"923"	"Lgr"	"Lambda"	"$\Lambda$"
+"923"	"Lcy"	"Lambda"	"$\Lambda$"
+"923"	"Lambda"	"Lambda"	"$\Lambda$"	U
+"924"	"Mcy"	"Mu"	"M"
+"924"	"Mgr"	"Mu"	"M"
+"924"	"Mu"	"Mu"	"M"	U
+"925"	"Ngr"	"Nu"	"N"
+"925"	"Nu"	"Nu"	"N"	U
+"926"	"Xgr"	"Xi"	"$\Xi$"
+"926"	"Xi"	"Xi"	"$\Xi$"	U
+"927"	"Ogr"	"Omicron"	"O"	U
+"927"	"Omicron"	"Omicron"	"O"
+"928"	"Pgr"	"Pi"	"$\Pi$"
+"928"	"Pi"	"Pi"	"$\Pi$"	U
+"929"	"Rgr"	"Rho"	"R"
+"929"	"Rho"	"Rho"	"R"	U
+"931"	"Scy"	"Sigma"	"$\Sigma$"
+"931"	"Sgr"	"Sigma"	"$\Sigma$"
+"931"	"Sigma"	"Sigma"	"$\Sigma$"	U
+"932"	"Tgr"	"Tau"	"T"
+"932"	"Tau"	"Tau"	"T"	U
+"933"	"Ugr"	"Upsilon"	"$\Upsilon$"
+"933"	"Upsi"	"Upsilon"	"$\Upsilon$"
+"933"	"Upsilon"	"Upsilon"	"$\Upsilon$"	U
+"934"	"PHgr"	"Phi"	"$\Phi$"
+"934"	"Phi"	"Phi"	"$\Phi$"	U
+"935"	"KHgr"	"Chi"	"X"	U
+"935"	"Chi"	"Chi"	"X"
+"936"	"PSgr"	"Psi"	"$\Psi$"
+"936"	"Psi"	"Psi"	"$\Psi$"	U
+"937"	"OHgr"	"Omega"	"$\Omega$"
+"937"	"ohm"	"ohm"	"$\Omega$"
+"937"	"Omega"	"Omega"	"$\Omega$"	U
+"945"	"agr"	"alpha"	"$\alpha$"
+"945"	"alpha"	"alpha"	"$\alpha$"	L
+"946"	"bgr"	"beta"	"$\beta$"
+"946"	"beta"	"beta"	"$\beta$"	L
+"947"	"ggr"	"gamma"	"$\gamma$"
+"947"	"gcy"	"gamma"	"$\gamma$"
+"947"	"gamma"	"gamma"	"$\gamma$"	L
+"948"	"dcy"	"delta"	"$\delta$"
+"948"	"dgr"	"delta"	"$\delta$"
+"948"	"delta"	"delta"	"$\delta$"	L
+"949"	"ecy"	"epsilon"	"$\epsilon$"
+"949"	"egr"	"epsilon"	"$\epsilon$"
+"949"	"epsi"	"epsilon"	"$\epsilon$"	L
+"949"	"epsis"	"epsilon"	"$\epsilon$"
+"949"	"epsiv"	"epsilon"	"$\epsilon$"
+"949"	"varepsilon"	"epsilon"	"$\epsilon$"
+"949"	"epsilon"	"epsilon"	"$\epsilon$"
+"950"	"zgr"	"zeta"	"$\zeta$"
+"950"	"zeta"	"zeta"	"$\zeta$"	L
+"951"	"eegr"	"eta"	"$\eta$"
+"951"	"eta"	"eta"	"$\eta$"	L
+"952"	"thetas"	"theta"	"$\theta$"	L
+"952"	"thgr"	"theta"	"$\theta$"
+"952"	"thetasym"	"theta"	"$\theta$"
+"952"	"theta"	"theta"	"$\theta$"
+"953"	"icy"	"iota"	"$\iota$"
+"953"	"igr"	"iota"	"$\iota$"
+"953"	"iota"	"iota"	"$\iota$"	L
+"954"	"kcy"	"kappa"	"$\kappa$"
+"954"	"kgr"	"kappa"	"$\kappa$"
+"954"	"kappa"	"kappa"	"$\kappa$"	L
+"955"	"lgr"	"lambda"	"$\lambda$"
+"955"	"lambda"	"lambda"	"$\lambda$"	L
+"956"	"mgr"	"mu"	"$\mu$"
+"956"	"mu"	"mu"	"$\mu$"	L
+"957"	"ngr"	"nu"	"$\nu$"
+"957"	"nu"	"nu"	"$\nu$"	L
+"958"	"xgr"	"xi"	"$\xi$"
+"958"	"xi"	"xi"	"$\xi$"	L
+"959"	"ogr"	"omicron"	"o"	L
+"959"	"omicron"	"omicron"	"o"
+"960"	"pgr"	"pi"	"$\pi$"
+"960"	"pi"	"pi"	"$\pi$"	L
+"961"	"rgr"	"rho"	"$\rho$"
+"961"	"rho"	"rho"	"$\rho$"	L
+"962"	"sfgr"	"sigma"	"$\sigma$"
+"962"	"sigmav"	"sigma"	"$\sigma$"	L
+"962"	"varsigma"	"sigma"	"$\sigma$"	
+"963"	"scy"	"sigma"	"$\sigma$"
+"963"	"sgr"	"sigma"	"$\sigma$"
+"963"	"sigmaf"	"sigma"	"$\sigma$"
+"963"	"sigma"	"sigma"	"$\sigma$"	L
+"964"	"tgr"	"tau"	"$\tau$"
+"964"	"tau"	"tau"	"$\tau$"	L
+"965"	"ugr"	"upsilon"	"$\upsilon$"
+"965"	"upsi"	"upsilon"	"$\upsilon$"	L
+"965"	"upsilon"	"upsilon"	"$\upsilon$"
+"966"	"phgr"	"phi"	"$\phi$"
+"966"	"phis"	"phi"	"$\phi$"	L
+"966"	"phi"	"phi"	"$\phi$"
+"967"	"khcy"	"chi"	"$\chi$"
+"967"	"khgr"	"chi"	"$\chi$"
+"967"	"chi"	"chi"	"$\chi$"	L
+"968"	"pscy"	"psi"	"$\psi$"
+"968"	"psgr"	"psi"	"$\psi$"
+"968"	"psi"	"psi"	"$\psi$"	L
+"969"	"ohcy"	"omega"	"$\omega$"
+"969"	"ohgr"	"omega"	"$\omega$"
+"969"	"omega"	"omega"	"$\omega$"	L
+"977"	"thetav"	"theta"	"$\theta$"	L
+"978"	"upsih"	"Upsilon"	"\Upsilon"	L
+"981"	"phiv"	"phi"	"$\phi$"	L
+"981"	"varphi"	"phi"	"$\phi$"
+"982"	"piv"	"pi"	"$\pi$"	L
+"982"	"varpi"	"pi"	"$\pi$"
+"988"	"gammad"	"digamma"	"$\digamma$"	L
+"1008"	"kappav"	"kappa"	"$\kappa$"	L
+"1009"	"rhov"	"rho"	"$\rho$"	L
+"1013"	"epsilon"	"epsilon"	"$\epsilon$"	L
+"1523"	"lsquo"	"'"	"'"	P
+"1489"	"beth"	"&beth;"	"$\beth$"	P
+"1490"	"gimel"	"&gimel;"	"$\gimel$"	P
+"1491"	"daleth"	"&daleth;"	"$\daleth$"	P
+"7682"	"Bdot"	"B"	"\.{B}"	U
+"7683"	"bdot"	"b"	"\.{b}"	L
+"7690"	"Ddot"	"D"	"\.{D}"	U
+"7691"	"ddot"	"d"	"\.{d}"	L
+"7696"	"Dcedil"	"D"	"\c{D}"	U
+"7697"	"dcedil"	"d"	"\c{d}"	L
+"7710"	"Fdot"	"F"	"\.{F}"	U
+"7711"	"fdot"	"f"	"\.{f}"	L
+"7712"	"Gmacr"	"G"	"\={G}"	U
+"7713"	"gmacr"	"g"	"\={g}"	L
+"7714"	"Hdot"	"H"	"\.{H}"	U
+"7715"	"hdot"	"h"	"\.{h}"	L
+"7719"	"huml"	"h"	"\"h"	L
+"7720"	"Hcedil"	"H"	"\c{H}"	U
+"7721"	"hcedil"	"h"	"\c{h}"	L
+"7728"	"Kacute"	"K"	"\'{K}"	U
+"7729"	"kacute"	"k"	"\'{k}"	L
+"7742"	"Macute"	"M"	"\'{M}"	U
+"7743"	"macute"	"m"	"\'{m}"	L
+"7744"	"Mdot"	"M"	"\.{M}"	U
+"7745"	"mdot"	"m"	"\.{m}"	L
+"7748"	"Ndot"	"N"	"\.{N}"	U
+"7749"	"ndot"	"n"	"\.{n}"	L
+"7764"	"Pacute"	"P"	"\'{P}"	U
+"7765"	"pacute"	"p"	"\'{p}"	L
+"7766"	"Pdot"	"P"	"\.{P}"	U
+"7767"	"pdot"	"p"	"\.{p}"	L
+"7768"	"Rdot"	"R"	"\.{R}"	U
+"7769"	"rdot"	"r"	"\.{r}"	L
+"7776"	"Sdot"	"S"	"\.{S}"	U
+"7777"	"sdot"	"s"	"\.{s}"	L
+"7786"	"Tdot"	"T"	"\.{T}"	U
+"7787"	"tdot"	"t"	"\.{t}"	L
+"7804"	"Vtilde"	"V"	"\~{V}"	U
+"7805"	"vtilde"	"v"	"\~{v}"	L
+"7808"	"Wgrave"	"W"	"\`{W}"	U
+"7809"	"wgrave"	"w"	"\`{w}"	L
+"7810"	"Wacute"	"W"	"\'{W}"	U
+"7811"	"wacute"	"w"	"\'{w}"	L
+"7814"	"Wdot"	"W"	"\.{W}"	U
+"7815"	"wdot"	"w"	"\.{w}"	L
+"7818"	"Xdot"	"X"	"\.{X}"	U
+"7819"	"xdot"	"x"	"\.{x}"	L
+"7822"	"Ydot"	"Y"	"\.{Y}"	U
+"7823"	"ydot"	"y"	"\.{y}"	L
+"7824"	"Zcirc"	"Z"	"\^{Z}"	U
+"7825"	"zcirc"	"z"	"\^{z}"	L
+"7868"	"Etilde"	"E"	"\~{E}"	U
+"7869"	"etilde"	"e"	"\~{e}"	L
+"7922"	"Ygrave"	"Y"	"\`{Y}"	U
+"7923"	"ygrave"	"y"	"\`{y}"	L
+"7928"	"Ytilde"	"Y"	"\~{Y}"	U
+"7929"	"ytilde"	"y"	"\~{y}"	L
+"8160"	"ubrcy"	"u"	"\upsilon"
+"8160"	"upsilon"	"u"	"\upsilon"	L
+"8168"	"Upsilon"	"Y"	"\Upsilon"	L
+"8194"	"ensp"	" "	"~"	S
+"8195"	"emsp"	"  "	"~~"	S
+"8196"	"emsp13"	"  "	"~~"	S
+"8197"	"emsp14"	"  "	"~~"	S
+"8199"	"numsp"	" "	"$\kern\zerowidth$"	S
+"8200"	"puncsp"	" "	"$\kern.2em$"	S
+"8201"	"ThinSpace"	" "	"$\kern.1666em$"
+"8201"	"thinsp"	" "	"$\kern.1666em$"	S
+"8202"	"hairsp"	" "	"$ $"	S
+"8208"	"hyphen"	"--"	"--"	P
+"8209"	"minus"	"-"	"-"	P
+"8210"	"dash"	"--"	"--"	P
+"8211"	"ndash"	"--"	"${\mbox{--}}$"	P
+"8212"	"mdash"	"---"	"${\mbox{---}}$"	P
+"8213"	"horbar"	"---"	"---"	P
+"8214"	"dvbm0"	"||"	"$\Vert$"
+"8214"	"dvbr"	"||"	"$\Vert$"	P
+"8216"	"lsquor"	"`"	"`"
+"8216"	"lsquo"	"`"	"`"	P
+"8217"	"rsquor"	"'"	"'"
+"8217"	"rsquo"	"'"	"'"	P
+"8220"	"ldquo"	"``"	"``"	P
+"8221"	"rdquo"	"''"	"''"	P
+"8224"	"dagger"	"&dagger;"	"$\dagger$"	P
+"8225"	"Dagger"	"&Dagger;"	"$\ddagger$"	P
+"8226"	"bullet"	"&bull;"	"$\bullet$"
+"8226"	"bull"	"&bull;"	"$\bullet$"	P
+"8229"	"nldr"	".."	"${\mbox{..}}$"	P
+"8230"	"hellip"	"..."	"$\ldots$"
+"8230"	"mldr"	"..."	"${\mbox{$ldots}}$"
+"8230"	"ldots"	"..."	"$\ldots$"	P
+"8231"	"prime"	"'"	"$\prime$"	P
+"8240"	"permil"	"0/00"	"0/00"	P
+"8242"	"feet"	"'"	"$^{\prime}$"
+"8242"	"arcmin"	"'"	"$\arcmin$"
+"8242"	"arcmin"	"'"	"$\farcm$"
+"8242"	"vprime"	"'"	"$^{\prime}$"
+"8242"	"prime"	"'"	"$^{\prime}$"	P
+"8243"	"arcsec"	"""	"$\arcsec$"
+"8243"	"arcsec"	"""	"$\farcs$"
+"8243"	"inches"	"""	"$^{\prime\prime}$"
+"8243"	"Prime"	"""	"$^{\prime\prime}$"	P
+"8244"	"tprime"	"'''"	"$^{\prime\prime\prime}$"	P
+"8245"	"bprime"	"`"	"$\backprime$"	P
+"8248"	"caret"	"^"	"$^$"	P
+"8249"	"slaquo"	"<"	"$<$"	P
+"8250"	"sraquo"	">"	"$>$"	P
+"8259"	"hybull"	"&hybull;"	"{\bf -}"	P
+"8270"	"ast"	"*"	"*"	P
+"8289"	"func"	"f "	"$\func$"	P
+"8315"	"minus"	"-"	"-"	P
+"8364"	"euro"	"&euro;"	"euro"	P
+"8407"	"ar"	"&ar;"	"$\rightarrow{\phantom{o}}$"	P
+"8453"	"incare"	"c/o"	"c/o"	P
+"8460"	"hamilt"	"H"	"$\mathcal{H}$"	P
+"8462"	"plank"	"&plank;"	"$\hbar$"	L
+"8463"	"hslash"	"&hslash;"	"$\hslash$"
+"8463"	"planck"	"&planck;"	"$\hslash$"	L
+"8465"	"Im"	"&Im;"	"$\Im$"	P
+"8465"	"image"	"&image;"	"$\Im$"
+"8466"	"lagran"	"L"	"$\mathcal{L}$"	P
+"8467"	"ell"	"l"	"$\ell$"	P
+"8472"	"weierp"	"&weierp;"	"$\wp$"	P
+"8476"	"Re"	"R"	"$\Re$"
+"8476"	"real"	"R"	"$\Re$"	P
+"8477"	"R"	"R"	"R"	P
+"8478"	"rx"	"&rx;"	"$\rx$"	P
+"8482"	"trade"	"&trade;"	"$^{\mbox{TM}}$"	P
+"8484"	"Z"	"Z"	"Z"	P
+"8487"	"mho"	"&mho;"	"$\mho$"	P
+"8491"	"angst"	"AA"	"\AA"	P
+"8492"	"bernou"	"B"	"$\mathcal{B}$"	P
+"8499"	"phmmat"	"M"	"$\mathcal{M}$"	P
+"8501"	"aleph"	"&aleph;"	"$\aleph$"	P
+"8531"	"frac13"	"1/3"	"$\slantfrac{1}{3}$"	P
+"8532"	"frac23"	"2/3"	"$\slantfrac{2}{3}$"	P
+"8533"	"frac15"	"1/5"	"$\slantfrac{1}{5}$"	P
+"8534"	"frac25"	"2/5"	"$\slantfrac{2}{5}$"	P
+"8535"	"frac35"	"3/5"	"$\slantfrac{3}{5}$"	P
+"8536"	"frac45"	"4/5"	"$\slantfrac{4}{5}$"	P
+"8537"	"frac16"	"1/6"	"$\slantfrac{1}{6}$"	P
+"8538"	"frac56"	"5/6"	"$\slantfrac{5}{6}$"	P
+"8539"	"frac18"	"1/8"	"$\slantfrac{1}{8}$"	P
+"8540"	"frac38"	"3/8"	"$\slantfrac{3}{8}$"	P
+"8541"	"frac58"	"5/8"	"$\slantfrac{5}{8}$"	P
+"8542"	"frac78"	"7/8"	"$\slantfrac{7}{8}$"	P
+"8592"	"larr"	"<--"	"$\leftarrow$"	P
+"8593"	"uarr"	"&uarr;"	"$\uparrow$"	P
+"8594"	"rarr"	"-->"	"$\rightarrow$"	P
+"8594"	"to"	"-->"	"$\rightarrow$"
+"8595"	"darr"	"&darr;"	"$\downarrow$"	P
+"8596"	"harr"	"<-->"	"$\leftrightarrow$"	P
+"8597"	"varr"	"&varr;"	"$\updownarrow$"	P
+"8598"	"nwarr"	"&nwarr;"	"$\nwarrow$"	P
+"8599"	"nearr"	"&nearr;"	"$\nearrow$"	P
+"8600"	"drarr"	"&drarr;"	"$\searrow$"	P
+"8601"	"dlarr"	"&dlarr;"	"$\swarrow$"	P
+"8602"	"nlarr"	"&nlarr;"	"$\nleftarrow$"	P
+"8603"	"nrarr"	"&nrarr;"	"$\nrightarrow$"	P
+"8606"	"Larr"	"<<--"	"$\twoheadleftarrow$"	P
+"8608"	"Rarr"	"-->>"	"$\twoheadrightarrow$"	P
+"8610"	"larrtl"	"<--<;"	"$\leftarrowtail$"	P
+"8611"	"rarrtl"	">-->;"	"$\rightarrowtail$"	P
+"8614"	"map"	"|-->"	"$\mapsto$"	P
+"8617"	"larrhk"	"&larrhk;"	"$\hookleftarrow$"	P
+"8618"	"rarrhk"	"&rarrhk;"	"$\hookrightarrow$"	P
+"8619"	"larrlp"	"&larrlp;"	"$\looparrowleft$"	P
+"8620"	"rarrlp"	"&rarrlp;"	"$\looparrowright$"	P
+"8621"	"harrw"	"&harrw;"	"$\leftrightsquigarrow$"	P
+"8622"	"nharr"	"&nharr;"	"$\nleftrightarrow$"	P
+"8624"	"lsh"	"&lsh;"	"$\Lsh$"	P
+"8625"	"rsh"	"&rsh;"	"$\Rsh$"	P
+"8630"	"cularr"	"&cularr;"	"$\curvearrowleft$"	P
+"8631"	"curarr"	"&curarr;"	"$\curvearrowright$"	P
+"8634"	"olarr"	"&olarr;"	"$\circlearrowleft$"	P
+"8635"	"orarr"	"&orarr;"	"$\circlearrowright$"	P
+"8636"	"lharu"	"&lharu;"	"$\leftharpoonup$"	P
+"8637"	"lhard"	"&lhard;"	"$\leftharpoondown$"	P
+"8638"	"uharr"	"&uharr;"	"$\upharpoonright$"	P
+"8639"	"uharl"	"&uharl;"	"$\upharpoonleft$"	P
+"8640"	"rharu"	"&rharu;"	"$\rightharpoonup$"	P
+"8641"	"rhard"	"&rhard;"	"$\rightharpoondown$"	P
+"8642"	"dharr"	"&dharr;"	"$\downharpoonright$"	P
+"8643"	"dharl"	"&dharl;"	"$\downharpoonleft$"	P
+"8644"	"rlarr2"	"&rlarr2;"	"$\rightleftarrows$"	P
+"8646"	"lrarr2"	"&lrarr2;"	"$\leftrightarrows$"	P
+"8647"	"larr2"	"&larr2;"	"$\leftleftarrows$"	P
+"8648"	"uarr2"	"&uarr2;"	"$\upuparrows$"	P
+"8649"	"rarr2"	"&rarr2;"	"$\rightrightarrows$"	P
+"8650"	"darr2"	"&darr2;"	"$\downdownarrows$"	P
+"8651"	"lrhar2"	"&lrhar2;"	"$\leftrightharpoons$"	P
+"8652"	"rlhar2"	"&rlhar2;"	"$\rightleftharpoons$"	P
+"8653"	"nlArr"	"&nlArr;"	"$\nLeftarrow$"	P
+"8654"	"nhArr"	"&nhArr;"	"$\nLeftrightarrow$"	P
+"8655"	"nrArr"	"&nrArr;"	"$\nRightarrow$"	P
+"8656"	"lArr"	"<=="	"$\Leftarrow$"	P
+"8657"	"uArr"	"&uArr;"	"$\Uparrow$"	P
+"8658"	"rArr"	"==>"	"$\Rightarrow$"	P
+"8659"	"dArr"	"&dArr;"	"$\Downarrow$"	P
+"8660"	"hArr"	"<==>"	"$\Leftrightarrow$"	P
+"8661"	"vArr"	"&vArr;"	"$\Updownarrow$"	P
+"8666"	"lAarr"	"&lAarr;"	"$\Lleftarrow$"	P
+"8667"	"rAarr"	"&rAarr;"	"$\Rrightarrow$"	P
+"8669"	"rarrw"	"&rarrw;"	"$\rightsquigarrow$"	P
+"8704"	"forall"	"&forall;"	"$\forall$"	P
+"8705"	"comp"	"C"	"$\complement$"	P
+"8706"	"part"	"&part;"	"$\partial$"	P
+"8706"	"partial"	"&part;"	"$\partial$"
+"8707"	"exist"	"&exist;"	"$\exists$"	P
+"8708"	"nexist"	"&nexist;"	"$\nexists$"	P
+"8709"	"Empty"	"&Empty;"	"$\varnothing$"
+"8709"	"empty"	"&empty;"	"$\emptyset$"	P
+"8710"	"Delta"	"&Delta;"	"$\Delta$"	P
+"8711"	"nabla"	"&nabla;"	"$\nabla$"	P
+"8712"	"isin"	"&isin;"	"$\in$"	P
+"8713"	"notin"	"&notin;"	"$\not\in$"	P
+"8714"	"epsilon"	"&epsilon;"	"$\epsilon$"	P
+"8715"	"ni"	"&ni;"	"$\ni$"	P
+"8719"	"prod"	"&prod;"	"$\prod$"	P
+"8720"	"coprod"	"&coprod;"	"$\coprod$"	P
+"8721"	"sum"	"&sum;"	"$\sum$"	P
+"8722"	"minus"	"-"	"-"	P
+"8723"	"mp"	"-/+"	"$\mp$"
+"8723"	"mnplus"	"-/+"	"$\mp$"	P
+"8724"	"plusdo"	"&plusdo;"	"$\dotplus$"	P
+"8725"	"sol"	"/"	"/"	P
+"8726"	"setmn"	"\"	"$\setminus$"	P
+"8727"	"lowast"	"*"	"$\ast$"	P
+"8728"	"cir"	"o"	"$\circ$"	P
+"8728"	"compfn"	"o"	"$\circ$"
+"8728"	"j0"	"o"	"$\circ$"
+"8729"	"bull"	"."	"$\bull$"	P
+"8730"	"radic"	"&radic;"	"$\sqrt$"
+"8730"	"sqrt"	"&radic;"	"$\sqrt$"
+"8730"	"surd"	"&surd;"	"$\surd$"	P
+"8733"	"prop"	"&prop;"	"$\propto$"	P
+"8733"	"propto"	"&prop;"	"$\propto$"
+"8733"	"vprop"	"&vprop;"	"$\varpropto$"
+"8734"	"inf"	"&infin;"	"$\infty$"	
+"8734"	"infin"	"&infin;"	"$\infty$"	P
+"8734"	"infy"	"&infin;"	"$\infty$"	
+"8734"	"infty"	"&infin;"	"$\infty$"	
+"8735"	"ang90"	"&ang90;"	"$\llcorner$"	P
+"8736"	"ang"	"&ang;"	"$\angle$"	P
+"8737"	"angmsd"	"&angmsd;"	"$\measuredangle$"	P
+"8738"	"angsph"	"&angsph;"	"$\sphericalangle$"	P
+"8739"	"mid"	"|"	"$\mid$"	P
+"8740"	"nmid"	"&nmid;"	"$\nmid$"	P
+"8741"	"Verbar"	"||"	"$\parallel$"
+"8741"	"par"	"||"	"$\parallel$"	P
+"8741"	"parallel"	"||"	"$\parallel$"	
+"8742"	"npar"	"&npar;"	"$\nparallel$"	P
+"8743"	"and"	"&and;"	"$\wedge$"	P
+"8744"	"or"	"&or;"	"$\vee$"	P
+"8745"	"cap"	"&cap;"	"$\cap$"	P
+"8746"	"cup"	"&cup;"	"$\cup$"	P
+"8747"	"int"	"&int;"	"$\int$"	P
+"8750"	"conint"	"&conint;"	"$\oint$"	P
+"8756"	"there4"	"&there4;"	"$\therefore$"	P
+"8757"	"becaus"	"&becaus;"	"$\because$"	P
+"8758"	"ratio"	":"	":"	P
+"8764"	"sim"	"~"	"$\sim$"	P
+"8765"	"bsim"	"&bsim;"	"$\backsim$"	P
+"8768"	"m22"	"$\wr$"	"$\wr$"
+"8768"	"order"	"&order;"	"$\wr$"
+"8768"	"wreath"	"&wreath;"	"$\wr$"	P
+"8769"	"nsim"	"&nsim;"	"$\nsim$"	P
+"8770"	"eqsim"	"=~"	"$\eqsim$"	P
+"8771"	"simeq"	"~="	"$\simeq$"	
+"8771"	"sime"	"~="	"$\simeq$"	P
+"8772"	"nsime"	"&nsime;"	"$\not\simeq$"	P
+"8773"	"Congruent"	"&cong;"	"$\cong$"
+"8773"	"cong"	"&cong;"	"$\cong$"	P
+"8775"	"ncong"	"&ncong;"	"$\ncong$"	P
+"8776"	"approx"	"&ap;"	"$\approx$"
+"8776"	"ap"	"&ap;"	"$\approx$"	P
+"8777"	"napprox"	"&napprox;"	"$\napprox$"
+"8777"	"nap"	"&nap;"	"$\not\approx$"	P
+"8778"	"ape"	"&ape;"	"$\approxeq$"	P
+"8780"	"bcong"	"&bcong;"	"$\backcong$"	P
+"8781"	"asymp"	"&asymp;"	"$\asymp$"	P
+"8782"	"bump"	"&bump;"	"$\Bumpeq$"	P
+"8783"	"bumpe"	"&bumpe;"	"$\bumpeq$"	P
+"8784"	"esdot"	"&esdot;"	"$\doteq$"	P
+"8785"	"eDot"	"&eDot;"	"$\doteqdot$"	P
+"8786"	"efDot"	"&efDot;"	"$\fallingdotseq$"	P
+"8787"	"erDot"	"&erDot;"	"$\risingdotseq$"	P
+"8788"	"colone"	":="	":="	P
+"8789"	"ecolon"	"=:"	"=:"	P
+"8790"	"ecir"	"&ecir;"	"$\eqcirc$"	P
+"8791"	"circe"	"&circe;"	"$\circeq$"	P
+"8791"	"cire"	"&cire;"	"$\circeq$"
+"8793"	"wedgeq"	"&wedgeq;"	"$\buildrel \wedge \over =$"	P
+"8796"	"trie"	"&trie;"	"$\triangleq$"	P
+"8800"	"neq"	"!="	"$\neq$"
+"8800"	"NotEqual"	"!="	"$\neq$"
+"8800"	"ne"	"!="	"$\neq$"	P
+"8801"	"equiv"	"&equiv;"	"$\equiv$"	P
+"8802"	"nequiv"	"&nequiv;"	"$\not\equiv$"	P
+"8804"	"leq"	"<="	"$\leq$"	
+"8804"	"le"	"<="	"$\leq$"	P
+"8805"	"geq"	">="	"$\geq$"	
+"8805"	"ge"	">="	"$\geq$"	P
+"8806"	"lE"	"&lE;"	"$\leqq$"	P
+"8807"	"gE"	"&gE;"	"$\geqq$"	P
+"8808"	"lnE"	"&lnE;"	"$\lneqq$"	P
+"8809"	"gnE"	"&gnE;"	"$\gneqq$"	P
+"8810"	"Lt"	"&Lt;"	"$\ll$"	P
+"8811"	"gg"	"&Gt;"	"$\gg$"	
+"8811"	"Gt"	"&Gt;"	"$\gg$"	P
+"8812"	"twixt"	"&twixt;"	"$\between$"	P
+"8814"	"nlt"	"&nlt;"	"$\nless$"	P
+"8815"	"ngt"	"&ngt;"	"$\ngtr$"	P
+"8816"	"nles"	"&nles;"	"$\nleqslant$"	P
+"8817"	"nges"	"&nges;"	"$\ngeqslant$"	P
+"8818"	"lsim"	"&lsim;"	"$\lesssim$"	P
+"8819"	"gsim"	"&gsim;"	"$\gtrsim$"	P
+"8822"	"lg"	"&lg;"	"$\lessgtr$"	P
+"8823"	"gl"	"&gl;"	"$\gtrless$"	P
+"8826"	"pr"	"&pr;"	"$\prec$"	P
+"8827"	"sc"	"&sc;"	"$\succ$"	P
+"8828"	"cupre"	"&cupre;"	"$\preccurlyeq$"
+"8828"	"preccurlyeq"	"&preccurlyeq;"	"$\preccurlyeq$"	P
+"8829"	"sccue"	"&sccue;"	"$\succcurlyeq$"	P
+"8830"	"prsim"	"&prsim;"	"$\precsim$"	P
+"8831"	"scsim"	"&scsim;"	"$\succsim$"	P
+"8832"	"npr"	"&npr;"	"$\nprec$"	P
+"8833"	"nsc"	"&nsc;"	"$\nsucc$"	P
+"8834"	"sub"	"&sub;"	"$\subset$"	P
+"8835"	"sup"	"&sup;"	"$\supset$"	P
+"8836"	"nsub"	"&nsub;"	"$\not\subset$"	P
+"8837"	"nsup"	"&nsup;"	"$\not\supset$"	P
+"8838"	"sube"	"&sube;"	"$\subseteq$"	P
+"8839"	"supe"	"&supe;"	"$\supseteq$"	P
+"8840"	"nsube"	"&nsube;"	"$\nsubseteq$"	P
+"8841"	"nsupe"	"&nsupe;"	"$\nsupseteq$"	P
+"8842"	"vsubne"	"&vsubne;"	"$\varsubsetneq$"
+"8842"	"subne"	"&subne;"	"$\subsetneq$"	P
+"8843"	"vsupne"	"&vsupne;"	"$\varsupsetneq$"
+"8843"	"supne"	"&supne;"	"$\supsetneq$"	P
+"8846"	"uplus"	"&uplus;"	"$\uplus$"	P
+"8847"	"sqsub"	"&sqsub;"	"$\sqsubset$"	P
+"8848"	"sqsup"	"&sqsup;"	"$\sqsupset$"	P
+"8849"	"sqsube"	"&sqsube;"	"$\sqsubseteq$"	P
+"8850"	"sqsupe"	"&sqsupe;"	"$\sqsupseteq$"	P
+"8851"	"sqcap"	"&sqcap;"	"$\sqcap$"	P
+"8852"	"sqcup"	"&sqcup;"	"$\sqcup$"	P
+"8853"	"oplus"	"&oplus;"	"$\oplus$"	P
+"8854"	"ominus"	"&ominus;"	"$\ominus$"	P
+"8855"	"otimes"	"&otimes;"	"$\otimes$"	P
+"8856"	"osol"	"&osol;"	"$\oslash$"	P
+"8857"	"sun"	"&sun;"	"$\odot$"	P
+"8857"	"sun"	"&sun;"	"$\CircleDot$"
+"8857"	"sun"	"&sun;"	"$\sun$"
+"8858"	"ocir"	"&ocir;"	"$\circledcirc$"	P
+"8858"	"target"	"&target;"	"$\circledcirc$"
+"8859"	"oast"	"*"	"$\circledast$"	P
+"8861"	"odash"	"&odash;"	"$\circleddash$"	P
+"8862"	"plusb"	"&plusb;"	"$\boxplus$"	P
+"8863"	"minusb"	"&minusb;"	"$\boxminus$"	P
+"8864"	"timesb"	"&timesb;"	"$\boxtimes$"	P
+"8865"	"sdotb"	"&sdotb;"	"$\boxdot$"	P
+"8867"	"dashv"	"-|"	"$\dashv$"	P
+"8868"	"top"	"&top;"	"$\top$"	P
+"8869"	"bottom"	"&bottom;"	"$\bot$"
+"8869"	"perp"	"&perp;"	"$\perp$"	P
+"8870"	"vdash"	"|-"	"$\vdash$"	P
+"8871"	"vDash"	"|="	"$\vDash$"	P
+"8872"	"models"	"|="	"$\models$"	P
+"8873"	"Vdash"	"||-"	"$\Vdash$"	P
+"8874"	"Vvdash"	"|||-"	"$\Vvdash$"	P
+"8876"	"nvdash"	"&nvdash;"	"$\nvdash$"	P
+"8877"	"nvDash"	"&nvDash;"	"$\nvDash$"	P
+"8878"	"nVdash"	"&nVdash;"	"$\nVdash$"	P
+"8879"	"nVDash"	"&nVDash;"	"$\nVDash$"	P
+"8882"	"vltri"	"&vltri;"	"$\lhd$"	P
+"8883"	"vrtri"	"&vrtri;"	"$\rhd$"	P
+"8884"	"ltrie"	"&ltrie;"	"$\unlhd$"	P
+"8885"	"rtrie"	"&rtrie;"	"$\unrhd$"	P
+"8888"	"mumap"	"&mumap;"	"$\multimap$"	P
+"8890"	"intcal"	"&intcal;"	"$\intercal$"	P
+"8891"	"veebar"	"&veebar;"	"$\veebar$"	P
+"8892"	"barwed"	"&barwed;"	"$\barwedge$"	P
+"8898"	"cap"	"&cap;"	"$\cap$"	P
+"8900"	"diam"	"&diam;"	"$\diamond$"	P
+"8901"	"sdot"	"."	"$\cdot$"	P
+"8902"	"sstarf"	"*"	"$\star$"
+"8902"	"star"	"*"	"$\star$"	P
+"8903"	"divonx"	"&divonx;"	"$\divideontimes$"	P
+"8904"	"bowtie"	"&bowtie;"	"$\bowtie$"	P
+"8905"	"ltimes"	"&ltimes;"	"$\ltimes$"	P
+"8906"	"rtimes"	"&rtimes;"	"$\rtimes$"	P
+"8907"	"lthree"	"&lthree;"	"$\leftthreetimes$"	P
+"8908"	"rthree"	"&rthree;"	"$\rightthreetimes$"	P
+"8909"	"bsime"	"&bsime;"	"$\backsimeq$"	P
+"8910"	"cuvee"	"&cuvee;"	"$\curlyvee$"	P
+"8911"	"cuwed"	"&cuwed;"	"$\curlywedge$"	P
+"8912"	"Sub"	"&Sub;"	"$\Subset$"	P
+"8913"	"Sup"	"&Sup;"	"$\Supset$"	P
+"8914"	"Cap"	"&Cap;"	"$\Cap$"	P
+"8915"	"Cup"	"&Cup;"	"$\Cup$"	P
+"8916"	"fork"	"&fork;"	"$\pitchfork$"	P
+"8918"	"ldot"	"&ldot;"	"$\lessdot$"	P
+"8919"	"gsdot"	"&gsdot;"	"$\gtrdot$"	P
+"8920"	"Ll"	"&Ll;"	"$\lll$"	P
+"8921"	"Gg"	"&Gg;"	"$\ggg$"	P
+"8922"	"leg"	"&leg;"	"$\lesseqgtr$"	P
+"8923"	"gel"	"&gel;"	"$\gtreqless$"	P
+"8926"	"cuepr"	"&cuepr;"	"$\curlyeqprec$"	P
+"8927"	"cuesc"	"&cuesc;"	"$\curlyeqsucc$"	P
+"8928"	"npre"	"&npre;"	"$\npreceq$"	P
+"8929"	"nsce"	"&nsce;"	"$\nsucceq$"	P
+"8934"	"lnsim"	"&lnsim;"	"$\lnsim$"	P
+"8935"	"gnsim"	"&gnsim;"	"$\gnsim$"	P
+"8936"	"prnsim"	"&prnsim;"	"$\precnsim$"	P
+"8937"	"scnsim"	"&scnsim;"	"$\succnsim$"	P
+"8938"	"nltri"	"&nltri;"	"$\ntriangleleft$"	P
+"8939"	"nrtri"	"&nrtri;"	"$\ntriangleright$"	P
+"8940"	"nltrie"	"&nltrie;"	"$\ntrianglelefteq$"	P
+"8941"	"nrtrie"	"&nrtrie;"	"$\ntrianglerighteq$"	P
+"8942"	"m7"	"$\vdots$"	"$\vdots$"
+"8942"	"vdots"	"&vdots;"	"$\vdots$"	P
+"8942"	"vellip"	"&vellip;"	"$\vdots$"
+"8943"	"cdots"	"..."	"$\cdots$"	P
+"8943"	"ctdot"	"..."	"$\cdots$"	P
+"8944"	"ddots"	"&ddots;"	"$\ddots$"	P
+"8966"	"Barwed"	"&Barwed;"	"$\doublebarwedge$"	P
+"8968"	"ceill0"	"&ceill0;"	"$\lceil$"
+"8968"	"lceil"	"&lceil;"	"$\lceil$"	P
+"8969"	"ceilr0"	"&ceilr0;"	"$\rceil$"
+"8969"	"rceil"	"&rceil;"	"$\rceil$"	P
+"8970"	"fll0"	"&fll0;"	"$\lfloor$"
+"8970"	"lfloor"	"&lfloor;"	"$\lfloor$"	P
+"8971"	"flr0"	"&flr0;"	"$\rfloor$"
+"8971"	"rfloor"	"&rfloor;"	"$\rfloor$"	P
+"8972"	"drcrop"	"&drcrop;"	"$\drcrop$"	P
+"8973"	"dlcrop"	"&dlcrop;"	"$\dlcrop$"	P
+"8974"	"urcrop"	"&urcrop;"	"$\urcrop$"	P
+"8975"	"ulcrop"	"&ulcrop;"	"$\ulcrop$"	P
+"8988"	"ulcorn"	"&ulcorn;"	"$\ulcorner$"	P
+"8989"	"urcorn"	"&urcorn;"	"$\urcorner$"	P
+"8990"	"dlcorn"	"&dlcorn;"	"$\llcorner$"	P
+"8991"	"drcorn"	"&drcorn;"	"$\lrcorner$"	P
+"8994"	"frown"	"&frown;"	"$\frown$"	P
+"8995"	"smile"	"&smile;"	"$\smile$"	P
+"9001"	"angl0"	"<"	"$\langle$"
+"9001"	"lang"	"<"	"$\langle$"
+"9001"	"langle"	"<"	"$\langle$"	P
+"9002"	"angr0"	">"	"$\rangle$"
+"9002"	"rang"	">"	"$\rangle$"
+"9002"	"rangle"	">"	"$\rangle$"	P
+"9415"	"circledR"	"&circR;"	"$\circledR$"
+"9415"	"circR"	"&circR;"	"$\circledR$"	P 
+"9416"	"circS"	"&circS;"	"$\circledS$"	P
+"9416"	"oS"	"&oS;"	"$\circledS$"
+"9472"	"ndash"	"--"	"${\mbox{--}}$"	P
+"9632"	"missing"	"&missing;"	"$\blacksquare$"
+"9632"	"squf"	"&squf;"	"$\blacksquare$"	P
+"9633"	"squ"	"&squ;"	"$\square$"
+"9633"	"square"	"&square;"	"$\square$"	P
+"9645"	"rect"	"&rect;"	"{\fbox{\phantom{~~}}"	P
+"9651"	"xutri"	"&xutri;"	"$\bigtriangleup$"	P
+"9652"	"utrif"	"&utrif;"	"$\blacktriangle$"	P
+"9653"	"utri"	"&utri;"	"$\triangle$"	P
+"9656"	"rtrif"	"&rtrif;"	"$\blacktriangleright$"	P
+"9657"	"rtri"	"&rtri;"	"$\triangleright$"	P
+"9661"	"xdtri"	"&xdtri;"	"$\bigtriangledown$"	P
+"9662"	"dtrif"	"&dtrif;"	"$\blacktriangledown$"	P
+"9663"	"dtri"	"&dtri;"	"$\triangledown$"	P
+"9666"	"ltrif"	"&ltrif;"	"$\blacktriangleleft$"	P
+"9667"	"ltri"	"&ltri;"	"$\triangleleft$"	P
+"9674"	"loz"	"&loz;"	"$\lozenge$"	P
+"9711"	"xcirc"	"&xcirc;"	"$\bigcirc$"	P
+"9733"	"starf"	"*"	"$\bigstar$"	P
+"9737"	"sun"	"&sun;"	"$\sun$"
+"9792"	"female"	"&female;"	"$\female$"	P
+"9793"	"earth"	"&earth;"	"$\earth$"	P
+"9794"	"male"	"&male;"	"$\male$"	P
+"9824"	"spades"	"&spades;"	"$\spadesuit$"	P
+"9825"	"hearts"	"&hearts;"	"$\heartsuit$"	P
+"9826"	"diams"	"&diams;"	"$\diamondsuit$"	P
+"9827"	"clubs"	"&clubs;"	"$\clubsuit$"	P
+"9830"	"lozf"	"&lozf;"	"$\blacklozenge$"	P
+"9837"	"flat"	"b"	"$\flat$"	P
+"9838"	"natur"	"&natur;"	"$\natural$"	P
+"9839"	"sharp"	"#"	"$\sharp$"	P
+"10003"	"check"	"&check;"	"$\checkmark$"	P
+"10003"	"chkmrk"	"&chkmrk;"	"$\checkmark$"
+"10016"	"malt"	"&malt;"	"$\maltese$"	P
+"10216"	"mlab"	"<"	"$\langle$"	P
+"10217"	"mrab"	">"	"$\rangle$"	P
+"10877"	"les"	"<="	"\leqslant"	P
+"10878"	"ges"	"=>"	"\geqslant"	P
+"10886"	"gap"	"&gap;"	"$\gtrapprox$"	P
+"10889"	"lap"	"&lap;"	"$\lessapprox$"	P
