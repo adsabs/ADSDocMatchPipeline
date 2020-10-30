@@ -2,26 +2,54 @@ import sys
 import argparse
 from pub_parser import get_pub_metadata
 from from_oracle import get_matches
-import time
 
-def read_metadata(filename):
+def get_filenames(filename):
     """
-    read pub metadata file and return a dict
-    containing authors, title, abstract, and bibcode
+    read input file and return list of pub metadata full filenames
 
     :param filename:
     :return:
     """
-    pub_metadata = []
+    filenames = []
     try:
-        with open(filename, 'rU') as fp:
-            for pub_filename in fp:
-                with open(pub_filename.rstrip('\r\n'), 'rU') as pub_fp:
-                    print 'reading and parsing', pub_filename.rstrip('\r\n')
-                    pub_metadata.append(get_pub_metadata(pub_fp.read()))
+        with open(filename, 'r') as fp:
+            for filename in fp.readlines():
+                filenames.append(filename.rstrip('\r\n'))
     except Exception as e:
         print('Unable to open/read input file', e)
-    return pub_metadata
+    return filenames
+
+def match_to_arXiv(filename):
+    """
+    read and parse arXiv metadata file
+    return list of bibcodes and scores for the matches in decreasing order
+
+    :param filename:
+    :return:
+    """
+    try:
+        with open(filename, 'r') as pub_fp:
+            return get_matches(get_pub_metadata(pub_fp.read()), 'article')
+    except:
+        return None
+
+def join_hybrid_elements(hybrid_list, separator):
+    """
+
+    :param hybrid_list:
+    :param separator:
+    :return:
+    """
+    return separator.join(str(x) for x in hybrid_list)
+
+def single_match_to_arXiv(pub_filename):
+    """
+    when user submits a single pub metadata file for matching
+
+    :param pub_filename:
+    :return:
+    """
+    return join_hybrid_elements(match_to_arXiv(pub_filename), '\t')
 
 def batch_match_to_arXiv(filename, result_filename):
     """
@@ -30,26 +58,17 @@ def batch_match_to_arXiv(filename, result_filename):
     :param result_filename:
     :return:
     """
-    start_time = time.time()
-    pub_metadata = read_metadata(filename)
-    if result_filename:
-        with open(result_filename, 'w') as fp:
-            for pub in pub_metadata:
-                fp.write('%s\r\n' % str(get_matches(pub, 'article')))
-    else:
-        for pub in pub_metadata:
-           print(get_matches(pub, 'article'))
-    end_time = time.time()
-    print('duration:', (end_time - start_time) * 1000, 'ms')
-
-def signle_match_to_arXiv(pub_filename):
-    """
-
-    :param pub_filename:
-    :return:
-    """
-    with open(pub_filename, 'rU') as pub_fp:
-        print(get_matches(get_pub_metadata(pub_fp.read()), 'article'))
+    filenames = get_filenames(filename)
+    if len(filenames) > 0:
+        if result_filename:
+            # output file
+            with open(result_filename, 'w') as fp:
+                # one file at a time, parse and score, and then write the result to the file
+                for arXiv_filename in filenames:
+                    fp.write('%s\r\n'%single_match_to_arXiv(arXiv_filename))
+        else:
+            for arXiv_filename in filenames:
+                print(single_match_to_arXiv(arXiv_filename))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Match Publisher with arXiv')
@@ -60,6 +79,5 @@ if __name__ == '__main__':
     if args.input:
         batch_match_to_arXiv(filename=args.input, result_filename=args.output)
     elif args.single:
-        signle_match_to_arXiv(pub_filename=args.single)
+        print single_match_to_arXiv(pub_filename=args.single)
     sys.exit(0)
-

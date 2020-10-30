@@ -1,27 +1,79 @@
-import os, sys
+import sys
 import argparse
 from pyingest.parsers.arxiv import ArxivParser
 from from_oracle import get_matches
-import time
+import re
 
-def read_metadata(filename):
+MUST_MATCH = ['Astrophysics', 'Physics']
+DOCTYPE_THESIS = ['phdthesis', 'mastersthesis']
+
+ARXIV_PARSER = ArxivParser()
+
+def get_filenames(filename):
     """
-    read arxiv metadata file and return a dict
-    containing authors, title, abstract, and bibcode
+    read input file and return list of arXiv metadata full filenames
 
     :param filename:
     :return:
     """
-    arXiv_metadata = []
+    filenames = []
     try:
-        with open(filename, 'rU') as fp:
-            parser = ArxivParser()
-            for arXiv_filename in fp.readlines():
-                with open(arXiv_filename[:-1], 'rU') as arxiv_fp:
-                    arXiv_metadata.append(parser.parse(arxiv_fp))
+        with open(filename, 'r') as fp:
+            for filename in fp.readlines():
+                filenames.append(filename.rstrip('\r\n'))
     except Exception as e:
         print('Unable to open/read input file', e)
-    return arXiv_metadata
+    return filenames
+
+re_doi = re.compile(r'doi:\s*(10\.\d{4,9}/\S+\w)', re.IGNORECASE)
+re_thesis = re.compile(r'(thesis)', re.IGNORECASE)
+def match_to_pub(filename):
+    """
+    read and parse arXiv metadata file
+    return list of bibcodes and scores for the matches in decreasing order
+
+    :param filename:
+    :return:
+    """
+    try:
+        with open(filename, 'r') as arxiv_fp:
+            metadata = ARXIV_PARSER.parse(arxiv_fp)
+            comments = ' '.join(metadata.get('comments', []))
+            # extract doi out of comments if there are any
+            match = re_doi.search(comments)
+            if match:
+                metadata['doi'] = match.group(1)
+            else:
+                doi = metadata.get('properties', {}).get('DOI', None)
+                if doi:
+                    metadata['doi'] = doi.replace('doi:', '')
+            match = re_thesis.search(comments)
+            if match:
+                match_doctype = DOCTYPE_THESIS
+            else:
+                match_doctype = None
+            mustmatch = any(category in metadata.get('keywords', '') for category in MUST_MATCH)
+            return get_matches(metadata, 'eprint', mustmatch, match_doctype)
+    except:
+        return None
+
+def join_hybrid_elements(hybrid_list, separator):
+    """
+
+    :param hybrid_list:
+    :param separator:
+    :return:
+    """
+    return separator.join(str(x) for x in hybrid_list)
+
+def single_match_to_pub(arXiv_filename):
+    """
+    when user submits a single arxiv metadata file for matching
+
+    :param arxiv_filename:
+    :return:
+    """
+    return join_hybrid_elements(match_to_pub(arXiv_filename), '\t')
 
 def batch_match_to_pub(filename, result_filename):
     """
@@ -30,26 +82,17 @@ def batch_match_to_pub(filename, result_filename):
     :param result_filename:
     :return:
     """
-    start_time = time.time()
-    arXiv_metadata = read_metadata(filename)
-    if result_filename:
-        with open(result_filename, 'w') as fp:
-            for arXiv in arXiv_metadata:
-                fp.write('%s\r\n'%str(get_matches(arXiv, 'eprint')))
-    else:
-        for arXiv in arXiv_metadata:
-            print(get_matches(arXiv, 'eprint'))
-    end_time = time.time()
-    print('duration:', (end_time-start_time)*1000, 'ms')
-
-def single_match_to_pub(arxiv_filename):
-    """
-
-    :param arxiv_filename:
-    :return:
-    """
-    with open(arxiv_filename, 'rU') as arxiv_fp:
-        print(get_matches(ArxivParser().parse(arxiv_fp), 'eprint'))
+    filenames = get_filenames(filename)
+    if len(filenames) > 0:
+        if result_filename:
+            # output file
+            with open(result_filename, 'w') as fp:
+                # one file at a time, parse and score, and then write the result to the file
+                for arXiv_filename in filenames:
+                    fp.write('%s\r\n'%single_match_to_pub(arXiv_filename))
+        else:
+            for arXiv_filename in filenames:
+                print(single_match_to_pub(arXiv_filename))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Match arXiv with Publisher')
@@ -60,5 +103,5 @@ if __name__ == '__main__':
     if args.input:
         batch_match_to_pub(filename=args.input, result_filename=args.output)
     elif args.single:
-        single_match_to_pub(arxiv_filename=args.single)
+        print single_match_to_pub(arXiv_filename=args.single)
     sys.exit(0)

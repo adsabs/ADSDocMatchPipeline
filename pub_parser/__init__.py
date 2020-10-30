@@ -125,4 +125,6 @@ def get_pub_metadata(contents):
     switch_date = article['Publication Date'].split('/')
     article['Publication Date'] = switch_date[1] + '/' + switch_date[0]
 
+    article['Authors'] = UNICODE_HANDLER.ent2u(article['Authors'])
+
     return as_needed(article)
