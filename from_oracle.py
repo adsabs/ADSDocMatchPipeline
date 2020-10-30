@@ -24,7 +24,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         return (metadata['bibcode'], None, e)
 
     response = requests.post(
-        url='http://localhost:5000/matchdoc', # 'https://api.adsabs.harvard.edu/v1/_oracle/matchdoc',
+        url='https://api.adsabs.harvard.edu/v1/_oracle/matchdoc',
         headers={'Authorization': 'Bearer: token here'},
         data=payload,
         timeout=60

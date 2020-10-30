@@ -10,6 +10,8 @@ Scripts to match publisher document with arXiv counterpart and vice versa.
     $ virtualenv python
     $ source python/bin/activate
     $ pip install -r requirements.txt
+    
+    Add your ADS token to `from_oracle.py` for oracle service.
 
 ### For matching arXiv bibcode to publisher bibcode in solr use script:
     
