@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 
@@ -25,7 +26,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
 
     response = requests.post(
         url='https://api.adsabs.harvard.edu/v1/_oracle/matchdoc',
-        headers={'Authorization': 'Bearer: token here'},
+        headers={'Authorization': 'Bearer: %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
         data=payload,
         timeout=60
     )
