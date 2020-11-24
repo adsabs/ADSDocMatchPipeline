@@ -25,13 +25,12 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         return (metadata['bibcode'], None, e)
 
     response = requests.post(
-        url='https://api.adsabs.harvard.edu/v1/_oracle/matchdoc',
+        url='https://api.adsabs.harvard.edu/v1/oracle/matchdoc',
         headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
         data=payload,
         timeout=60
     )
 
-    print response.text
     if response.status_code == 200:
         json_text = json.loads(response.text)
         if 'match' in json_text:
@@ -44,7 +43,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
                 if confidences[0] > 0.5:
                     scores = '|'.join(str(score) for score in [one_match['scores'] for one_match in json_text['match']][:count])
                     bibcodes = '|'.join([one_match['bibcode'] for one_match in json_text['match']][:count])
-                 # else, when confidence is low and we have multiple matches,
+                # else, when confidence is low and we have multiple matches,
                 # more than likely none is a correct match
                 else:
                     scores = ''

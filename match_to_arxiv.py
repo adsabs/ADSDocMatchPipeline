@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import argparse
 from pub_parser import get_pub_metadata
 from from_oracle import get_matches
@@ -70,6 +70,7 @@ def batch_match_to_arXiv(filename, result_filename):
             for arXiv_filename in filenames:
                 print(single_match_to_arXiv(arXiv_filename))
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Match Publisher with arXiv')
     parser.add_argument('-i', '--input', help='the path to an input file containing list of arXiv metadata files for processing.')
@@ -80,4 +81,11 @@ if __name__ == '__main__':
         batch_match_to_arXiv(filename=args.input, result_filename=args.output)
     elif args.single:
         print single_match_to_arXiv(pub_filename=args.single)
+    # test mode
+    else:
+        assert(single_match_to_arXiv(pub_filename=eval(os.environ.get('ARXIV_DOCMATCHING_TEST'))[0]) ==
+               "2018ApJS..236...24F\t...................\t0\tNo result from solr with Abstract, trying Title. No document was found in solr matching the request.")
+        assert(single_match_to_arXiv(pub_filename=eval(os.environ.get('ARXIV_DOCMATCHING_TEST'))[1]) ==
+               "2005JASIS..56...36K\t...................\t0\tNo matches with Abstract, trying Title. No result from solr with Title. No document was found in solr matching the request.")
+        print 'both tests pass'
     sys.exit(0)
