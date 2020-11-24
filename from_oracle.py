@@ -26,11 +26,12 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
 
     response = requests.post(
         url='https://api.adsabs.harvard.edu/v1/_oracle/matchdoc',
-        headers={'Authorization': 'Bearer: %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
+        headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
         data=payload,
         timeout=60
     )
 
+    print response.text
     if response.status_code == 200:
         json_text = json.loads(response.text)
         if 'match' in json_text:
