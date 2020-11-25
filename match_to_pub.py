@@ -107,13 +107,15 @@ if __name__ == '__main__':
         print single_match_to_pub(arXiv_filename=args.single)
     # test mode
     else:
-        matched = single_match_to_pub(arXiv_filename=eval(os.environ.get('PUB_DOCMATCHING_TEST'))[0]).split('\t')
+        arXiv_path = os.environ.get('ARXIV_DOCMATCHING_PATH')
+
+        matched = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'2009/14323')).split('\t')
         assert(matched[0] == '2020arXiv200914323K')
         assert(matched[1] == '...................')
         assert(matched[2] == '0')
         assert(matched[3] == 'No result from solr with Abstract, trying Title. No document was found in solr matching the request.')
 
-        matched = single_match_to_pub(arXiv_filename=eval(os.environ.get('PUB_DOCMATCHING_TEST'))[1]).split('\t')
+        matched = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'1801/01021')).split('\t')
         assert(matched[0] == '2018arXiv180101021F')
         assert(matched[1] == '2018ApJS..236...24F')
         assert(matched[2] == '1')

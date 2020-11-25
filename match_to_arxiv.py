@@ -83,13 +83,15 @@ if __name__ == '__main__':
         print single_match_to_arXiv(pub_filename=args.single)
     # test mode
     else:
-        matched = single_match_to_arXiv(pub_filename=eval(os.environ.get('ARXIV_DOCMATCHING_TEST'))[0]).split('\t')
+        pub_path = os.environ.get('PUB_DOCMATCHING_PATH')
+
+        matched = single_match_to_arXiv(pub_filename='%s%s'%(pub_path,'K47/K47-02665.abs')).split('\t')
         assert(matched[0] == '2018ApJS..236...24F')
         assert(matched[1] == '...................')
         assert(matched[2] == '0')
         assert(matched[3] == 'No result from solr with Abstract, trying Title. No document was found in solr matching the request.')
 
-        matched = single_match_to_arXiv(pub_filename=eval(os.environ.get('ARXIV_DOCMATCHING_TEST'))[1]).split('\t')
+        matched = single_match_to_arXiv(pub_filename='%s%s'%(pub_path,'J05/J05-12407.abs')).split('\t')
         assert(matched[0] == '2005JASIS..56...36K')
         assert(matched[1] == '...................')
         assert(matched[2] == '0')
