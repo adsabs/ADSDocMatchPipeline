@@ -1,6 +1,8 @@
+from builtins import chr
+from builtins import object
 import os
 import re
-from UserDict import UserDict
+from collections import UserDict
 
 
 class UnicodeError(Exception):
@@ -10,7 +12,7 @@ class UnicodeError(Exception):
     pass
 
 
-class UnicodeChar:
+class UnicodeChar(object):
     def __init__(self, fields):
         """
 
@@ -55,7 +57,7 @@ class UnicodeHandler(UserDict):
         :param data_filename:
         """
         self.data_filename = os.path.dirname(__file__) + '/unicode.dat'
-        self.unicode = [None, ] * 65536
+        self.str = [None, ] * 65536
 
         lines = open(self.data_filename).readlines()
         UserDict.__init__(self)
@@ -71,8 +73,8 @@ class UnicodeHandler(UserDict):
                     self[entity] = UnicodeChar(fields)  # keep entity table
 
                     if len(fields) > 4:  # keep code table
-                        if not self.unicode[code]:
-                            self.unicode[code] = self[entity]
+                        if not self.str[code]:
+                            self.str[code] = self[entity]
                         else:
                             pass
                 except ValueError:
@@ -87,7 +89,7 @@ class UnicodeHandler(UserDict):
         :return:
         """
         try:
-            return unichr(value)
+            return chr(value)
         except ValueError:
             ustring = "\\U%08x" % value
             return ustring.decode('unicode-escape')
@@ -99,7 +101,7 @@ class UnicodeHandler(UserDict):
         :return:
         """
         ent = match.group(1)
-        if ent in self.keys():
+        if ent in list(self.keys()):
             ret = eval("u'\\u%04x'" % self[ent].code)
             return ret
         return None
@@ -114,7 +116,7 @@ class UnicodeHandler(UserDict):
         ent = match.group(1)
         if ent in self.XML_PREDEFINED_ENTITIES:
             return "&" + ent + ";"
-        elif ent in self.keys():
+        elif ent in list(self.keys()):
             ret = eval("u'\\u%04x'" % self[ent].code)
             return ret
         else:

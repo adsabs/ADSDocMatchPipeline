@@ -1,6 +1,10 @@
+from builtins import chr
 import sys
 import re
-from unicode import UnicodeHandler
+from adsputils import setup_logging
+from pub_parser.unicode import UnicodeHandler
+
+logger = setup_logging('docmatch_log')
 
 FIELDPAT = re.compile(r"([A-Za-z][^:]*):\s*(.*)")
 MAX_ABSTRACT_FIELD_LINES = 50000
@@ -27,7 +31,7 @@ def get_illegal_char_regex():
         (0xAFFFE, 0xAFFFF), (0xBFFFE, 0xBFFFF), (0xCFFFE, 0xCFFFF),
         (0xDFFFE, 0xDFFFF), (0xEFFFE, 0xEFFFF), (0xFFFFE, 0xFFFFF),
         (0x10FFFE, 0x10FFFF) ]
-    illegal_ranges = ["%s-%s" % (unichr(low), unichr(high))
+    illegal_ranges = ["%s-%s" % (chr(low), chr(high))
         for (low, high) in illegal_unichrs if low < sys.maxunicode]
     return re.compile(u'[%s]' % u''.join(illegal_ranges))
 ILLEGALCHARSREGEX = get_illegal_char_regex()
@@ -69,16 +73,18 @@ def get_pub_metadata(contents):
     fields_found_in_file = []
     num_lines = 0
 
+    if (isinstance(contents, bytes)):
+        contents = contents.decode('utf-8')
+
     #I check if in the file there are invalid unicode characters
     if ILLEGALCHARSREGEX.search(contents):
         # strip illegal stuff but keep newlines
         contents = UNICODE_HANDLER.remove_control_chars(contents, strict=True)
-        sys.stderr.write('Illegal unicode character in metadata file')
+        logger.error('Illegal unicode character in metadata file')
     contents = contents.strip().split('\n')
 
     while contents:
         line = contents.pop(0)
-        line = line.decode('utf_8')
         match = FIELDPAT.match(line)
         if match:
             # see if we have an existing field
@@ -104,7 +110,7 @@ def get_pub_metadata(contents):
     # Now let's get the abstract. The abstract can contain multiple
     # paragraphs so we need to make sure that we keep this information.
     abstract = ''.join([l.strip() and l.strip() + ' ' or '<P />' for l in contents])
-    article[u'Abstract'] = abstract.strip().replace(' \n', '\n').decode('utf_8')
+    article[u'Abstract'] = abstract.strip().replace(' \n', '\n')
 
     # if the bibcode is not in the field that I have retrieved then there is a huge problem with the file
     if 'Bibliographic Code' not in fields_found_in_file:
@@ -116,10 +122,10 @@ def get_pub_metadata(contents):
     # now properly encode data in fields which have XML-encoded entities and which do not
     # have their own specific content management/cleanup routine
     for field in ENCODED_ABSTRACT_FIELDS:
-        if article.has_key(field):
+        if field in article:
             article[field] = UNICODE_HANDLER.ent2u(article[field])
     for field in HTML_ENCODED_ABSTRACT_FIELDS:
-        if article.has_key(field):
+        if field in article:
             article[field] = UNICODE_HANDLER.ent2xml(article[field])
 
     switch_date = article['Publication Date'].split('/')
