@@ -9,6 +9,7 @@ Scripts to match publisher document with arXiv counterpart and vice versa.
 
     $ virtualenv python
     $ source python/bin/activate
+    $ pip install --upgrade setuptools
     $ pip install -r requirements.txt
     
     Add your ADS token to `from_oracle.py` for oracle service.
