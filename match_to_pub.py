@@ -115,14 +115,14 @@ if __name__ == '__main__':
         assert(matched[1] == '...................')
         assert(matched[2] == '0')
         assert(matched[3] == '')
-        assert(matched[4] == 'No matches with Abstract, trying Title. No document was found in solr matching the request.')
+        assert(matched[4] == 'No result from solr with Abstract, trying Title. No document was found in solr matching the request.')
 
         matched, _ = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'1801/01021'))
         matched = matched.split('\t')
         assert(matched[0] == '2018arXiv180101021F')
         assert(matched[1] == '2018ApJS..236...24F')
         assert(matched[2] == '1')
-        assert(matched[3] == "{'doi': 1.0, 'abstract': 0.97, 'author': 1.0, 'year': 1, 'title': 0.98}")
+        assert(matched[3] == "{'abstract': 0.98, 'title': 0.98, 'author': 1, 'year': 1, 'doi': 1.0}")
         assert(matched[4] == '')
 
         print('both tests pass')
