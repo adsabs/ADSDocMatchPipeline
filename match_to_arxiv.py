@@ -87,7 +87,7 @@ if __name__ == '__main__':
         assert(matched[1] == '...................')
         assert(matched[2] == '0')
         assert(matched[3] == '')
-        assert(matched[4] == 'No result from solr with Abstract, trying Title. No document was found in solr matching the request.')
+        assert(matched[4] == 'No result from solr with Abstract, trying Title. No result from solr with Title. No document was found in solr matching the request.')
 
         matched, _ = single_match_to_arXiv(pub_filename='%s%s'%(pub_path,'J05/J05-12407.abs'))
         matched = matched.split('\t')
