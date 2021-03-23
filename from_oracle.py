@@ -25,7 +25,13 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
                    'mustmatch':mustmatch,
                    'match_doctype':match_doctype}
     except KeyError as e:
-        return (metadata['bibcode'], None, e)
+        result = {}
+        result['source_bibcode'] = metadata['bibcode']
+        result['matched_bibcode'] = '.' * 19
+        result['confidence'] = None
+        result['score'] = None
+        result['comment'] = 'Exception: KeyError, %s missing.'%str(e)
+        return result
 
     response = requests.post(
         url='https://api.adsabs.harvard.edu/v1/oracle/matchdoc',
