@@ -5,7 +5,6 @@ from pyingest.parsers.arxiv import ArxivParser
 from from_oracle import get_matches
 from common import get_filenames, format_results, write_for_inspection_hits
 import re
-import urllib
 
 logger = setup_logging('docmatch_log')
 
@@ -36,8 +35,6 @@ def match_to_pub(filename):
                 doi = metadata.get('properties', {}).get('DOI', None)
                 if doi:
                     metadata['doi'] = doi.replace('doi:', '')
-            if 'doi' in metadata:
-                metadata['doi'] = urllib.parse.quote(metadata['doi'])
             match = re_thesis.search(comments)
             if match:
                 match_doctype = DOCTYPE_THESIS
@@ -109,13 +106,13 @@ if __name__ == '__main__':
     else:
         arXiv_path = os.environ.get('ARXIV_DOCMATCHING_PATH')
 
-        matched, _ = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'2009/14323'))
+        matched, _ = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'1701/00200'))
         matched = matched.split('\t')
-        assert(matched[0] == '2020arXiv200914323K')
+        assert(matched[0] == '2017arXiv170100200T')
         assert(matched[1] == '...................')
         assert(matched[2] == '0')
         assert(matched[3] == '')
-        assert(matched[4] == 'No result from solr with Abstract, trying Title. No document was found in solr matching the request.')
+        assert(matched[4] == 'No matches with Abstract, trying Title. No document was found in solr matching the request.')
 
         matched, _ = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'1801/01021'))
         matched = matched.split('\t')
@@ -125,6 +122,14 @@ if __name__ == '__main__':
         assert(matched[3] == "{'abstract': 0.98, 'title': 0.98, 'author': 1, 'year': 1, 'doi': 1.0}")
         assert(matched[4] == '')
 
-        print('both tests pass')
+        matched, _ = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'0708/1752'))
+        matched = matched.split('\t')
+        assert(matched[0] == '2007arXiv0708.1752V')
+        assert(matched[1] == '2007A&A...474..653V')
+        assert(matched[2] == '1')
+        assert(matched[3] == "{'abstract': 1.0, 'title': 1.0, 'author': 1, 'year': 1, 'doi': 1.0}")
+        assert(matched[4] == '')
+
+        print('all tests pass')
 
     sys.exit(0)

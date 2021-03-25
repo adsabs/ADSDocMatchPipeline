@@ -28,9 +28,14 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         result = {}
         result['source_bibcode'] = metadata['bibcode']
         result['matched_bibcode'] = '.' * 19
-        result['confidence'] = None
-        result['score'] = None
+        result['confidence'] = 0
+        result['score'] = ''
         result['comment'] = 'Exception: KeyError, %s missing.'%str(e)
+        result['inspection'] = {
+            'scores': 0,
+            'bibcodes': '.' * 19,
+            'comment': 'Exception: KeyError, %s missing.'%str(e)
+        }
         return result
 
     response = requests.post(
