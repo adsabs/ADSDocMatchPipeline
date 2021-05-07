@@ -63,7 +63,7 @@ def upload_file(filename):
     }
     files = {
         'data': ('metadata', json.dumps(param), 'application/json; charset=UTF-8'),
-        'file': open("output/arXiv_from_Alberto.output.csv", "rb")
+        'file': open(filename, "rb")
     }
     headers = {"Authorization": "Bearer %s"%access_token, "contentType": "application/vnd.ms-excel"}
     url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart"
