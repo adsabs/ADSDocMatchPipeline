@@ -32,8 +32,8 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         result['score'] = ''
         result['comment'] = 'Exception: KeyError, %s missing.'%str(e)
         result['inspection'] = {
-            'scores': 0,
-            'bibcodes': '.' * 19,
+            'scores': [0],
+            'bibcodes': ['.' * 19],
             'comment': 'Exception: KeyError, %s missing.'%str(e)
         }
         return result

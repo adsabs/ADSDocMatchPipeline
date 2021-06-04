@@ -57,7 +57,7 @@ def write_for_inspection_hits(result_filename, inspection_hits):
     else:
         fp = open(csv_file, 'w')
         # new file, write header line
-        fp.write('source bibcode (link),verified bibcode,confidence,matched bibcode (link),matched scores,matched bibcode (link),matched scores\n')
+        fp.write('source bibcode (link),verified bibcode,confidence,matched bibcode (link),matched scores,matched bibcode (link),matched scores,comment\n')
 
     hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")",'
     score_format = '"%s",'

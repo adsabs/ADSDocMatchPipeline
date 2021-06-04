@@ -58,8 +58,8 @@ def batch_match_to_arXiv(filename, result_filename):
             # output file
             with open(result_filename, 'w') as fp:
                 # one file at a time, parse and score, and then write the result to the file
-                for arXiv_filename in filenames:
-                    a_match, for_inspection = single_match_to_arXiv(arXiv_filename)
+                for pub_filename in filenames:
+                    a_match, for_inspection = single_match_to_arXiv(pub_filename)
                     fp.write('%s\r\n'%a_match)
                     if for_inspection:
                         write_for_inspection_hits(result_filename, for_inspection)

@@ -11,7 +11,7 @@ MAX_ABSTRACT_FIELD_LINES = 50000
 # Fields containing entity-encoded content but without ad-hoc handlers
 ENCODED_ABSTRACT_FIELDS = ['Origin', 'Abstract Copyright', 'Instruments']
 # Fieldes containing HTML encoded content
-HTML_ENCODED_ABSTRACT_FIELDS = ['Journal']
+HTML_ENCODED_ABSTRACT_FIELDS = ['Journal', 'Authors']
 
 class MetadataError(Exception):
     """
@@ -130,7 +130,5 @@ def get_pub_metadata(contents):
 
     switch_date = article['Publication Date'].split('/')
     article['Publication Date'] = switch_date[1] + '/' + switch_date[0]
-
-    article['Authors'] = UNICODE_HANDLER.ent2u(article['Authors'])
 
     return as_needed(article)
