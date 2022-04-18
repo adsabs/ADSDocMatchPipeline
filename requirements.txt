@@ -1,2 +1,2 @@
-git+https://github.com/adsabs/adsabs-pyingest.git@v1.0.17
+git+https://github.com/adsabs/adsabs-pyingest.git@v1.0.24
 requests==2.20.0
