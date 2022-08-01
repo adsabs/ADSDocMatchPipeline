@@ -86,8 +86,7 @@ def batch_match_to_pub(filename, result_filename):
                 for arXiv_filename in filenames:
                     a_match, for_inspection = single_match_to_pub(arXiv_filename)
                     fp.write('%s\n'%a_match)
-                    if for_inspection:
-                        write_for_inspection_hits(result_filename, for_inspection)
+                    write_for_inspection_hits(result_filename, a_match, for_inspection)
         else:
             for arXiv_filename in filenames:
                 single_match_output(arXiv_filename)

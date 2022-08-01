@@ -36,7 +36,9 @@ def read_nowadays_results_audit(nowadays):
     """
     results = []
     with open(nowadays, 'r') as fp:
-        for columns in csv.reader(fp, delimiter=','):
+        reader = csv.reader(fp, delimiter=',')
+        next(reader)
+        for columns in reader:
             results.append(columns)
     return results
 
@@ -49,19 +51,19 @@ def combine_classic_with_nowadays(classic_results, nowadays_results):
     :return:
     """
     combined_results = []
-    combined_results.append(['source bibcode (link)','verified bibcode','curator comment', 'classic bibcode (link)','confidence','matched bibcode (link)','matched score','comment'])
+    combined_results.append(['source bibcode (link)','classic bibcode (link)','curator comment','verified bibcode','matched bibcode (link)','comment','label','confidence','matched scores'])
 
     hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")"'
     for nowadays_result in nowadays_results:
         if len(nowadays_result) == 1:
             continue
-        source_bibcode_link = hyperlink_format % (nowadays_result[0], nowadays_result[0])
+        # insert three columns: 'classic bibcode (link)','curator comment','verified bibcode' between the source and matched bibcode columns
         classic_bibcode = classic_results.get(nowadays_result[0], '')
         classic_bibcode_link = hyperlink_format % (classic_bibcode, classic_bibcode) if classic_bibcode else ''
-        matched_bibcode_link = hyperlink_format % (nowadays_result[1], nowadays_result[1]) if not nowadays_result[1].startswith('.') else ''
-        score = '"%s"'%nowadays_result[3] if nowadays_result[3] else ''
-        comment = '"%s"'%nowadays_result[4] if len(nowadays_result) == 5 else ''
-        combined_results.append([source_bibcode_link, '', '', classic_bibcode_link, nowadays_result[2], matched_bibcode_link, score, comment])
+        # need to format the two linked columns again
+        source_bibcode_link = hyperlink_format % (nowadays_result[0], nowadays_result[0])
+        matched_bibcode_link = hyperlink_format % (nowadays_result[1], nowadays_result[1]) if not nowadays_result[1][-21:-2].startswith('.') else ''
+        combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%nowadays_result[5], nowadays_result[2], nowadays_result[3], '"%s"'%nowadays_result[4]])
     return combined_results
 
 def combine_classic_with_nowadays_audit(classic_results, nowadays_results):
@@ -72,25 +74,22 @@ def combine_classic_with_nowadays_audit(classic_results, nowadays_results):
     :return:
     """
     combined_results = []
-    header = nowadays_results[0]
-    combined_results.append(header[0:2]+['curator comment', 'classic bibcode (link)']+header[2:5]+['other matched bibcode (link)','other matched scores']+header[7:])
+    combined_results.append(['source bibcode (link)','classic bibcode (link)','curator comment','verified bibcode','matched bibcode (link)','comment','label','confidence','matched scores'])
 
     hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")"'
-    for nowadays_result in nowadays_results[1:]:
-        source_bibcode_link = '"%s"'%nowadays_result[0].replace('"','""')
+    for nowadays_result in nowadays_results:
+        # insert two columns: 'classic bibcode (link)','curator comment' between the source and matched bibcode columns
         classic_bibcode = classic_results.get(nowadays_result[0][-21:-2], '')
         classic_bibcode_link = hyperlink_format % (classic_bibcode, classic_bibcode) if classic_bibcode else ''
-        matched = []
-        for i in range(3,len(nowadays_result)-1,2):
-            matched.append('"%s"'%nowadays_result[i].replace('"','""'))
-            matched.append('"%s"'%nowadays_result[i+1])
-        comment = '"%s"'%nowadays_result[-1]
-        combined_results.append([source_bibcode_link,nowadays_result[1],'',classic_bibcode_link,nowadays_result[2]]+matched+[comment])
+        # need to format the two linked columns again
+        source_bibcode_link = '"%s"'%nowadays_result[0].replace('"','""')
+        matched_bibcode_link = '"%s"'%nowadays_result[2].replace('"','""') if not nowadays_result[2][-21:-2].startswith('.') else ''
+        combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%nowadays_result[6], nowadays_result[3], nowadays_result[4], '"%s"'%nowadays_result[5]])
     return combined_results
 
 def write_output(combined_results, filename):
     """
-    
+
     :param combined_results:
     :param filename:
     :return:

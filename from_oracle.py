@@ -39,46 +39,55 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         return result
 
     response = requests.post(
-        url='https://api.adsabs.harvard.edu/v1/oracle/matchdoc',
+        url='https://api.adsabs.harvard.edu/v1/oracle/docmatch',
         headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
         data=payload,
         timeout=60
     )
 
     result = {}
-    result['source_bibcode'] = metadata['bibcode']
 
     if response.status_code == 200:
         json_text = json.loads(response.text)
         if 'match' in json_text:
             confidences = [one_match['confidence'] for one_match in json_text['match']]
             # do we have more than one match with the highest confidence
-            count = confidences.count(confidences[0])
-            # low confidence or we have multi match
-            if (confidences[0] > 0 and confidences[0] <= 0.5) or count > 1:
+            if len(confidences) > 1:
                 # when confidence is low or multiple matches are found log them to be inspected
                 # in the case of multi matches, we want to return them all, and let curators decide which, if any, is correct
                 # in the case of low confidence, we want curators to check them out and see if the match is correct,
                 # hence do not display the bibcode in the output file, direct it to another file for inspection
                 # include a comment that these were added to inspection file
+                result['source_bibcode'] = metadata['bibcode']
                 result['matched_bibcode'] = '.'*19
-                result['confidence'] = confidences[0]
+                result['label'] = 'Not Match'
+                result['confidence'] = 'Multi match!'
                 result['score'] = ''
                 result['comment'] = (json_text.get('comment', '') + ' Match(es) for this bibcode is logged in the accompanied csv file.').strip()
-                result['inspection'] = {
-                    'scores': [str(score) for score in [match['scores'] for match in json_text['match']][:count]],
-                    'bibcodes': [match['bibcode'] for match in json_text['match']][:count],
-                    'comment': 'Multi match. ' if count > 1 else 'Low confidence. ' + '%s'%json_text.get('comment', '')
-                }
+                result['inspection'] = []
+                for i, one_match in enumerate(json_text['match']):
+                    result['inspection'].append({
+                        'source_bibcode': metadata['bibcode'],
+                        'confidence': one_match['confidence'],
+                        'label': 'Match' if one_match['matched'] == 1 else 'Not Match',
+                        'scores': str(one_match['scores']),
+                        'matched_bibcode': one_match['matched_bibcode'],
+                        'comment': ('Multi match: %d of %d. ' % (i + 1, len(json_text['match'])) if len(json_text['match']) > 1 else '' + json_text.get('comment', '')).strip()
+
+                    })
                 return result
             # single match
-            result['matched_bibcode'] = json_text['match'][0]['bibcode']
+            result['source_bibcode'] = metadata['bibcode']
+            result['matched_bibcode'] = json_text['match'][0]['matched_bibcode']
+            result['label'] = 'Match' if json_text['match'][0]['matched'] == 1 else 'Not Match'
             result['confidence'] = json_text['match'][0]['confidence']
             result['score'] = json_text['match'][0]['scores']
             result['comment'] = json_text.get('comment', '')
             return result
         # no match
+        result['source_bibcode'] = metadata['bibcode']
         result['matched_bibcode'] = '.' * 19
+        result['label'] = 'Not Match'
         result['confidence'] = 0
         result['score'] = ''
         result['comment'] = '%s %s'%(json_text.get('comment', None), json_text.get('no match', '').capitalize())

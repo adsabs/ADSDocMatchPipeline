@@ -5,8 +5,8 @@ import requests
 
 
 # step 1: register a project to google cloud and get the following information
-# os.environ['CLIENT_ID'] = ''
-# os.environ['CLIENT_SECRET'] = ''
+os.environ['CLIENT_ID'] = '602199020484-0j3lsgjcpug42qbu7cklt40n6mhpdrcn.apps.googleusercontent.com'
+os.environ['CLIENT_SECRET'] = 'SRkzogXA_uvtDUZJLPKtbCnu'
 # step 2: register the machine where the files are locataed to be loaded to google drive
 # curl -d "client_id=<CLIENT_ID>&scope=https://www.googleapis.com/auth/drive.file" https://oauth2.googleapis.com/device/code
 # which returns
@@ -30,9 +30,9 @@ import requests
 # }
 # access_token expires in an hour, however refresh_token can be used to obtain access token before each upload
 # refresh_token can be used up to 200 days, at which point another access token has to be obtained
-# os.environ['REFRESH_TOKEN'] = ''
+os.environ['REFRESH_TOKEN'] = '1//0dWx3QYOVuSNUCgYIARAAGA0SNwF-L9IrCD67bTAw6Odql8kZOwg59z6MBv-9qfZO1McJorVHSo_WAbUlYZ0EoaDbK1cN33Sen90'
 # step 4: create a folder where the uploaded file should go to, get the id
-# os.environ['FOLDER_ID'] = ''
+os.environ['FOLDER_ID'] = '1H0yADQXKCJr0ZvFfPMo7_bv_IvZVCQIw'
 
 def upload_file(filename):
     """
