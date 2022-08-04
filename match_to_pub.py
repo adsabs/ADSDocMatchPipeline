@@ -13,6 +13,22 @@ DOCTYPE_THESIS = ['phdthesis', 'mastersthesis']
 
 ARXIV_PARSER = ArxivParser()
 
+re_admin_notes = re.compile(r'arXiv admin note: (.*)$')
+def add_metadata_comment(results, comments):
+    """
+
+    :param results:
+    :param comments:
+    :return:
+    """
+    match = re_admin_notes.search(comments)
+    if match:
+        admin_notes = match.group(1)
+        results['comment'] = ('%s %s'%(results.get('comment', ''), admin_notes)).strip()
+        for inspection in results.get('inspection', []):
+            inspection['comment'] = ('%s %s'%(inspection.get('comment', ''), admin_notes)).strip()
+    return results
+
 re_doi = re.compile(r'doi:\s*(10\.\d{4,9}/\S+\w)', re.IGNORECASE)
 re_thesis = re.compile(r'(thesis)', re.IGNORECASE)
 def match_to_pub(filename):
@@ -41,7 +57,7 @@ def match_to_pub(filename):
             else:
                 match_doctype = None
             mustmatch = any(category in metadata.get('keywords', '') for category in MUST_MATCH)
-            return get_matches(metadata, 'eprint', mustmatch, match_doctype)
+            return add_metadata_comment(get_matches(metadata, 'eprint', mustmatch, match_doctype), comments)
     except Exception as e:
         logger.error('Exception: %s'%e)
         return
