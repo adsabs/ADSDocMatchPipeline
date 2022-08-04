@@ -47,7 +47,7 @@ def to_add(lines):
             slice_item = slice(i, i + max_lines_one_call, 1)
 
             response = requests.put(
-                url='https://api.adsabs.harvard.edu/v1/oracle/update',
+                url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/update',
                 headers={'Content-type': 'application/json', 'Accept': 'text/plain',
                          'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
                 data=json.dumps(data[slice_item]),
@@ -73,7 +73,7 @@ def to_delete(lines):
         for i in range(0, len(data), max_lines_one_call):
             slice_item = slice(i, i + max_lines_one_call, 1)
             response = requests.delete(
-                url='https://api.adsabs.harvard.edu/v1/oracle/delete',
+                url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/delete',
                 headers={'Content-type': 'application/json', 'Accept': 'text/plain',
                          'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
                 data=json.dumps(data[slice_item]),

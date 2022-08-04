@@ -12,8 +12,9 @@ def read_classic_results(classic):
     results = {}
     with open(classic, 'r') as fp:
         for line in fp.readlines():
-            columns = line[:-1].split('\t')
-            results[columns[0]] = columns[1]
+            if len(line) > 1:
+                columns = line[:-1].split('\t')
+                results[columns[0]] = columns[1]
     return results
 
 def read_nowadays_results(nowadays):

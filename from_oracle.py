@@ -39,7 +39,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         return result
 
     response = requests.post(
-        url='https://api.adsabs.harvard.edu/v1/oracle/docmatch',
+        url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/docmatch',
         headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
         data=payload,
         timeout=60
