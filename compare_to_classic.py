@@ -79,6 +79,10 @@ def combine_classic_with_nowadays_audit(classic_results, nowadays_results):
 
     hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")"'
     for nowadays_result in nowadays_results:
+        # if there was an error in the csv file, transfer it and move on
+        if len(nowadays_result) == 1:
+            combined_results.append(nowadays_result)
+            continue
         # insert two columns: 'classic bibcode (link)','curator comment' between the source and matched bibcode columns
         classic_bibcode = classic_results.get(nowadays_result[0][-21:-2], '')
         classic_bibcode_link = hyperlink_format % (classic_bibcode, classic_bibcode) if classic_bibcode else ''
