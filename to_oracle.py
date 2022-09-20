@@ -17,7 +17,7 @@ def read_lines(filename):
         for line in fp.readlines():
             # ignore anything after the comment sign
             line = line.split('#')[0].strip()
-            result = line[:-1].split('\t')
+            result = line.split('\t')
             # has to have at least two values of bibcodes
             if len(result) < 2:
                 continue
@@ -64,11 +64,10 @@ def to_add(lines):
     """
     max_lines_one_call = int(os.environ.get('API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'))
     data = format_lines(lines)
-    results = []
+    count = 0
     if len(data) > 0:
         for i in range(0, len(data), max_lines_one_call):
             slice_item = slice(i, i + max_lines_one_call, 1)
-
             response = requests.put(
                 url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/add',
                 headers={'Content-type': 'application/json', 'Accept': 'text/plain',
@@ -78,8 +77,12 @@ def to_add(lines):
             )
             if response.status_code == 200:
                 json_text = json.loads(response.text)
-                results.append("%s:%s" % (slice_item, json_text))
-        return ';'.join(results)
+                print("%s:%s" % (slice_item, json_text))
+                count += max_lines_one_call
+            else:
+                print('Oracle returned status code %d'%response.status_code)
+                return 'Stopped...'
+        return 'Added %d to database'%count
     return 'No data!'
 
 

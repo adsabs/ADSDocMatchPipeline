@@ -62,7 +62,7 @@ def write_for_inspection_hits(result_filename, a_match, inspection_hits):
 
     # include match only if inpsection_hits is empty
     # otherwise write inspection_hits
-    if not inspection_hits:
+    if not inspection_hits and a_match:
         a_match_parts = a_match.split('\t')
         if len(a_match_parts) == 6:
             source_bibcode = a_match_parts[0]
@@ -78,7 +78,7 @@ def write_for_inspection_hits(result_filename, a_match, inspection_hits):
         else:
             # it is an error write it out
             fp.write("%s\n"%a_match)
-    else:
+    elif inspection_hits:
         for item in inspection_hits:
             source_bibcode = item['source_bibcode']
             matched_bibcode = item['matched_bibcode']

@@ -1,9 +1,32 @@
 import os
 import requests
 import json
+import time
 from adsputils import setup_logging
 
 logger = setup_logging('docmatch_log')
+
+def get_doi(metadata):
+    """
+
+    :param metadata:
+    :return:
+    """
+    comments =  metadata.get('comments', [])
+    dois = []
+    if comments:
+        try:
+            dois = [comment.split('doi:')[1].strip(';').strip(',').strip('.') for comment in comments if comment.startswith('doi')]
+        except:
+            pass
+    doi = [metadata.get('doi', '')]
+    if dois:
+        for one in dois:
+            if one not in doi:
+                doi.append(one)
+    if not ''.join(doi):
+        return None
+    return doi
 
 def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
     """
@@ -15,13 +38,14 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
     :return:
     """
     try:
-        payload = {'abstract': metadata['abstract'].replace('\n',' '),
+        # 8/31 abstract can be empty, since oracle can match with title
+        payload = {'abstract': metadata.get('abstract', '').replace('\n',' '),
                    'title': metadata['title'].replace('\n',' '),
                    'author': metadata['authors'],
                    'year': metadata['pubdate'][:4],
                    'doctype': doctype,
                    'bibcode': metadata['bibcode'],
-                   'doi': metadata.get('doi', None),
+                   'doi': get_doi(metadata),
                    'mustmatch':mustmatch,
                    'match_doctype':match_doctype}
     except KeyError as e:
@@ -31,23 +55,42 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         result['confidence'] = 0
         result['score'] = ''
         result['comment'] = 'Exception: KeyError, %s missing.'%str(e)
-        result['inspection'] = {
+        result['inspection'].append({
+            'source_bibcode': '.' * 19,
+            'confidence': -1,
+            'label': '',
             'scores': [0],
-            'bibcodes': ['.' * 19],
+            'matched_bibcode': '.' * 19,
             'comment': 'Exception: KeyError, %s missing.'%str(e)
-        }
+        })
         return result
 
-    response = requests.post(
-        url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/docmatch',
-        headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
-        data=payload,
-        timeout=60
-    )
+    try:
+        for _ in range(int(os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_ATTEMPTS'))):
+            response = requests.post(
+                url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/docmatch',
+                headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
+                data=json.dumps(payload),
+                timeout=60
+            )
+            status_code = response.status_code
+            if status_code == 200:
+                break
+            # if got 5xx errors from solr, per alberto, sleep for five seconds and try again, attempt 3 times
+            elif status_code in [502, 504]:
+                logger.info('Got %s status_code from solr, waiting 5 second and attempt again.' % status_code)
+                time.sleep(5)
+            # any other error, quit
+            else:
+                logger.info('Got %s status_code from solr, stopping.' % status_code)
+                break
+    except Exception as e:
+        status_code = 500
+        logger.info('Exception %s, stopping.'%str(e))
 
     result = {}
 
-    if response.status_code == 200:
+    if status_code == 200:
         json_text = json.loads(response.text)
         if 'match' in json_text:
             confidences = [one_match['confidence'] for one_match in json_text['match']]
@@ -73,7 +116,6 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
                         'scores': str(one_match['scores']),
                         'matched_bibcode': one_match['matched_bibcode'],
                         'comment': ('Multi match: %d of %d. ' % (i + 1, len(json_text['match'])) if len(json_text['match']) > 1 else '' + json_text.get('comment', '')).strip()
-
                     })
                 return result
             # single match
@@ -94,8 +136,8 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         return result
     # when error
     # log it
-    logger.error('From solr got status code: %d'%response.status_code)
+    logger.error('From solr got status code: %d'%status_code)
     result['matched_bibcode'] = None
-    result['status_code'] = response.status_code
-    result['comment'] = 'error'
+    result['status_code'] = "got %d for the last failed attempt."%status_code
+    result['comment'] = '%s error'%metadata['bibcode']
     return result
