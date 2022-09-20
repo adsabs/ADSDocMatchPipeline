@@ -30,7 +30,7 @@ def add_metadata_comment(results, comments):
     return results
 
 re_doi = re.compile(r'doi:\s*(10\.\d{4,9}/\S+\w)', re.IGNORECASE)
-re_thesis = re.compile(r'(thesis)', re.IGNORECASE)
+re_thesis = re.compile(r'\b(thesis)\b', re.IGNORECASE)
 def match_to_pub(filename):
     """
     read and parse arXiv metadata file
