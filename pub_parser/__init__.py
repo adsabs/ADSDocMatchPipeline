@@ -119,6 +119,9 @@ def get_pub_metadata(contents):
     if len(article['Bibliographic Code']) != 19:
         raise MetadataError('Invalid bibcode')
 
+    if 'Authors' not in fields_found_in_file and 'Review Author' in fields_found_in_file:
+        article['Authors'] = article['Review Author']
+
     # now properly encode data in fields which have XML-encoded entities and which do not
     # have their own specific content management/cleanup routine
     for field in ENCODED_ABSTRACT_FIELDS:
