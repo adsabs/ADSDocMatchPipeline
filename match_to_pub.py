@@ -11,6 +11,14 @@ logger = setup_logging('docmatch_log')
 MUST_MATCH = ['Astrophysics', 'Physics']
 DOCTYPE_THESIS = ['phdthesis', 'mastersthesis']
 
+DOCTYPE_SPECIFIC_CASES = {
+    'thesis': ['phdthesis', 'mastersthesis'],
+    'erratum': ['erratum'],
+    'errata': ['erratum'],
+    'book review': ['bookreview'],
+    'book reviews': ['bookreview'],
+}
+
 ARXIV_PARSER = ArxivParser()
 
 re_admin_notes = re.compile(r'arXiv admin note: (.*)$')
@@ -30,7 +38,7 @@ def add_metadata_comment(results, comments):
     return results
 
 re_doi = re.compile(r'doi:\s*(10\.\d{4,9}/\S+\w)', re.IGNORECASE)
-re_thesis = re.compile(r'\b(thesis)\b', re.IGNORECASE)
+re_doctype_specific_cases = re.compile(r'\b(thesis|erratum|errata|book review|book reviews)\b', re.IGNORECASE)
 def match_to_pub(filename):
     """
     read and parse arXiv metadata file
@@ -51,9 +59,10 @@ def match_to_pub(filename):
                 doi = metadata.get('properties', {}).get('DOI', None)
                 if doi:
                     metadata['doi'] = doi.replace('doi:', '')
-            match = re_thesis.search(comments)
+            # check both comments and title, for special cases
+            match = re_doctype_specific_cases.search("%s %s"%(comments, metadata.get('title')))
             if match:
-                match_doctype = DOCTYPE_THESIS
+                match_doctype = DOCTYPE_SPECIFIC_CASES[match.group(0).lower()]
             else:
                 match_doctype = None
             mustmatch = any(category in metadata.get('keywords', '') for category in MUST_MATCH)
