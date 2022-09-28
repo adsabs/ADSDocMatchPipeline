@@ -4,6 +4,8 @@ import json
 import time
 from adsputils import setup_logging
 
+from authors import normalize_author_list
+
 logger = setup_logging('docmatch_log')
 
 def get_doi(metadata):
@@ -41,7 +43,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
         # 8/31 abstract can be empty, since oracle can match with title
         payload = {'abstract': metadata.get('abstract', '').replace('\n',' '),
                    'title': metadata['title'].replace('\n',' '),
-                   'author': metadata['authors'],
+                   'author': normalize_author_list(metadata['authors']),
                    'year': metadata['pubdate'][:4],
                    'doctype': doctype,
                    'bibcode': metadata['bibcode'],
