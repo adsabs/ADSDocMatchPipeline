@@ -120,10 +120,11 @@ def query(filename):
     :param filename:
     :return:
     """
-    # open and close the output file with `w` flag to be emptied if it exitsted,
-    # since the subsequent calls use flag `a`.
-    fp = open(filename, 'w')
-    fp.close()
+    # remove the input file if it exitsted, since the subsequent calls use flag `a`.
+    try:
+        os.remove(filename)
+    except OSError:
+        pass
 
     start = 0
     count = 0
@@ -136,6 +137,7 @@ def query(filename):
             json_dict = json.loads(response.text)
             params = json_dict['params']
             results = json_dict['results']
+            print('[%d, %d]' % (start, start + len(results)))
             count += len(results)
             start += params['rows']
             if not results:

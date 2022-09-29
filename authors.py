@@ -18,6 +18,7 @@ def get_collaborators(ref_string):
 
     return 0, 0
 
+WORDS_ONLY = re.compile('\w+')
 def get_length_matched_authors(ref_string, matches):
     """
     make sure the author was matched from the beginning of the reference
@@ -28,7 +29,7 @@ def get_length_matched_authors(ref_string, matches):
     """
     matched_str = ', '.join([' '.join(list(filter(None, author))).strip() for author in matches])
     count = 0
-    for sub, full in zip(matched_str, ref_string):
+    for sub, full in zip(WORDS_ONLY.findall(matched_str), WORDS_ONLY.findall(ref_string)):
         if sub != full:
             break
         count += 1
@@ -36,7 +37,7 @@ def get_length_matched_authors(ref_string, matches):
 
 # all author lists coming in need to be case-folded
 # replaced van(?: der) with van|van der
-SINGLE_NAME_RE = "(?:(?:d|de|de la|De|des|Des|in '[a-z]|van|van der|van den|van de|von|Mc|[A-Z]')[' ]?)?[A-Z][a-z]['A-Za-z]*"
+SINGLE_NAME_RE = "(?:(?:d|de|de la|del|De|des|Des|in '[a-z]|van|van der|van den|van de|von|Mc|[A-Z]')[' ]?)?[A-Z][a-z]['A-Za-z]*"
 LAST_NAME_PAT = re.compile(r"%s(?:[- ]%s)*" % (SINGLE_NAME_RE, SINGLE_NAME_RE))
 
 ETAL = r"(([\s,]*and)?[\s,]*[Ee][Tt][.\s]*[Aa][Ll][.\s]+)?"
