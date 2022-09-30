@@ -11,14 +11,6 @@ logger = setup_logging('docmatch_log')
 MUST_MATCH = ['Astrophysics', 'Physics']
 DOCTYPE_THESIS = ['phdthesis', 'mastersthesis']
 
-DOCTYPE_SPECIFIC_CASES = {
-    'thesis': ['phdthesis', 'mastersthesis'],
-    'erratum': ['erratum'],
-    'errata': ['erratum'],
-    'book review': ['bookreview'],
-    'book reviews': ['bookreview'],
-}
-
 ARXIV_PARSER = ArxivParser()
 
 re_admin_notes = re.compile(r'arXiv admin note: (.*)$')
@@ -38,7 +30,9 @@ def add_metadata_comment(results, comments):
     return results
 
 re_doi = re.compile(r'doi:\s*(10\.\d{4,9}/\S+\w)', re.IGNORECASE)
-re_doctype_specific_cases = re.compile(r'\b(thesis|erratum|errata|book review|book reviews)\b', re.IGNORECASE)
+re_doctype_thesis = re.compile(r'\b(thesis)\b', re.IGNORECASE)
+re_doctype_errata = re.compile(r'(^errat(a|um))\b', re.IGNORECASE)
+re_doctype_bookreview = re.compile(r'\bbook[s|\s|\-]*review[s|ed]*', re.IGNORECASE)
 def match_to_pub(filename):
     """
     read and parse arXiv metadata file
@@ -59,12 +53,21 @@ def match_to_pub(filename):
                 doi = metadata.get('properties', {}).get('DOI', None)
                 if doi:
                     metadata['doi'] = doi.replace('doi:', '')
-            # check both comments and title, for special cases
-            match = re_doctype_specific_cases.search("%s %s"%(comments, metadata.get('title')))
+            match_doctype = None
+            title = metadata.get('title')
+            # check title for erratum
+            match = re_doctype_errata.search(title)
             if match:
-                match_doctype = DOCTYPE_SPECIFIC_CASES[match.group(0).lower()]
+                match_doctype = ['erratum']
             else:
-                match_doctype = None
+                match = re_doctype_bookreview.search(title)
+                if match:
+                    match_doctype = ['bookreview']
+                else:
+                    # check both comments and title for thesis
+                    match = re_doctype_thesis.search("%s %s"%(comments, title))
+                    if match:
+                        match_doctype = ['phdthesis', 'mastersthesis']
             mustmatch = any(category in metadata.get('keywords', '') for category in MUST_MATCH)
             return add_metadata_comment(get_matches(metadata, 'eprint', mustmatch, match_doctype), comments)
     except Exception as e:
