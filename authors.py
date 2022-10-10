@@ -1,4 +1,5 @@
 
+from unidecode import unidecode
 import re
 
 COLLABORATION_PAT = re.compile(r"(?P<collaboration>[(\[]*[A-Za-z\s\-\/]+\s[Cc]ollaboration[s]?\s*[A-Z\.]*[\s.,)\]]+)")
@@ -52,9 +53,9 @@ LEADING_INIT_PAT = re.compile(r"(?P<first>(?:[A-Z]\.[\s-]*)+) "
 
 # This pattern should match author names with first/middle name behind the last name
 TRAILING_FULL_PAT = re.compile(r"(?P<last>%s%s)\s*,?\s+"
-                               r"(?P<first>(?:[A-Z][A-Za-z]+\s*)(?:[A-Z][.\s])*)" % (LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX))
+                               r"(?P<first>(?:[A-Z][A-Za-z.]+\s*)(?:[A-Z][.\s])*)" % (LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX))
 # This pattern should match author names with first/middle name in front of the last name
-LEADING_FULL_PAT = re.compile(r"(?P<first>(?:[A-Z][A-Za-z]+\s*)(?:[A-Z][.\s])*) "
+LEADING_FULL_PAT = re.compile(r"(?P<first>(?:[A-Z][A-Za-z.]+\s*)(?:[A-Z][.\s])*) "
                               r"(?P<last>%s%s)\s*,?" % (LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX))
 
 def get_author_pattern(ref_string):
@@ -151,7 +152,7 @@ def normalize_author_list(author_string):
     :param author_string:
     :return:
     """
-    author_string = REMOVE_AND.sub(',', author_string)
+    author_string = unidecode(REMOVE_AND.sub(',', author_string))
     pattern = get_author_pattern(author_string)
     if pattern:
         return "; ".join("%s, %s" % (match.group("last"), match.group("first")[0])
