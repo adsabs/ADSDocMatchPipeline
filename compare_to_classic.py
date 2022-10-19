@@ -100,8 +100,13 @@ def write_output(combined_results, filename):
     :return:
     """
     with open(filename, 'w') as fp:
+        fp.write(','.join(combined_results[0]) + '\n')
+        combined_results = sorted(combined_results[1:], key=lambda item: item[7])
         for combined_result in combined_results:
-            fp.write(','.join(combined_result)+'\n')
+            # include only the lines with classic bibcode, or matched bibcode, or if there was a doi mention in the comments
+            if len(combined_result[1]) > 0 or len(combined_result[4]) > 0 or 'doi' in combined_result[5].lower():
+                combined_result[2] = 'agree' if combined_result[1] == combined_result[4] and len(combined_result[1]) > 0 else ('disagree' if len(combined_result[1]) > 0 else '')
+                fp.write(','.join(combined_result)+'\n')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Combine results with classic')
