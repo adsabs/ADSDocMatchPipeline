@@ -4,6 +4,7 @@ from adsputils import setup_logging
 from pub_parser import get_pub_metadata
 from from_oracle import get_matches
 from common import get_filenames, format_results, write_for_inspection_hits
+import time
 
 logger = setup_logging('docmatch_log_match_to_arxiv')
 
@@ -62,6 +63,8 @@ def batch_match_to_arXiv(filename, result_filename):
                     a_match, for_inspection = single_match_to_arXiv(pub_filename)
                     fp.write('%s\r\n'%a_match)
                     write_for_inspection_hits(result_filename, a_match, for_inspection)
+                    # wait a second before the next attempt
+                    time.sleep(1)
         else:
             for pub_filename in filenames:
                 single_match_output(pub_filename)

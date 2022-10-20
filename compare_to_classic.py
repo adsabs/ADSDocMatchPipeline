@@ -101,10 +101,13 @@ def write_output(combined_results, filename):
     """
     with open(filename, 'w') as fp:
         fp.write(','.join(combined_results[0]) + '\n')
-        combined_results = sorted(combined_results[1:], key=lambda item: item[7])
+        combined_results = sorted(combined_results[1:], key=lambda result: float(result[7]) if len(result) > 7 else -1)
         for combined_result in combined_results:
+            # error lines are one element, include them
+            if len(combined_result) == 1:
+                fp.write(','.join(combined_result) + '\n')
             # include only the lines with classic bibcode, or matched bibcode, or if there was a doi mention in the comments
-            if len(combined_result[1]) > 0 or len(combined_result[4]) > 0 or 'doi' in combined_result[5].lower():
+            elif len(combined_result[1]) > 0 or len(combined_result[4]) > 0 or 'doi' in combined_result[5].lower():
                 combined_result[2] = 'agree' if combined_result[1] == combined_result[4] and len(combined_result[1]) > 0 else ('disagree' if len(combined_result[1]) > 0 else '')
                 fp.write(','.join(combined_result)+'\n')
 

@@ -70,7 +70,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
     sleep_sec = int(os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_SLEEP_SEC'))
     try:
         num_attempts = int(os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_ATTEMPTS'))
-        for _ in range(num_attempts):
+        for i in range(num_attempts):
             response = requests.post(
                 url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/docmatch',
                 headers={'Authorization': 'Bearer %s'%os.environ.get('API_DOCMATCHING_TOKEN')},
@@ -79,11 +79,11 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
             )
             status_code = response.status_code
             if status_code == 200:
-                logger.debug('Got 200 for status_code. All good.')
+                logger.info('Got 200 for status_code at attempt # %d' % (i+1))
                 break
             # if got 5xx errors from solr, per alberto, sleep for five seconds and try again, attempt 3 times
             elif status_code in [502, 504]:
-                logger.info('Got %s status_code from solr, waiting %d second and attempt again.' % (status_code, num_attempts))
+                logger.info('Got %d status_code from solr, waiting %d second and attempt again.' % (status_code, num_attempts))
                 time.sleep(sleep_sec)
             # any other error, quit
             else:

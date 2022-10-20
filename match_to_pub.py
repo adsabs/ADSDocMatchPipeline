@@ -5,6 +5,7 @@ from pyingest.parsers.arxiv import ArxivParser
 from from_oracle import get_matches
 from common import get_filenames, format_results, write_for_inspection_hits
 import re
+import time
 
 logger = setup_logging('docmatch_log_match_to_pub')
 
@@ -115,6 +116,8 @@ def batch_match_to_pub(filename, result_filename):
                     a_match, for_inspection = single_match_to_pub(arXiv_filename)
                     fp.write('%s\n'%a_match)
                     write_for_inspection_hits(result_filename, a_match, for_inspection)
+                    # wait a second before the next attempt
+                    time.sleep(1)
         else:
             for arXiv_filename in filenames:
                 single_match_output(arXiv_filename)
