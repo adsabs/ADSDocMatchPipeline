@@ -6,7 +6,7 @@ from adsputils import setup_logging
 
 from authors import normalize_author_list
 
-logger = setup_logging('docmatch_log')
+logger = setup_logging('docmatch_log_from_oracle')
 
 def get_doi(metadata):
     """

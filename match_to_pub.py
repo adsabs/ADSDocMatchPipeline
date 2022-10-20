@@ -6,7 +6,7 @@ from from_oracle import get_matches
 from common import get_filenames, format_results, write_for_inspection_hits
 import re
 
-logger = setup_logging('docmatch_log')
+logger = setup_logging('docmatch_log_match_to_pub')
 
 MUST_MATCH = ['Astrophysics', 'Physics']
 DOCTYPE_THESIS = ['phdthesis', 'mastersthesis']

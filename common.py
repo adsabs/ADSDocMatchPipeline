@@ -6,7 +6,7 @@ The module contains methods that are called from both match_to_pub and match_to_
 import os
 from adsputils import setup_logging
 
-logger = setup_logging('docmatch_log')
+logger = setup_logging('docmatch_log_common')
 
 def get_filenames(filename):
     """

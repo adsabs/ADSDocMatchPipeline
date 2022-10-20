@@ -5,7 +5,7 @@ from pub_parser import get_pub_metadata
 from from_oracle import get_matches
 from common import get_filenames, format_results, write_for_inspection_hits
 
-logger = setup_logging('docmatch_log')
+logger = setup_logging('docmatch_log_match_to_arxiv')
 
 def match_to_arXiv(filename):
     """

@@ -4,7 +4,7 @@ import re
 from adsputils import setup_logging
 from pub_parser.unicode import UnicodeHandler
 
-logger = setup_logging('docmatch_log')
+logger = setup_logging('docmatch_log_pub_parser')
 
 FIELDPAT = re.compile(r"([A-Za-z][^:]*):\s*(.*)")
 MAX_ABSTRACT_FIELD_LINES = 50000

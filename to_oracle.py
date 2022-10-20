@@ -4,7 +4,7 @@ import requests
 import json
 from adsputils import setup_logging
 
-logger = setup_logging('docmatch_log')
+logger = setup_logging('docmatch_log_to_oracle')
 
 def read_lines(filename):
     """
