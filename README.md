@@ -85,6 +85,8 @@ In some cases, there might be more than one match for the source bibcode with th
 * n is to specify the path to an output results file from docmatching, this is the tab delimited output file.
 * a is to specify the path to an output results file from docmatching, this is the comma delimited output file.
 * o is to specify output file name to write the combined result of classic and new system to. This is optional and if not provided the combined results shall be written to console.
+* o is to specify output file name to write the combined result of classic and new system to. This is optional and if not provided the combined results shall be written to console.
+* s is to specify the source of the output results file, eprint or pub, to be able to match the right bibcodes with the source bibcode from the classic side.
 
 ##### Capabilities:
 
@@ -92,8 +94,8 @@ In some cases, there might be more than one match for the source bibcode with th
 
 ##### Command lines:
 
-    python compare_to_classic.py -c"match.out" -n"match_oracle.out" -o<output filename>
-    python compare_to_classic.py -c"match.out" -a"match_oracle.out.csv" -o<output filename>
+    python compare_to_classic.py -c"match.out" -n"match_oracle.out" -o<output filename> -s"eprint"
+    python compare_to_classic.py -c"match.out" -a"match_oracle.out.csv" -o<output filename> -s"pub"
 
 
 ## Maintainers
