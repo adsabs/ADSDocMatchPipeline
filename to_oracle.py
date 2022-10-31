@@ -114,7 +114,7 @@ def to_delete(lines):
     return 'No data!'
 
 
-def query(filename):
+def query(filename, days):
     """
 
     :param filename:
@@ -132,7 +132,10 @@ def query(filename):
                'Authorization': 'Bearer %s' % os.environ.get('API_DOCMATCHING_TOKEN')}
     url = os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/query'
     while True:
-        response = requests.post(url=url, headers=headers, data=json.dumps({'start': start}), timeout=60)
+        params = {'start': start}
+        if days:
+            params['days'] = int(days)
+        response = requests.post(url=url, headers=headers, data=json.dumps(params), timeout=60)
         if response.status_code == 200:
             json_dict = json.loads(response.text)
             params = json_dict['params']
@@ -151,6 +154,7 @@ if __name__ == '__main__':
         description='Send a request to oracle service to add/delete records to/from the database, also send a request to query the database')
     parser.add_argument('-f', '--file', help='the path to a tab delimited input file for add/delete, or output file for query commands.  The input file contains triplets: source bibcode/matched bibcode/confidence, allowing comments in the file which shall be ingnored after the # sign.')
     parser.add_argument('-a', '--action', help='add, del, or query')
+    parser.add_argument('-d', '--days', help='optional parameter for query, return only matches for the past specified days')
     args = parser.parse_args()
     if args.file and args.action:
         if args.action == 'add':
@@ -158,8 +162,10 @@ if __name__ == '__main__':
         elif args.action == 'del':
             print(to_delete(read_lines(args.file)))
         elif args.action == 'query':
-            print(query(args.file))
+            print(query(args.file, args.days))
         else:
             print('unrecognized action, add, del, or query are accepted only')
             sys.exit(1)
+    else:
+        print('both filename and action params are required')
     sys.exit(0)

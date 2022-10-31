@@ -51,6 +51,7 @@ def as_needed(article):
         ("Abstract", "abstract"),
         ("Publication Date", "pubdate"),
         ("Bibliographic Code", "bibcode"),
+        ("DOI", "doi"),
     ]
     return_record = {}
     for src_key, dest_key in field_mappings:
