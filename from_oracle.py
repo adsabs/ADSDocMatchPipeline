@@ -87,7 +87,7 @@ def get_matches(metadata, doctype, mustmatch=False, match_doctype=None):
                 time.sleep(sleep_sec)
             # any other error, quit
             else:
-                logger.info('Got %s status_code from solr, stopping.' % status_code)
+                logger.info('Got %s status_code from a call to oracle, stopping.' % status_code)
                 break
     except Exception as e:
         status_code = 500
