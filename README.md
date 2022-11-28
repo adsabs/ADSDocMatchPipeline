@@ -53,7 +53,7 @@ In some cases, there might be more than one match for the source bibcode with th
 
 ##### To add/delete to/from database or query database use script:
     
-    to_oracle.py
+    oracle_db.py
     
 ##### Command line arguments:
 
@@ -68,9 +68,9 @@ In some cases, there might be more than one match for the source bibcode with th
 
 ##### Command lines:
 
-    python to_oracle.py -a add -f <input filename>
-    python to_oracle.py -a del -f <input filename>
-    python to_oracle.py -a query -f <output filename> -d <include past number of days only> 
+    python oracle_db.py -a add -f <input filename>
+    python oracle_db.py -a del -f <input filename>
+    python oracle_db.py -a query -f <output filename> -d <include past number of days only> 
 
 
 ### To create results for verification

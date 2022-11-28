@@ -112,13 +112,13 @@ def write_output(combined_results, filename):
                 fp.write(','.join(combined_result) + '\n')
             # include only the lines with classic bibcode, or matched bibcode
             elif len(combined_result[1]) > 0 or len(combined_result[4]) > 0:
-                if combined_result[1] == combined_result[4] and len(combined_result[1]) > 0:
-                    combined_result[2] = 'agree'
-                # verify the match if classic and matched bibcodes do not match
-                # or if there is a multi match and confidence is high
+                # if there is a classic match see if it agrees or disagrees with oracle
+                if len(combined_result[1]) > 0:
+                    combined_result[2] = 'agree' if combined_result[1] == combined_result[4] else 'disagree'
+                # if there is a multi match and confidence is high
                 # or if there was no abstract for comparison and confidence is high
-                elif (combined_result[1] != combined_result[4] and len(combined_result[1]) > 0) or \
-                     (len(combined_result) >= 8 and float(combined_result[7]) >= 0.5 and
+                # mark it to be verified
+                elif (len(combined_result) >= 8 and float(combined_result[7]) >= 0.5 and
                           (('None' in combined_result[8]) or ('Multi match' in combined_result[5]))):
                     combined_result[2] = 'verify'
                 fp.write(','.join(combined_result)+'\n')
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.source:
         if args.source not in ['eprint', 'pub']:
-            print('source file type not specified, either eprint or pub should is accepted')
+            print('source file type not specified, either eprint or pub should be included')
             sys.exit(1)
     if args.classic and args.nowadays:
         classic_results = read_classic_results(args.classic, args.source)
