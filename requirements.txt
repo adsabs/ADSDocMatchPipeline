@@ -1,2 +1,4 @@
 git+https://github.com/adsabs/adsabs-pyingest.git@v1.0.24
+openpyxl==3.0.10
+pandas==1.5.2
 requests==2.20.0

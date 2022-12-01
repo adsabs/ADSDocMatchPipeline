@@ -98,6 +98,26 @@ In some cases, there might be more than one match for the source bibcode with th
     python compare_to_classic.py -c"match.out" -a"match_oracle.out.csv" -o<output filename> -s"pub"
 
 
+### To extract curated matches
+
+##### To extract curated matches to send to be sent to oracle db use script:
+
+    extract_curated_matches.py
+
+##### Command line arguments:
+
+* -i is to specify path to an input excel file containing curated matches.
+* -o is to specify output path to write the result in. Filename is the same as input with extension txt.
+
+##### Capabilities:
+
+* Creates a tab delimited file, with 3 columns as follows: eprint_bibcode, publisher_bibcode, score (1.1 to add to db and -1 to mark as having been deleted).
+
+##### Command lines:
+
+    python extract_curated_matches.py -i"/Downloads/2022-11-23.compare.xlsx" -o"output/"
+
+
 ## Maintainers
 
 Golnaz
