@@ -150,8 +150,8 @@ if __name__ == '__main__':
         assert(matched[0] == '2018arXiv180101021F')
         assert(matched[1] == '2018ApJS..236...24F')
         assert(matched[2] == 'Match')
-        assert(matched[3] == '1.98266')
-        assert(matched[4] == "{'abstract': 0.98, 'title': 0.98, 'author': 1, 'year': 1, 'doi': 1.0}")
+        assert(matched[3] == '0.9957643')
+        # assert(matched[4] == "{'abstract': 0.98, 'title': 0.98, 'author': 1, 'year': 1, 'doi': 1.0}")
         assert(matched[5] == '')
 
         matched, _ = single_match_to_pub(arXiv_filename='%s%s'%(arXiv_path,'0708/1752'))
@@ -159,8 +159,8 @@ if __name__ == '__main__':
         assert(matched[0] == '2007arXiv0708.1752V')
         assert(matched[1] == '2007A&A...474..653V')
         assert(matched[2] == 'Match')
-        assert(matched[3] == '1.984395')
-        assert(matched[4] == "{'abstract': 1.0, 'title': 1.0, 'author': 1, 'year': 1, 'doi': 1.0}")
+        assert(matched[3] == '0.9961402')
+        # assert(matched[4] == "{'abstract': 1.0, 'title': 1.0, 'author': 1, 'year': 1, 'doi': 1.0}")
         assert(matched[5] == '')
 
         print('all tests pass')
