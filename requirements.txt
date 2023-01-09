@@ -1,4 +1,7 @@
 git+https://github.com/adsabs/adsabs-pyingest.git@v1.0.24
+adsputils==1.3.0
+google==3.0.0
+google-api-python-client==2.69.0
+numpy==1.23.5
 openpyxl==3.0.10
 pandas==1.5.2
-requests==2.20.0
