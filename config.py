@@ -1,20 +1,5 @@
 import os
 
-################################################################################
-# - Key deployment variables
-# Redefine these in your local environment and run the same docker image as
-# in production, by example pointing to 'localhost' instead of 'adsvm' broker.
-_INDEXER_HOST = os.getenv('_INDEXER_HOST', 'adsqb10g')
-_INDEXER_PORT = os.getenv('_INDEXER_PORT', '9983')
-_BROKER_HOST = os.getenv('_BROKER_HOST', 'adsvm03.cfa.harvard.edu')
-_BROKER_PORT = os.getenv('_BROKER_PORT', '5682')
-_API_PROTOCOL = os.getenv('_API_PROTOCOL', 'https')
-_API_HOST = os.getenv('_API_HOST', 'api.adsabs.harvard.edu')
-_API_PORT = os.getenv('_API_PORT', '443')
-_MAIL_HOST = os.getenv('_MAIL_HOST', 'head.cfa.harvard.edu')
-_MAIL_PORT = os.getenv('_MAIL_PORT', '25')
-################################################################################
-
 LOGGING_LEVEL = 'INFO'
 LOG_STDOUT = True
 
