@@ -147,14 +147,14 @@ class MatchMetadata():
         if for_inspection:
             print(for_inspection)
     
-    def batch_match_to_arXiv(self, filename, result_filename):
+    def batch_match_to_arXiv(self, input_filename, result_filename):
         """
     
-        :param filename:
-        :param result_filename:
+        :param input_filename: contains list of filenames
+        :param result_filename: name of result file to write to
         :return:
         """
-        filenames = self.get_filenames(filename)
+        filenames = self.get_filenames(input_filename)
         if len(filenames) > 0:
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
@@ -231,14 +231,14 @@ class MatchMetadata():
         if for_inspection:
             print('Needs inspection -->', for_inspection)
 
-    def batch_match_to_pub(self, filename, result_filename):
+    def batch_match_to_pub(self, input_filename, result_filename):
         """
     
-        :param filename:
-        :param result_filename:
+        :param input_filename: contains list of filenames
+        :param result_filename: name of result file to write to
         :return:
         """
-        filenames = self.get_filenames(filename)
+        filenames = self.get_filenames(input_filename)
         if len(filenames) > 0:
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
