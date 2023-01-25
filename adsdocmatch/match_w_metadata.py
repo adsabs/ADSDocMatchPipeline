@@ -350,12 +350,12 @@ class MatchMetadata():
                         combined_result[2] = 'verify'
                     fp.write(','.join(combined_result)+'\n')
 
-    def output_combine_classic_docmatch_results(self, source, classic_filename, docmatch_filename, output_filename):
+    def output_combine_classic_docmatch_results(self, classic_filename, docmatch_filename, source, output_filename):
         """
 
-        :param source:
         :param classic_filename:
         :param docmatch_filename:
+        :param source: source of docmatch, is it arxived matched `eprint` or published matched `pub`
         :param output_filename:
         :return:
         """
