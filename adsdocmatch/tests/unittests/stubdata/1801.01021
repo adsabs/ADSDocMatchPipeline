@@ -1,0 +1,33 @@
+<record>
+<header>
+ <identifier>oai:arXiv.org:1801.01021</identifier>
+ <datestamp>2018-05-23</datestamp>
+ <setSpec>cs</setSpec>
+ <setSpec>physics:astro-ph</setSpec>
+</header>
+<metadata>
+ <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+ <dc:title>The Unified Astronomy Thesaurus: Semantic Metadata for Astronomy and
+  Astrophysics</dc:title>
+ <dc:creator>Frey, Katie</dc:creator>
+ <dc:creator>Accomazzi, Alberto</dc:creator>
+ <dc:subject>Astrophysics - Instrumentation and Methods for Astrophysics</dc:subject>
+ <dc:subject>Computer Science - Digital Libraries</dc:subject>
+ <dc:description>  Several different controlled vocabularies have been developed and used by the
+astronomical community, each designed to serve a specific need and a specific
+group. The Unified Astronomy Thesaurus (UAT) attempts to provide a highly
+structured controlled vocabulary that will be relevant and useful across the
+entire discipline, regardless of content or platform. As two major use cases
+for the UAT include classifying articles and data, we examine the UAT in
+comparison with the Astronomical Subject Keywords used by major publications
+and the JWST Science Keywords used by STScI's Astronomer's Proposal Tool.
+</dc:description>
+ <dc:description>Comment: Submitted to the Astrophysical Journal Supplements, 10 pages, 3
+  tables</dc:description>
+ <dc:date>2018-01-03</dc:date>
+ <dc:type>text</dc:type>
+ <dc:identifier>http://arxiv.org/abs/1801.01021</dc:identifier>
+ <dc:identifier>doi:10.3847/1538-4365/aab760</dc:identifier>
+ </oai_dc:dc>
+</metadata>
+</record>

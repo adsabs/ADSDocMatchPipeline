@@ -1,0 +1,26 @@
+<record>
+<header>
+ <identifier>oai:arXiv.org:1701.00200</identifier>
+ <datestamp>2017-08-22</datestamp>
+ <setSpec>math</setSpec>
+</header>
+<metadata>
+ <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+ <dc:title>Post-Lie algebra structures on the Witt algebra</dc:title>
+ <dc:creator>Tang, Xiaomin</dc:creator>
+ <dc:subject>Mathematics - Rings and Algebras</dc:subject>
+ <dc:subject>17A30, 17A42, 17B60, 18D50</dc:subject>
+ <dc:description>  In this paper, we characterize the graded post-Lie algebra structures and a
+class of shifting post-Lie algebra structures on the Witt algebra. We obtain
+some new Lie algebras and give a class of their modules. As an application, the
+homogeneous Rota-Baxter operators and a class of non-homogeneous Rota-Baxter
+operators of weight $1$ on the Witt algebra are studied.
+</dc:description>
+ <dc:description>Comment: 24 pages</dc:description>
+ <dc:date>2017-01-01</dc:date>
+ <dc:date>2017-08-19</dc:date>
+ <dc:type>text</dc:type>
+ <dc:identifier>http://arxiv.org/abs/1701.00200</dc:identifier>
+ </oai_dc:dc>
+</metadata>
+</record>

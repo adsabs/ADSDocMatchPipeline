@@ -2,7 +2,7 @@ import os
 import requests
 import json
 import time
-from adsputils import setup_logging
+from adsputils import setup_logging, load_config
 from unidecode import unidecode
 import pandas as pd
 import numpy as np
@@ -10,6 +10,8 @@ import re
 
 
 logger = setup_logging('docmatch_log_oracle_util')
+config = {}
+config.update(load_config())
 
 class OracleUtil():
 
@@ -239,13 +241,13 @@ class OracleUtil():
             })
             return result
 
-        sleep_sec = int(os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_SLEEP_SEC'))
+        sleep_sec = int(config['API_DOCMATCHING_ORACLE_SERVICE_SLEEP_SEC'])
         try:
-            num_attempts = int(os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_ATTEMPTS'))
+            num_attempts = int(config['API_DOCMATCHING_ORACLE_SERVICE_ATTEMPTS'])
             for i in range(num_attempts):
                 response = requests.post(
-                    url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/docmatch',
-                    headers={'Authorization': 'Bearer %s' % os.environ.get('API_DOCMATCHING_TOKEN')},
+                    url=config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/docmatch',
+                    headers={'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']},
                     data=json.dumps(payload),
                     timeout=60
                 )
@@ -253,9 +255,9 @@ class OracleUtil():
                 if status_code == 200:
                     logger.info('Got 200 for status_code at attempt # %d' % (i + 1))
                     break
-                # if got 5xx errors from solr, per alberto, sleep for five seconds and try again, attempt 3 times
+                # if got 5xx errors from oracle, per alberto, sleep for five seconds and try again, attempt 3 times
                 elif status_code in [502, 504]:
-                    logger.info('Got %d status_code from solr, waiting %d second and attempt again.' % (
+                    logger.info('Got %d status_code from oracle, waiting %d second and attempt again.' % (
                     status_code, num_attempts))
                     time.sleep(sleep_sec)
                 # any other error, quit
@@ -285,7 +287,7 @@ class OracleUtil():
                     result['confidence'] = 'Multi match!'
                     result['score'] = ''
                     result['comment'] = (json_text.get('comment',
-                                                       '') + ' Match(es) for this bibcode is logged in the accompanied csv file.').strip()
+                                                       '') + ' Match(es) for this bibcode is in the `inspection` field.').strip()
                     result['inspection'] = []
                     for i, one_match in enumerate(json_text['match']):
                         result['inspection'].append({
@@ -316,7 +318,7 @@ class OracleUtil():
             return result
         # when error
         # log it
-        logger.error('From solr got status code: %d' % status_code)
+        logger.error('From oracle got status code: %d' % status_code)
         result['matched_bibcode'] = None
         result['status_code'] = "got %d for the last failed attempt." % status_code
         result['comment'] = '%s error' % metadata['bibcode']
@@ -414,7 +416,7 @@ class OracleUtil():
                     continue
                 # if confidence is missing, init
                 if len(result) == 2:
-                    result += [os.environ.get('API_DOCMATCHING_CONFIDENCE_VALUE')]
+                    result += [config['API_DOCMATCHING_CONFIDENCE_VALUE']]
                 results.append(result)
         return results
 
@@ -439,16 +441,16 @@ class OracleUtil():
         :param matches:
         :return:
         """
-        max_lines_one_call = int(os.environ.get('API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'))
+        max_lines_one_call = int(config['API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'])
         data = self.make_params(matches)
         count = 0
         if len(data) > 0:
             for i in range(0, len(data), max_lines_one_call):
                 slice_item = slice(i, i + max_lines_one_call, 1)
                 response = requests.put(
-                    url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/add',
+                    url=config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/add',
                     headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % os.environ.get('API_DOCMATCHING_TOKEN')},
+                             'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']},
                     data=json.dumps(data[slice_item]),
                     timeout=60
                 )
@@ -468,16 +470,16 @@ class OracleUtil():
         :param lines:
         :return:
         """
-        max_lines_one_call = int(os.environ.get('API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'))
+        max_lines_one_call = int(config['API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'])
         data = self.make_params(lines)
         results = []
         if len(data) > 0:
             for i in range(0, len(data), max_lines_one_call):
                 slice_item = slice(i, i + max_lines_one_call, 1)
                 response = requests.delete(
-                    url=os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/delete',
+                    url=config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/delete',
                     headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % os.environ.get('API_DOCMATCHING_TOKEN')},
+                             'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']},
                     data=json.dumps(data[slice_item]),
                     timeout=60
                 )
@@ -516,8 +518,8 @@ class OracleUtil():
         start = 0
         count = 0
         headers = {'Content-type': 'application/json', 'Accept': 'application/json',
-                   'Authorization': 'Bearer %s' % os.environ.get('API_DOCMATCHING_TOKEN')}
-        url = os.environ.get('API_DOCMATCHING_ORACLE_SERVICE_URL') + '/query'
+                   'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']}
+        url = config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/query'
         while True:
             params = {'start': start}
             if days:

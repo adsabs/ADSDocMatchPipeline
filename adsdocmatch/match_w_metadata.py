@@ -1,7 +1,7 @@
 import os
 from adsputils import setup_logging
 from pub_parser import get_pub_metadata
-from from_oracle import get_matches
+from oracle_util import OracleUtil
 from pyingest.parsers.arxiv import ArxivParser
 import time
 import re
@@ -22,6 +22,7 @@ class MatchMetadata():
     re_doctype_bookreview = re.compile(r'\bbook[s|\s|\-]*review[s|ed]*', re.IGNORECASE)
 
     ARXIV_PARSER = ArxivParser()
+    ORACLE_UTIL = OracleUtil()
 
     def get_filenames(self, filename):
         """
@@ -119,7 +120,7 @@ class MatchMetadata():
         """
         try:
             with open(filename, 'rb') as pub_fp:
-                return get_matches(get_pub_metadata(pub_fp.read()), 'article')
+                return self.ORACLE_UTIL.get_matches(get_pub_metadata(pub_fp.read()), 'article')
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
@@ -132,6 +133,7 @@ class MatchMetadata():
         :return:
         """
         results = self.match_to_arXiv(pub_filename)
+        print(results)
         if results:
             return self.format_results(results, '\t')
         return None,None
@@ -203,7 +205,7 @@ class MatchMetadata():
                         if match:
                             match_doctype = ['phdthesis', 'mastersthesis']
                 mustmatch = any(category in metadata.get('keywords', '') for category in self.MUST_MATCH)
-                return self.add_metadata_comment(get_matches(metadata, 'eprint', mustmatch, match_doctype), comments)
+                return self.add_metadata_comment(self.ORACLE_UTIL.get_matches(metadata, 'eprint', mustmatch, match_doctype), comments)
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
@@ -215,7 +217,8 @@ class MatchMetadata():
         :param arxiv_filename:
         :return:
         """
-        results = self, self.match_to_pub(arXiv_filename)
+        results = self.match_to_pub(arXiv_filename)
+        print(results)
         if results:
             return self.format_results(results, '\t')
         return None,None
