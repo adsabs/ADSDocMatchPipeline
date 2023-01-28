@@ -1,5 +1,5 @@
 import os
-from adsputils import setup_logging
+from adsputils import setup_logging, load_config
 from pub_parser import get_pub_metadata
 from oracle_util import OracleUtil
 from pyingest.parsers.arxiv import ArxivParser
@@ -8,7 +8,8 @@ import re
 import csv
 
 logger = setup_logging('docmatch_log_match_metadata')
-
+config = {}
+config.update(load_config())
 
 class MatchMetadata():
 
@@ -24,7 +25,7 @@ class MatchMetadata():
     ARXIV_PARSER = ArxivParser()
     ORACLE_UTIL = OracleUtil()
 
-    def get_filenames(self, filename):
+    def get_input_filenames(self, filename):
         """
         read input file and return list of arXiv metadata full filenames
 
@@ -40,74 +41,56 @@ class MatchMetadata():
             logger.error('Unable to open/read input file', e)
         return filenames
 
-    def format_results(self, results, separator):
+    def process_results(self, results, separator):
         """
 
         :param results:
         :param separator:
         :return:
         """
-        if results.get('matched_bibcode', None):
-            match = separator.join([str(results.get(field, '')) for field in ['source_bibcode', 'matched_bibcode', 'label', 'confidence', 'score', 'comment']])
-            if len(results.get('inspection', [])) > 1:
-                return match, results['inspection']
-            # single match
-            return match, None
+        matches = []
+        for result in results:
+            if result.get('matched_bibcode', None):
+                matches.append(separator.join([str(result.get(field, '')) for field in ['source_bibcode', 'matched_bibcode', 'label', 'confidence', 'score', 'comment']]))
+        if matches:
+            return matches
         # when error, return status_code
-        return '%s status_code=%s' % (results.get('comment', ''), results.get('status_code', '')), None
+        return ['%s status_code=%s' % (results.get('comment', ''), results.get('status_code', ''))]
 
-    def write_results(self, result_filename, a_match, inspection_hits):
+    def write_results(self, result_filename, matches):
         """
-        for inspection list, also include matches, first write the match, and then if there are inspection_hits wrote those
 
         :param result_filename:
-        :param a_match:
-        :param inspection_hits:
+        :param matches:
         :return:
         """
-        csv_file = result_filename + '.csv'
+        csv_file = result_filename
         if os.path.exists(csv_file):
             fp = open(csv_file, 'a')
         else:
             fp = open(csv_file, 'w')
             # new file, write header line
-            fp.write(
-                'source bibcode (link),verified bibcode,matched bibcode (link),label,confidence,matched scores,comment\n')
+            fp.write('source bibcode (link),verified bibcode,matched bibcode (link),label,confidence,matched scores,comment\n')
 
         hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")"'
         double_quote = '"%s"'
 
-        # include match only if inpsection_hits is empty
-        # otherwise write inspection_hits
-        if not inspection_hits and a_match:
-            a_match_parts = a_match.split('\t')
-            if len(a_match_parts) == 6:
-                source_bibcode = a_match_parts[0]
-                matched_bibcode = a_match_parts[1]
+        for match in matches:
+            match_parts = match.split('\t')
+            if len(match_parts) == 6:
+                source_bibcode = match_parts[0]
+                matched_bibcode = match_parts[1]
                 fp.write('%s,,%s,%s,%s,%s,%s\n' % (
                     hyperlink_format % (source_bibcode, source_bibcode),
                     hyperlink_format % (matched_bibcode, matched_bibcode),
-                    a_match_parts[2],
-                    a_match_parts[3],
-                    double_quote % a_match_parts[4],
-                    double_quote % a_match_parts[5],
+                    match_parts[2],
+                    match_parts[3],
+                    double_quote % match_parts[4],
+                    double_quote % match_parts[5],
                 ))
             else:
                 # it is an error write it out
-                fp.write("%s\n" % a_match)
-        elif inspection_hits:
-            for item in inspection_hits:
-                source_bibcode = item['source_bibcode']
-                matched_bibcode = item['matched_bibcode']
-                # source bibcode, empty column reserved for curators adding verified bibcode, and the score
-                fp.write('%s,,%s,%s,%s,%s,%s\n' % (
-                    hyperlink_format % (source_bibcode, source_bibcode),
-                    hyperlink_format % (matched_bibcode, matched_bibcode),
-                    item['label'],
-                    item['confidence'],
-                    double_quote % item['scores'],
-                    double_quote % item['comment'],
-                ))
+                fp.write("%s\n" % match_parts)
         fp.close()
 
     def match_to_arXiv(self, filename):
@@ -133,21 +116,9 @@ class MatchMetadata():
         :return:
         """
         results = self.match_to_arXiv(pub_filename)
-        print(results)
         if results:
-            return self.format_results(results, '\t')
-        return None,None
-    
-    def single_match_to_arxiv_output(self, pub_filename):
-        """
-    
-        :param pub_filename:
-        :return:
-        """
-        a_match, for_inspection = self, self.single_match_to_arXiv(pub_filename)
-        print(a_match)
-        if for_inspection:
-            print(for_inspection)
+            return self.process_results(results, '\t')
+        return None
     
     def batch_match_to_arXiv(self, input_filename, result_filename):
         """
@@ -156,18 +127,15 @@ class MatchMetadata():
         :param result_filename: name of result file to write to
         :return:
         """
-        filenames = self.get_filenames(input_filename)
+        filenames = self.get_input_filenames(input_filename)
         if len(filenames) > 0:
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
                 for pub_filename in filenames:
-                    a_match, for_inspection = self.single_match_to_arXiv(pub_filename)
-                    self.write_results(result_filename, a_match, for_inspection)
+                    matches = self.single_match_to_arXiv(pub_filename)
+                    self.write_results(result_filename, matches)
                     # wait a second before the next attempt
                     time.sleep(1)
-            else:
-                for pub_filename in filenames:
-                    self.single_match_to_arxiv_output(pub_filename)
 
     def match_to_pub(self, filename):
         """
@@ -218,22 +186,10 @@ class MatchMetadata():
         :return:
         """
         results = self.match_to_pub(arXiv_filename)
-        print(results)
         if results:
-            return self.format_results(results, '\t')
-        return None,None
+            return self.process_results(results, '\t')
+        return None
     
-    def single_match_to_pub_output(self, arXiv_filename):
-        """
-    
-        :param arXiv_filename:
-        :return:
-        """
-        a_match, for_inspection = self.single_match_to_pub(arXiv_filename)
-        print('Match? -->', a_match)
-        if for_inspection:
-            print('Needs inspection -->', for_inspection)
-
     def batch_match_to_pub(self, input_filename, result_filename):
         """
     
@@ -241,18 +197,15 @@ class MatchMetadata():
         :param result_filename: name of result file to write to
         :return:
         """
-        filenames = self.get_filenames(input_filename)
+        filenames = self.get_input_filenames(input_filename)
         if len(filenames) > 0:
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
                 for arXiv_filename in filenames:
-                    a_match, for_inspection = self.single_match_to_pub(arXiv_filename)
-                    self.write_results(result_filename, a_match, for_inspection)
+                    matches = self.single_match_to_pub(arXiv_filename)
+                    self.write_results(result_filename, matches)
                     # wait a second before the next attempt
                     time.sleep(1)
-            else:
-                for arXiv_filename in filenames:
-                    self.single_match_output(arXiv_filename)
 
     def add_metadata_comment(self, results, comments):
         """
@@ -264,16 +217,16 @@ class MatchMetadata():
         match = self.re_admin_notes.search(comments)
         if match:
             admin_notes = match.group(1)
-            results['comment'] = ('%s %s'%(results.get('comment', ''), admin_notes)).strip()
-            for inspection in results.get('inspection', []):
-                inspection['comment'] = ('%s %s'%(inspection.get('comment', ''), admin_notes)).strip()
+            for result in results:
+                result['comment'] = ('%s %s'%(results.get('comment', ''), admin_notes)).strip()
         return results
 
     def read_classic_results(self, classic, source):
         """
-    
-        :param classic:
-        :return:
+        
+        :param classic: 
+        :param source: 
+        :return: 
         """
         results = {}
         with open(classic, 'r') as fp:
@@ -325,14 +278,14 @@ class MatchMetadata():
             combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%nowadays_result[6], nowadays_result[3], nowadays_result[4], '"%s"'%nowadays_result[5]])
         return combined_results
     
-    def output_combined_results(self, combined_results, filename):
+    def write_combined_results(self, combined_results, output_filename):
         """
     
         :param combined_results:
-        :param filename:
+        :param output_filename:
         :return:
         """
-        with open(filename, 'w') as fp:
+        with open(output_filename, 'w') as fp:
             fp.write(','.join(combined_results[0]) + '\n')
             # error lines are one element that have no confidence column
             combined_results = sorted(combined_results[1:], key=lambda result: float(result[7]) if len(result) > 7 else -1)
@@ -353,18 +306,57 @@ class MatchMetadata():
                         combined_result[2] = 'verify'
                     fp.write(','.join(combined_result)+'\n')
 
-    def output_combine_classic_docmatch_results(self, classic_filename, docmatch_filename, source, output_filename):
+    def merge_classic_docmatch_results(self, classic_filename, docmatch_filename, output_filename):
         """
 
         :param classic_filename:
         :param docmatch_filename:
-        :param source: source of docmatch, is it arxived matched `eprint` or published matched `pub`
         :param output_filename:
         :return:
         """
+        if docmatch_filename.endswith(config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME']):
+            source = 'eprint'
+        elif docmatch_filename.endswith(config['DOCMATCHPIPELINE_PUB_RESULT_FILENAME']):
+            source = 'pub'
+        else:
+            logger.error('Unable to determine type of result file, no combined file created.')
+            return
+
         classic_results = self.read_classic_results(classic_filename, source)
         docmatch_results = self.read_docmatch_results(docmatch_filename)
         if classic_results and docmatch_results:
             combined_results = self.combine_classic_docmatch_results(classic_results, docmatch_results)
             if combined_results:
-                self.output_combined_results(combined_results, output_filename)
+                self.write_combined_results(combined_results, output_filename)
+
+    def process_match_to_arXiv(self, path):
+        """
+
+        :param path:
+        :return:
+        """
+        input_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
+        result_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_PUB_RESULT_FILENAME'])
+
+        self.batch_match_to_arXiv(input_filename, result_filename)
+
+        classic_matched_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME'])
+        combined_output_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_PUB_COMBINED_FILENAME'])
+
+        self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+
+    def process_match_to_pub(self, path):
+        """
+
+        :param path:
+        :return:
+        """
+        input_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
+        result_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME'])
+
+        self.batch_match_to_pub(input_filename, result_filename)
+
+        classic_matched_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME'])
+        combined_output_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME'])
+
+        self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)

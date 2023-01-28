@@ -213,6 +213,7 @@ class OracleUtil():
         :param match_doctype: list of doctypes, if specified only this type of doctype is matched
         :return:
         """
+        results = []
         try:
             # 8/31 abstract can be empty, since oracle can match with title
             payload = {'abstract': metadata.get('abstract', '').replace('\n', ' '),
@@ -225,29 +226,18 @@ class OracleUtil():
                        'mustmatch': mustmatch,
                        'match_doctype': match_doctype}
         except KeyError as e:
-            result = {}
-            result['source_bibcode'] = metadata['bibcode']
-            result['matched_bibcode'] = '.' * 19
-            result['confidence'] = 0
-            result['score'] = ''
-            result['comment'] = 'Exception: KeyError, %s missing.' % str(e)
-            result['inspection'].append({
-                'source_bibcode': '.' * 19,
-                'confidence': -1,
-                'label': '',
-                'scores': [0],
-                'matched_bibcode': '.' * 19,
-                'comment': 'Exception: KeyError, %s missing.' % str(e)
-            })
-            return result
+            results.append({
+                'source_bibcode' : metadata['bibcode'],
+                'comment' : 'Exception: KeyError, %s missing.' % str(e)})
+            return results
 
-        sleep_sec = int(config['API_DOCMATCHING_ORACLE_SERVICE_SLEEP_SEC'])
+        sleep_sec = int(config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC'])
         try:
-            num_attempts = int(config['API_DOCMATCHING_ORACLE_SERVICE_ATTEMPTS'])
+            num_attempts = int(config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS'])
             for i in range(num_attempts):
                 response = requests.post(
-                    url=config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/docmatch',
-                    headers={'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']},
+                    url=config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL'] + '/docmatch',
+                    headers={'Authorization': 'Bearer %s' % config['DOCMATCHPIPELINE_API_TOKEN']},
                     data=json.dumps(payload),
                     timeout=60
                 )
@@ -268,8 +258,6 @@ class OracleUtil():
             status_code = 500
             logger.info('Exception %s, stopping.' % str(e))
 
-        result = {}
-
         if status_code == 200:
             json_text = json.loads(response.text)
             if 'match' in json_text:
@@ -279,50 +267,38 @@ class OracleUtil():
                     # when confidence is low or multiple matches are found log them to be inspected
                     # in the case of multi matches, we want to return them all, and let curators decide which, if any, is correct
                     # in the case of low confidence, we want curators to check them out and see if the match is correct,
-                    # hence do not display the bibcode in the output file, direct it to another file for inspection
-                    # include a comment that these were added to inspection file
-                    result['source_bibcode'] = metadata['bibcode']
-                    result['matched_bibcode'] = '.' * 19
-                    result['label'] = 'Not Match'
-                    result['confidence'] = 'Multi match!'
-                    result['score'] = ''
-                    result['comment'] = (json_text.get('comment',
-                                                       '') + ' Match(es) for this bibcode is in the `inspection` field.').strip()
-                    result['inspection'] = []
                     for i, one_match in enumerate(json_text['match']):
-                        result['inspection'].append({
-                            'source_bibcode': metadata['bibcode'],
+                        results.append({'source_bibcode': metadata['bibcode'],
                             'confidence': one_match['confidence'],
                             'label': 'Match' if one_match['matched'] == 1 else 'Not Match',
                             'scores': str(one_match['scores']),
                             'matched_bibcode': one_match['matched_bibcode'],
-                            'comment': ('Multi match: %d of %d. ' % (i + 1, len(json_text['match'])) if len(
-                                json_text['match']) > 1 else '' + json_text.get('comment', '')).strip()
-                        })
-                    return result
+                            'comment': json_text.get('comment', '') + ('Multi match: %d of %d. ' % (i + 1, len(json_text['match'])) if len(
+                                json_text['match']) > 1 else '' + json_text.get('comment', '')).strip()})
+                    return results
                 # single match
-                result['source_bibcode'] = metadata['bibcode']
-                result['matched_bibcode'] = json_text['match'][0]['matched_bibcode']
-                result['label'] = 'Match' if json_text['match'][0]['matched'] == 1 else 'Not Match'
-                result['confidence'] = json_text['match'][0]['confidence']
-                result['score'] = json_text['match'][0]['scores']
-                result['comment'] = json_text.get('comment', '')
-                return result
+                results.append({'source_bibcode' : metadata['bibcode'],
+                    'matched_bibcode' : json_text['match'][0]['matched_bibcode'],
+                    'label' : 'Match' if json_text['match'][0]['matched'] == 1 else 'Not Match',
+                    'confidence' : json_text['match'][0]['confidence'],
+                    'score' : json_text['match'][0]['scores'],
+                    'comment' : json_text.get('comment', '')})
+                return results
             # no match
-            result['source_bibcode'] = metadata['bibcode']
-            result['matched_bibcode'] = '.' * 19
-            result['label'] = 'Not Match'
-            result['confidence'] = 0
-            result['score'] = ''
-            result['comment'] = '%s %s' % (json_text.get('comment', None), json_text.get('no match', '').capitalize())
-            return result
+            results.append({'source_bibcode' : metadata['bibcode'],
+                'matched_bibcode' : '.' * 19,
+                'label' : 'Not Match',
+                'confidence' : 0,
+                'score' : '',
+                'comment' : '%s %s' % (json_text.get('comment', None), json_text.get('no match', '').capitalize())})
+            return results
         # when error
         # log it
         logger.error('From oracle got status code: %d' % status_code)
-        result['matched_bibcode'] = None
-        result['status_code'] = "got %d for the last failed attempt." % status_code
-        result['comment'] = '%s error' % metadata['bibcode']
-        return result
+        results.append({'source_bibcode': metadata['bibcode'],
+            'comment' : '%s error' % metadata['bibcode'],
+            'status_code' : "got %d for the last failed attempt." % status_code})
+        return results
 
     def read_google_sheet(self, input_filename):
         """
@@ -416,7 +392,7 @@ class OracleUtil():
                     continue
                 # if confidence is missing, init
                 if len(result) == 2:
-                    result += [config['API_DOCMATCHING_CONFIDENCE_VALUE']]
+                    result += [config['DOCMATCHPIPELINE_API_CONFIDENCE_VALUE']]
                 results.append(result)
         return results
 
@@ -441,16 +417,16 @@ class OracleUtil():
         :param matches:
         :return:
         """
-        max_lines_one_call = int(config['API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'])
+        max_lines_one_call = int(config['DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE'])
         data = self.make_params(matches)
         count = 0
         if len(data) > 0:
             for i in range(0, len(data), max_lines_one_call):
                 slice_item = slice(i, i + max_lines_one_call, 1)
                 response = requests.put(
-                    url=config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/add',
+                    url=config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL'] + '/add',
                     headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']},
+                             'Authorization': 'Bearer %s' % config['DOCMATCHPIPELINE_API_TOKEN']},
                     data=json.dumps(data[slice_item]),
                     timeout=60
                 )
@@ -470,16 +446,16 @@ class OracleUtil():
         :param lines:
         :return:
         """
-        max_lines_one_call = int(config['API_DOCMATCHING_MAX_RECORDS_TO_ORACLE'])
+        max_lines_one_call = int(config['DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE'])
         data = self.make_params(lines)
         results = []
         if len(data) > 0:
             for i in range(0, len(data), max_lines_one_call):
                 slice_item = slice(i, i + max_lines_one_call, 1)
                 response = requests.delete(
-                    url=config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/delete',
+                    url=config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL'] + '/delete',
                     headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']},
+                             'Authorization': 'Bearer %s' % config['DOCMATCHPIPELINE_API_TOKEN']},
                     data=json.dumps(data[slice_item]),
                     timeout=60
                 )
@@ -518,8 +494,8 @@ class OracleUtil():
         start = 0
         count = 0
         headers = {'Content-type': 'application/json', 'Accept': 'application/json',
-                   'Authorization': 'Bearer %s' % config['API_DOCMATCHING_TOKEN']}
-        url = config['API_DOCMATCHING_ORACLE_SERVICE_URL'] + '/query'
+                   'Authorization': 'Bearer %s' % config['DOCMATCHPIPELINE_API_TOKEN']}
+        url = config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL'] + '/query'
         while True:
             params = {'start': start}
             if days:
