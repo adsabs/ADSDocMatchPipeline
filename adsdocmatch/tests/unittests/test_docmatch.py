@@ -174,10 +174,10 @@ class TestDocMatch(unittest.TestCase):
         result_filename = "%s%s%s" % (path, current_dir, config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME'])
 
         # create input file with list of eprint filenames
-        eprint_filenames = [current_dir + '/2106.07251']
+        eprint_filenames = ['/2106.07251']
         with open(input_filename, "w") as f:
             for filename in eprint_filenames:
-                f.write("%s\n"%(path+filename))
+                f.write("%s\n"%(path+current_dir+filename))
             f.close()
 
         # create output file
@@ -223,10 +223,10 @@ class TestDocMatch(unittest.TestCase):
         result_filename = "%s%s%s" % (path, current_dir, config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME'])
 
         # create input file with list of pub filenames
-        eprint_filenames = [current_dir + '/K47-02665.abs']
+        eprint_filenames = ['/K47-02665.abs']
         with open(input_filename, "w") as f:
             for filename in eprint_filenames:
-                f.write("%s\n"%(path+filename))
+                f.write("%s\n"%(path+current_dir+filename))
             f.close()
 
         # create output file
@@ -348,3 +348,81 @@ class TestDocMatch(unittest.TestCase):
         os.remove(result_filename)
         os.remove(classic_matched_filename)
         os.remove(combined_output_filename)
+
+    def test_normalize_author_list(self):
+        """ """
+        eprint_filenames = ['/2106.07251', '/1701.00200', '/1801.01021', '/2106.07251']
+        path = os.path.dirname(__file__)
+        current_dir = '/stubdata'
+
+        expected_authors = ['Proxauf, B', 'Tang, X', 'Frey, K; Accomazzi, A', 'Proxauf, B']
+        for filename, authors in zip(eprint_filenames, expected_authors):
+            fullpath = path + current_dir + filename
+            with open(fullpath, 'rb') as arxiv_fp:
+                metadata = self.match_metadata.ARXIV_PARSER.parse(arxiv_fp)
+                assert(self.match_metadata.ORACLE_UTIL.normalize_author_list(metadata['authors']), authors)
+
+    def test_extract_doi(self):
+        """ """
+        eprint_filenames = ['/2106.07251', '/1701.00200', '/1801.01021', '/2106.07251']
+        path = os.path.dirname(__file__)
+        current_dir = '/stubdata'
+
+        expected_dois = [['10.53846/goediss-8502'], None, ['10.3847/1538-4365/aab760'], ['10.53846/goediss-8502']]
+        for filename, doi in zip(eprint_filenames, expected_dois):
+            fullpath = path + current_dir + filename
+            with open(fullpath, 'rb') as arxiv_fp:
+                metadata = self.match_metadata.ARXIV_PARSER.parse(arxiv_fp)
+                assert(self.match_metadata.ORACLE_UTIL.extract_doi(metadata), doi)
+
+    def test_read_google_sheet(self):
+        """ """
+        match_w_pub_filename = os.path.dirname(__file__) + '/stubdata/' + '2023-01-25.compare.xlsx'
+        results = self.match_metadata.ORACLE_UTIL.read_google_sheet(match_w_pub_filename)
+        expected = [
+            ['2021arXiv210913594W', '2023Quant...7..900W', '1.1'],
+            ['2021arXiv211102596P', '2023Quant...7..898P', '1.1'],
+            ['2022arXiv220400632S', '2023PhRvL.130d3601S', '1.1'],
+            ['2022arXiv220405794W', '2023Quant...7..903W', '1.1'],
+            ['2022arXiv220412715L', '2023NJPh...25a3009L', '1.1'],
+            ['2022arXiv220503149P', '2023PhRvC.107a4910P', '1.1'],
+            ['2022arXiv220508471N', '2023E&ES.1136a2018N', '1.1'],
+            ['2022arXiv220602637S', '2023NJPh...25a3015S', '1.1'],
+            ['2022arXiv220611916G', '2023PhRvB.107d1301G', '1.1'],
+            ['2022arXiv220612105S', '2023PhRvA.107a2422S', '1.1'],
+            ['2022arXiv220705646C', '2023Quant...7..902C', '1.1'],
+            ['2022arXiv220709366B', '2023PhRvL.130d1901B', '1.1'],
+            ['2022arXiv220809620C', '2023PhRvA.107a3307C', '1.1'],
+            ['2022arXiv220814400A', '2023PhRvB.107c5424A', '1.1'],
+            ['2022arXiv220905830T', '2023PhRvB.107c5125T', '1.1'],
+            ['2022arXiv221015213I', '2023PhRvD.107a6011I', '1.1'],
+            ['2022arXiv221100521S', '2023PhRvM...7a4003S', '1.1'],
+            ['2022arXiv221104744P', '2023PhRvA.107a2812P', '1.1'],
+            ['2022arXiv221107207G', '2023PhRvL.130d3602G', '1.1'],
+            ['2022arXiv221107754C', '2023JHEP...01..071C', '1.1'],
+            ['2022arXiv221108072G', '2023PhRvB.107b4416G', '1.1'],
+            ['2022arXiv221112960L', '2023PhRvD.107a3006L', '1.1'],
+            ['2023arXiv230109795G', '2023Symm...15..259G', '1.1'],
+            ['2023arXiv230109798L', '2023PhRvE.107a5105L', '1.1'],
+            ['2021arXiv210607251P', '2021PhDT........26P', '1.1'],
+            ['2021arXiv210607251P', '2021PhDT........26P', '1.1'],
+            ['2023arXiv230110072K', '2021OExpr..2923736K', '1.1'],
+            ['2021arXiv210607251P', '2020PhDT........36P', '-1']
+        ]
+        assert(results == expected)
+
+        match_w_eprint_filename = os.path.dirname(__file__) + '/stubdata/' + '2023-01-24.pubcompare.xlsx'
+        results = self.match_metadata.ORACLE_UTIL.read_google_sheet(match_w_eprint_filename)
+        expected = [
+            ['2023arXiv230108396S', '2023JPhCo...7a5001S', '1.1'],
+            ['2022arXiv220911954M', '2022ConPh..63...34M', '1.1'],
+            ['2022arXiv220600058K', '2023ITAP...71..650K', '1.1'],
+            ['2022arXiv221007569T', '2023JPSJ...92b3601T', '1.1'],
+            ['2019arXiv191101730S', '2020Quant...4..240S', '1.1'],
+            ['2019arXiv191110999D', '2022AIHPC..39.1485D', '1.1'],
+            ['2020arXiv200909163Z', '2022ITSP...70.6272Z', '1.1'],
+            ['2021arXiv211104351I', '2022Quant...6..718I', '-1'],
+            ['2022arXiv220306611J', '2022Quant...6..669J', '1.1'],
+            ['2020arXiv201206687J', '2022Quant...6..669J', '-1']
+        ]
+        assert(results == expected)

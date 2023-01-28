@@ -46,6 +46,8 @@ class OracleUtil():
         % (LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX, LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX,
            LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX, LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX))
 
+    REMOVE_AND = re.compile(r"(,?\s+and\s+)", re.IGNORECASE)
+
     def get_authors_last_attempt(self, ref_string):
         """
         last attempt to identify author(s)
@@ -62,8 +64,6 @@ class OracleUtil():
         if match:
             return '; '.join(match)
         return None
-
-    REMOVE_AND = re.compile(r"(,?\s+and\s+)", re.IGNORECASE)
 
     def get_length_matched_authors(self, ref_string, matches):
         """
@@ -181,7 +181,7 @@ class OracleUtil():
             return authors
         return author_string
 
-    def get_doi(self, metadata):
+    def extract_doi(self, metadata):
         """
 
         :param metadata:
@@ -191,8 +191,7 @@ class OracleUtil():
         dois = []
         if comments:
             try:
-                dois = [comment.split('doi:')[1].strip(';').strip(',').strip('.') for comment in comments if
-                        comment.startswith('doi')]
+                dois = [comment.split('doi:')[1].strip(';').strip(',').strip('.') for comment in comments if comment.startswith('doi')]
             except:
                 pass
         doi = [metadata.get('doi', '')]
@@ -202,7 +201,7 @@ class OracleUtil():
                     doi.append(one)
         if not ''.join(doi):
             return None
-        return doi
+        return list(filter(None, doi))
 
     def get_matches(self, metadata, doctype, mustmatch=False, match_doctype=None):
         """
@@ -222,7 +221,7 @@ class OracleUtil():
                        'year': metadata['pubdate'][:4],
                        'doctype': doctype,
                        'bibcode': metadata['bibcode'],
-                       'doi': self.get_doi(metadata),
+                       'doi': self.extract_doi(metadata),
                        'mustmatch': mustmatch,
                        'match_doctype': match_doctype}
         except KeyError as e:
@@ -356,46 +355,9 @@ class OracleUtil():
             results = dt[['verified_bib', 'source_bib', 'curator_comment']]
         else:
             results = []
-    
-        return results
-    
-    def output_curated_matches(self, results, input_filename, output_filename):
-        """
-    
-        :param results:
-        :param input_filename:
-        :param output_filename:
-        :return:
-        """
-        # Output as txt file if there are db updates to send
-        if len(results) > 0:
-            to_txt = results.sort_values(by=['source_bib', 'curator_comment'])
-            to_txt.to_csv(output_filename, index=False, header=False, sep='\t')
-            logger.info("Extraction complete: %d new matches for db updates from %s written to %s.", len(to_txt), input_filename, output_filename)
-        else:
-            logger.info("Extraction complete: No new db updates from %s available.", input_filename)
 
-    def read_curated_matches(self, filename):
-        """
+        return results.values.tolist()
     
-        :param filename:
-        :return:
-        """
-        results = []
-        with open(filename, 'r') as fp:
-            for line in fp.readlines():
-                # ignore anything after the comment sign
-                line = line.split('#')[0].strip()
-                result = line.split('\t')
-                # has to have at least two values of bibcodes
-                if len(result) < 2:
-                    continue
-                # if confidence is missing, init
-                if len(result) == 2:
-                    result += [config['DOCMATCHPIPELINE_API_CONFIDENCE_VALUE']]
-                results.append(result)
-        return results
-
     def make_params(self, matches):
         """
     
@@ -440,33 +402,6 @@ class OracleUtil():
             return 'Added %d to database'%count
         return 'No data!'
     
-    def delete_from_db(self, lines):
-        """
-    
-        :param lines:
-        :return:
-        """
-        max_lines_one_call = int(config['DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE'])
-        data = self.make_params(lines)
-        results = []
-        if len(data) > 0:
-            for i in range(0, len(data), max_lines_one_call):
-                slice_item = slice(i, i + max_lines_one_call, 1)
-                response = requests.delete(
-                    url=config['DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL'] + '/delete',
-                    headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % config['DOCMATCHPIPELINE_API_TOKEN']},
-                    data=json.dumps(data[slice_item]),
-                    timeout=60
-                )
-                if response.status_code == 200:
-                    json_text = json.loads(response.text)
-                    results.append("%s:%s" % (slice_item, json_text))
-                else:
-                    results.append("%s:%s" % (slice_item, response.text))
-            return ';'.join(results)
-        return 'No data!'
-
     def output_query_matches(self, filename, results):
         """
 
@@ -519,7 +454,7 @@ class OracleUtil():
         :param input_filename:
         :return:
         """
-        matches = self.read_curated_matches(input_filename)
+        matches = self.read_google_sheet(input_filename)
         if matches:
             self.add_to_db(matches)
 
