@@ -1,5 +1,9 @@
-# Docmatch Scripts
+[![Build Status](https://travis-ci.org/adsabs/ADSDocMatchPipeline.svg)](https://travis-ci.org/adsabs/ADSDocMatchPipeline)
+[![Coverage Status](https://coveralls.io/repos/adsabs/ADSOrcid/badge.svg)](https://coveralls.io/r/adsabs/ADSDocMatchPipeline)
 
+# ADS Doc Match Pipeline
+
+#=================== need to be updated
 ## Short Summary
 
 Scripts to match publisher document with arXiv counterpart and vice versa.
