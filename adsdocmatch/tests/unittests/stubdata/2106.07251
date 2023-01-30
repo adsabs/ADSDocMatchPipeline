@@ -1,0 +1,43 @@
+<record>
+<header>
+ <identifier>oai:arXiv.org:2106.07251</identifier>
+ <datestamp>2023-01-25</datestamp>
+ <setSpec>physics:astro-ph</setSpec>
+</header>
+<metadata>
+ <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+ <dc:title>Observations of large-scale solar flows</dc:title>
+ <dc:creator>Proxauf, Bastian</dc:creator>
+ <dc:subject>Astrophysics - Solar and Stellar Astrophysics</dc:subject>
+ <dc:description>  In this dissertation, several components of large-scale solar flows are
+studied observationally: solar equatorial Rossby waves (waves of radial
+vorticity), large-scale convection, and surface flows around active regions.
+Maps of horizontal flows are derived from photospheric observations by the
+Helioseismic and Magnetic Imager (HMI) aboard the Solar Dynamics Observatory
+(SDO) using two different techniques: granulation tracking and local
+helioseismology. First, the eigenfunctions of solar Rossby waves are measured
+from helioseismic ring-diagram flow maps with a correlation method and a
+spectral analysis. Down to $9$ Mm below the surface, the dependence of the
+radial vorticity with radius $r$ is consistent with $r^{m-1}$, for a given
+longitudinal wavenumber $m$. At the surface, the eigenfunctions are
+complex-valued. The real part decreases away from the equator and switches sign
+around $\pm 20-30^\circ$. The imaginary part is small, but nonzero, and may be
+due to wave attenuation. This may have implications for the transport of
+angular momentum in the latitudinal direction. Second, we revisit previous
+measurements of power spectra of longitudinal velocities near the solar
+surface, obtained from time-distance and ring-diagram helioseismology. Several
+issues in these past helioseismic analyses are identified and corrected. The
+corrections are not sufficient to remove the discrepancy between the
+measurements. I thus present new velocity power spectra from granulation
+tracking and ring-diagram helioseismology. The two new measurements are close
+to each other near the solar surface, and the corresponding kinetic energy
+decreases with increasing spatial scale.
+</dc:description>
+ <dc:description>Comment: PhD thesis, 97 pages</dc:description>
+ <dc:date>2021-06-14</dc:date>
+ <dc:type>text</dc:type>
+ <dc:identifier>http://arxiv.org/abs/2106.07251</dc:identifier>
+ <dc:identifier>doi:10.53846/goediss-8502</dc:identifier>
+ </oai_dc:dc>
+</metadata>
+</record>
