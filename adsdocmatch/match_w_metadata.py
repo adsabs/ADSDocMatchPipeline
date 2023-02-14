@@ -56,7 +56,7 @@ class MatchMetadata():
         if matches:
             return matches
         # when error, return status_code
-        return ['%s status_code=%s' % (result[0].get('comment', ''), result[0].get('status_code', ''))]
+        return ['%s status_code=%s' % (results[0].get('comment', ''), results[0].get('status_code', ''))]
 
     def write_results(self, result_filename, matches):
         """
