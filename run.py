@@ -78,10 +78,14 @@ def main():
                     filesToUpload = []
                     if args.match_to_pub:
                         # if successful, process_match returns the filename to
-                        # be uploaded to google
-                        filesToUpload.append(MatchMetadata().process_match_to_pub(path))
+                        # be uploaded to google.
+                        # fileList[0] is result_filename,
+                        # fileList[1] is combined_result_filename
+                        fileList = MatchMetadata().process_match_to_pub(path)
+                        filesToUpload.append(fileList[1])
                     if args.match_to_eprint:
-                        filesToUpload.append(MatchMetadata().process_match_to_arXiv(path))
+                        fileList = MatchMetadata().process_match_to_arXiv(path))
+                        filesToUpload.append(fileList[1])
                     for f in filesToUpload:
                         fileId = utils.upload_spreadsheet(f)
                         logger.info("File available in google drive: %s" % fileId)

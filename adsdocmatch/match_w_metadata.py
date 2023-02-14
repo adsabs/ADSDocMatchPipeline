@@ -1,15 +1,16 @@
 import os
 from adsputils import setup_logging, load_config
-from pub_parser import get_pub_metadata
-from oracle_util import OracleUtil
+from adsdocmatch.pub_parser import get_pub_metadata
+from adsdocmatch.oracle_util import OracleUtil
 from pyingest.parsers.arxiv import ArxivParser
 import time
 import re
 import csv
 
-logger = setup_logging('docmatch_log_match_metadata')
-config = {}
-config.update(load_config())
+proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
+config = load_config(proj_home=proj_home)
+
+logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
 
 class MatchMetadata():
 
@@ -55,7 +56,7 @@ class MatchMetadata():
         if matches:
             return matches
         # when error, return status_code
-        return ['%s status_code=%s' % (results.get('comment', ''), results.get('status_code', ''))]
+        return ['%s status_code=%s' % (result[0].get('comment', ''), result[0].get('status_code', ''))]
 
     def write_results(self, result_filename, matches):
         """
@@ -314,9 +315,9 @@ class MatchMetadata():
         :param output_filename:
         :return:
         """
-        if docmatch_filename.endswith(config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME']):
+        if docmatch_filename.endswithconfig.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'):
             source = 'eprint'
-        elif docmatch_filename.endswith(config['DOCMATCHPIPELINE_PUB_RESULT_FILENAME']):
+        elif docmatch_filename.endswithconfig.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'):
             source = 'pub'
         else:
             logger.error('Unable to determine type of result file, no combined file created.')
@@ -335,15 +336,17 @@ class MatchMetadata():
         :param path:
         :return:
         """
-        input_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
-        result_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_PUB_RESULT_FILENAME'])
+        input_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
+        result_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'))
 
         self.batch_match_to_arXiv(input_filename, result_filename)
 
-        classic_matched_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME'])
-        combined_output_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_PUB_COMBINED_FILENAME'])
+        classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
+        combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
 
         self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+
+        return [result_filename, combined_output_filename]
 
     def process_match_to_pub(self, path):
         """
@@ -351,12 +354,14 @@ class MatchMetadata():
         :param path:
         :return:
         """
-        input_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
-        result_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME'])
+        input_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
+        result_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'))
 
         self.batch_match_to_pub(input_filename, result_filename)
 
-        classic_matched_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME'])
-        combined_output_filename = "%s%s" % (path, config['DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME'])
+        classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
+        combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
 
         self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+
+        return [result_filename, combined_output_filename]
