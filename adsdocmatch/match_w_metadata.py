@@ -218,7 +218,7 @@ class MatchMetadata():
         if match:
             admin_notes = match.group(1)
             for result in results:
-                result['comment'] = ('%s %s'%(results.get('comment', ''), admin_notes)).strip()
+                result['comment'] = ('%s %s'%(result.get('comment', ''), admin_notes)).strip()
         return results
 
     def read_classic_results(self, classic, source):

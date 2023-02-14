@@ -5,7 +5,12 @@ DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC = '10'
 
 # input filenames
 DOCMATCHPIPELINE_INPUT_FILENAME = '/match_oracle.input'
-DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME = '/matches.output'
+
+# match arxiv to published (i.e. starting from daily arxiv ingest)
+DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME = '/match.out'
+
+# match published to arxiv (i.e. starting from collection index)
+# DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME = '/matches.output'
 
 # intermediate step filenames
 DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME = '/matched_eprint.output.csv'
