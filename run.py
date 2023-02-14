@@ -84,7 +84,7 @@ def main():
                         fileList = MatchMetadata().process_match_to_pub(path)
                         filesToUpload.append(fileList[1])
                     if args.match_to_eprint:
-                        fileList = MatchMetadata().process_match_to_arXiv(path))
+                        fileList = MatchMetadata().process_match_to_arXiv(path)
                         filesToUpload.append(fileList[1])
                     for f in filesToUpload:
                         fileId = utils.upload_spreadsheet(f)
