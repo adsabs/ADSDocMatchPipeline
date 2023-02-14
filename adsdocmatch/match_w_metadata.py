@@ -315,9 +315,9 @@ class MatchMetadata():
         :param output_filename:
         :return:
         """
-        if docmatch_filename.endswithconfig.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'):
+        if docmatch_filename.endswith(config.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default')):
             source = 'eprint'
-        elif docmatch_filename.endswithconfig.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'):
+        elif docmatch_filename.endswith(config.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default')):
             source = 'pub'
         else:
             logger.error('Unable to determine type of result file, no combined file created.')
