@@ -270,13 +270,16 @@ class MatchMetadata():
             if len(nowadays_result) == 1:
                 combined_results.append(nowadays_result)
                 continue
-            # insert two columns: 'classic bibcode (link)','curator comment' between the source and matched bibcode columns
-            classic_bibcode = classic_results.get(nowadays_result[0][-21:-2], '')
-            classic_bibcode_link = hyperlink_format % (classic_bibcode, classic_bibcode) if classic_bibcode else ''
-            # need to format the two linked columns again
-            source_bibcode_link = '"%s"'%nowadays_result[0].replace('"','""')
-            matched_bibcode_link = '"%s"'%nowadays_result[2].replace('"','""') if not nowadays_result[2][-21:-2].startswith('.') else ''
-            combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%nowadays_result[6], nowadays_result[3], nowadays_result[4], '"%s"'%nowadays_result[5]])
+            try:
+                # insert two columns: 'classic bibcode (link)','curator comment' between the source and matched bibcode columns
+                classic_bibcode = classic_results.get(nowadays_result[0][-21:-2], '')
+                classic_bibcode_link = hyperlink_format % (classic_bibcode, classic_bibcode) if classic_bibcode else ''
+                # need to format the two linked columns again
+                source_bibcode_link = '"%s"'%nowadays_result[0].replace('"','""')
+                matched_bibcode_link = '"%s"'%nowadays_result[2].replace('"','""') if not nowadays_result[2][-21:-2].startswith('.') else ''
+                combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%nowadays_result[6], nowadays_result[3], nowadays_result[4], '"%s"'%nowadays_result[5]])
+            except:
+                combined_results.append(nowadays_result)
         return combined_results
     
     def write_combined_results(self, combined_results, output_filename):
