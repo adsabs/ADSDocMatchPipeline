@@ -309,8 +309,8 @@ class MatchMetadata():
                         elif (len(combined_result) >= 8 and float(combined_result[7]) >= 0.5 and
                                   (('None' in combined_result[8]) or ('Multi match' in combined_result[5]))):
                             combined_result[2] = 'verify'
-                    except:
-                        pass
+                    except Exception as err:
+                        logger.warning("Error combining classic and docmatcher results: %s" % err)
                     fp.write(','.join(combined_result)+'\n')
 
     def merge_classic_docmatch_results(self, classic_filename, docmatch_filename, output_filename):
