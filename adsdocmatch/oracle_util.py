@@ -18,7 +18,7 @@ class OracleUtil():
 
     COLLABORATION_PAT = re.compile(r"(?P<collaboration>[(\[]*[A-Za-z\s\-\/]+\s[Cc]ollaboration[s]?\s*[A-Z\.]*[\s.,)\]]+)")
     COMMA_BEFORE_AND = re.compile(r"(,)?(\s+and)", re.IGNORECASE)
-    WORDS_ONLY = re.compile('\w+')
+    WORDS_ONLY = re.compile(r"\w+")
 
     # all author lists coming in need to be case-folded
     # replaced van(?: der) with van|van der
@@ -342,7 +342,8 @@ class OracleUtil():
                            'curator_comment': '-1',
                            'verified_bib': row.matched_bib,
                            'matched_bib': row.matched_bib}
-                dt = dt.append(new_row, ignore_index=True)
+                # dt = dt.append(new_row, ignore_index=True)
+                dt = pd.concat([dt, pd.DataFrame.from_dict([new_row])])
     
             # Replace curator comments; 'add':'1.1' and 'delete':'-1'
             if row.curator_comment == 'add':
