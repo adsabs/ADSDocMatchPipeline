@@ -300,15 +300,18 @@ class MatchMetadata():
                 # include only the lines with classic bibcode, or matched bibcode
                 elif len(combined_result[1]) > 0 or len(combined_result[4]) > 0:
                     # if there is a classic match see if it agrees or disagrees with oracle
-                    if len(combined_result[1]) > 0:
-                        combined_result[2] = 'agree' if combined_result[1] == combined_result[4] else 'disagree'
-                    # if there is a multi match and confidence is high
-                    # or if there was no abstract for comparison and confidence is high
-                    # mark it to be verified
-                    elif (len(combined_result) >= 8 and float(combined_result[7]) >= 0.5 and
-                              (('None' in combined_result[8]) or ('Multi match' in combined_result[5]))):
-                        combined_result[2] = 'verify'
-                    fp.write(','.join(combined_result)+'\n')
+                    try:
+                        if len(combined_result[1]) > 0:
+                            combined_result[2] = 'agree' if combined_result[1] == combined_result[4] else 'disagree'
+                        # if there is a multi match and confidence is high
+                        # or if there was no abstract for comparison and confidence is high
+                        # mark it to be verified
+                        elif (len(combined_result) >= 8 and float(combined_result[7]) >= 0.5 and
+                                  (('None' in combined_result[8]) or ('Multi match' in combined_result[5]))):
+                            combined_result[2] = 'verify'
+                        fp.write(','.join(combined_result)+'\n')
+                    except:
+                        pass
 
     def merge_classic_docmatch_results(self, classic_filename, docmatch_filename, output_filename):
         """
