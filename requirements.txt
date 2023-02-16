@@ -1,4 +1,6 @@
 git+https://github.com/adsabs/adsabs-pyingest.git@v1.0.24
-openpyxl==3.0.10
-pandas==1.5.2
-requests==2.20.0
+git+https://github.com/adsabs/ADSGoogleConnector.git@v0.0.1
+adsputils==1.3.0
+numpy==1.24.2
+openpyxl==3.1.0
+pandas==1.5.3

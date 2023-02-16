@@ -2,7 +2,7 @@ from builtins import chr
 import sys
 import re
 from adsputils import setup_logging
-from pub_parser.unicode import UnicodeHandler
+from adsdocmatch.pub_parser.unicode import UnicodeHandler
 
 logger = setup_logging('docmatch_log_pub_parser')
 
