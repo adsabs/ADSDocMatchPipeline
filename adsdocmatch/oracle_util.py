@@ -228,7 +228,9 @@ class OracleUtil():
         except KeyError as e:
             results.append({
                 'source_bibcode' : metadata['bibcode'],
-                'comment' : 'Exception: KeyError, %s missing.' % str(e)})
+                'comment' : 'Exception: KeyError, %s missing.' % str(e),
+                'status_code': 'did not send request to oracle service'})
+
             return results
 
         sleep_sec = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
