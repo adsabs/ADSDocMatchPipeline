@@ -97,7 +97,7 @@ def main():
         # via cron: check for files in curated, and process/archive if found
         elif args.add_to_oracle:
             try:
-                utils.add_to_oracle()
+                utils.process_curated_spreadsheets()
             except Exception as err:
                 logger.error("Error adding matches to oracledb: %s" % err)
         else:

@@ -30,7 +30,7 @@ def upload_spreadsheet(upload_filename):
     return gm.upload_file(**kwargs)
 
 
-def process_curated_spreadsheet(gm, filemetadata):
+def process_spreadsheet(gm, filemetadata):
     try:
         # first, download the curated spreadsheet, ...
         filename = filemetadata.get("name", None)
@@ -43,14 +43,14 @@ def process_curated_spreadsheet(gm, filemetadata):
             fx.write(data)
 
         # # second, parse the xlsx and add the results to oracledb...
-        # oracleUtil = OracleUtil()
-        # oracleUtil.update_db_curated_matches(xlsfile)
+        oracleUtil = OracleUtil()
+        oracleUtil.update_db_curated_matches(xlsfile)
 
     except Exception as err:
         raise GoogleDownloadException("Unable to download sheet to local .xlsx file: %s" % err)
 
 
-def archive_curated_spreadsheet(gm, filemetadata):
+def archive_spreadsheet(gm, filemetadata):
     try:
         # third, reparent curated to archive on Google Drive, ...
         oldparentid = conf.get("GOOGLE_FOLDER_IDS", {}).get("curated", None)
@@ -66,7 +66,7 @@ def archive_curated_spreadsheet(gm, filemetadata):
         raise GoogleReparentException("Failed to archive curated file %s: %s" % (fileId, err))
 
 
-def add_to_oracle():
+def process_curated_spreadsheets():
     secretsPath = conf.get('GOOGLE_SECRETS_FILENAME', None)
     scopesList = conf.get('GOOGLE_API_SCOPES', [])
     folderId = conf.get("GOOGLE_FOLDER_IDS", {}).get("curated", None)
@@ -81,8 +81,8 @@ def add_to_oracle():
     else:
         for f in files:
             try:
-                process_curated_spreadsheet(gm, f)
-                archive_curated_spreadsheet(gm, f)
+                process_spreadsheet(gm, f)
+                archive_spreadsheet(gm, f)
             except Exception as err:
                 logger.warning("Unable to add curated sheet (%s) to local oracledb: %s" % (f, err))
             else:
