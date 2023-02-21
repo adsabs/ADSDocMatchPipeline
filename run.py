@@ -86,6 +86,8 @@ def main():
                     if args.match_to_eprint:
                         fileList = MatchMetadata().process_match_to_arXiv(path)
                         filesToUpload.append(fileList[1])
+                    # If either process created files to upload,
+                    # send them to the Google Drive now.
                     for f in filesToUpload:
                         fileId = utils.upload_spreadsheet(f)
                         logger.info("File available in google drive: %s" % fileId)
