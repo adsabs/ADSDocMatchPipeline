@@ -95,7 +95,7 @@ def main():
                         logger.info("File available in google drive: %s" % fileId)
                         try:
                             url_post = "https://docs.google.com/spreadsheets/d/%s" % fileId
-                            url_slack = conf.get("SLACK_CURATOR_URL","")
+                            url_slack = conf.get("SLACK_WORKFLOW_URL","")
                             slack = SlackPublisher(slackurl=url_slack,
                                                    slackvar="url")
                             slack.publish(url_post)

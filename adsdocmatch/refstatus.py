@@ -1,5 +1,6 @@
 import json
 import os
+import requests
 from adsputils import load_config
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
@@ -17,7 +18,7 @@ class NoResultsException(Exception):
     pass
 
 
-class RepStatusException(Exception):
+class RefStatusException(Exception):
     pass
 
 
@@ -32,7 +33,7 @@ def RefereedStatus(bibstem):
             request_url = jdb_url + query
             r = requests.get(request_url, headers=header)
             if r.status_code == 200:
-                data = json.loads(r.json())
+                data = r.json()
             else:
                 raise FailedQueryException("Journals query failed with status code %s" % r.status_code)
             refereed = data.get('summary', {}).get('master', {}).get('refereed', None)
