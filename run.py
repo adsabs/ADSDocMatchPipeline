@@ -76,16 +76,17 @@ def main():
             if path:
                 try:
                     filesToUpload = []
+                    # if successful, process_match returns the filename to
+                    # be uploaded to google.  If a classic match file
+                    # exists, the comparison filename will be returned.
+                    # If no classic match file exists, the oracle match
+                    # filename will be returned.
                     if args.match_to_pub:
-                        # if successful, process_match returns the filename to
-                        # be uploaded to google.
-                        # fileList[0] is result_filename,
-                        # fileList[1] is combined_result_filename
-                        fileList = MatchMetadata().process_match_to_pub(path)
-                        filesToUpload.append(fileList[1])
+                        outFile = MatchMetadata().process_match_to_pub(path)
+                        filesToUpload.append(outFile)
                     if args.match_to_eprint:
                         fileList = MatchMetadata().process_match_to_arXiv(path)
-                        filesToUpload.append(fileList[1])
+                        filesToUpload.append(outFile)
                     # If either process created files to upload,
                     # send them to the Google Drive now.
                     for f in filesToUpload:

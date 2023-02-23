@@ -15,8 +15,8 @@ def upload_spreadsheet(upload_filename):
     fx = upload_filename.split('/')
     upload_name = ".".join(fx[-2:])
     secretsPath = conf.get('GOOGLE_SECRETS_FILENAME', None)
-    scopesList = conf.get('GOOGLE_API_SCOPES', [])
-    folderId = conf.get("GOOGLE_FOLDER_IDS", {}).get("basedir", None)
+    scopesList = [conf.get('GOOGLE_API_SCOPE', None)]
+    folderId = conf.get("GOOGLE_BASEDIR_ID", None)
 
     gm = GoogleManager(authtype="service",
                        folderId=folderId,
@@ -53,8 +53,8 @@ def process_spreadsheet(gm, filemetadata):
 def archive_spreadsheet(gm, filemetadata):
     try:
         # third, reparent curated to archive on Google Drive, ...
-        oldparentid = conf.get("GOOGLE_FOLDER_IDS", {}).get("curated", None)
-        newparentid = conf.get("GOOGLE_FOLDER_IDS", {}).get("archive", None)
+        oldparentid = conf.get("GOOGLE_CURATED_FOLDER_ID", None)
+        newparentid = conf.get("GOOGLE_ARCHIVE_FOLDER_ID", None)
         parentids = filemetadata.get("parents", None)
         fileId = filemetadata.get("id", None)
         kwargs = {"fileId": fileId,
@@ -68,8 +68,8 @@ def archive_spreadsheet(gm, filemetadata):
 
 def process_curated_spreadsheets():
     secretsPath = conf.get('GOOGLE_SECRETS_FILENAME', None)
-    scopesList = conf.get('GOOGLE_API_SCOPES', [])
-    folderId = conf.get("GOOGLE_FOLDER_IDS", {}).get("curated", None)
+    scopesList = [conf.get('GOOGLE_API_SCOPE', None)]
+    folderId = conf.get("GOOGLE_CURATED_FOLDER_ID", None)
     try:
         gm = GoogleManager(authtype="service",
                            folderId=folderId,
