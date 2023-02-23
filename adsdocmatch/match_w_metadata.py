@@ -350,9 +350,11 @@ class MatchMetadata():
         classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
         combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
 
-        self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
-
-        return [result_filename, combined_output_filename]
+        if os.path.exists(classic_matched_filename):
+            self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+            return combined_output_filename
+        else:
+            return result_filename
 
     def process_match_to_pub(self, path):
         """
@@ -368,6 +370,8 @@ class MatchMetadata():
         classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
         combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
 
-        self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
-
-        return [result_filename, combined_output_filename]
+        if os.path.exists(classic_matched_filename):
+            self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+            return combined_output_filename
+        else:
+            return result_filename
