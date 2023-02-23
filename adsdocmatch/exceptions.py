@@ -28,3 +28,5 @@ class ParserWriteException(Exception):
 class OracleAddRecordsException(Exception):
     pass
 
+class SlackPublishException(Exception):
+    pass

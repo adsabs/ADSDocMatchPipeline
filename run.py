@@ -1,6 +1,7 @@
 import argparse
 import os
 from adsdocmatch.match_w_metadata import MatchMetadata
+from adsdocmatch.slackhandler import SlackPublisher
 from adsputils import load_config, setup_logging
 import adsdocmatch.utils as utils
 
@@ -92,6 +93,14 @@ def main():
                     for f in filesToUpload:
                         fileId = utils.upload_spreadsheet(f)
                         logger.info("File available in google drive: %s" % fileId)
+                        try:
+                            url_post = "https://docs.google.com/spreadsheets/d/%s" % fileId
+                            url_slack = conf.get("SLACK_CURATOR_URL","")
+                            slack = SlackPublisher(slackurl=url_slack,
+                                                   slackvar="url")
+                            slack.publish(url_post)
+                        except Exception as err:
+                            logger.warning("Failed to send notification to Slack: %s" % err)
                 except Exception as err:
                         logger.warning("Match to pub/upload failed: %s" % err)
             else:
