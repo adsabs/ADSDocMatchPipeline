@@ -12,10 +12,10 @@ logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), p
 
 
 def upload_spreadsheet(upload_filename):
-    fx = upload_filename.split('/')
+    fx = upload_filename.split("/")
     upload_name = ".".join(fx[-2:])
-    secretsPath = conf.get('GOOGLE_SECRETS_FILENAME', None)
-    scopesList = [conf.get('GOOGLE_API_SCOPE', None)]
+    secretsPath = conf.get("GOOGLE_SECRETS_FILENAME", None)
+    scopesList = [conf.get("GOOGLE_API_SCOPE", None)]
     folderId = conf.get("GOOGLE_BASEDIR_ID", None)
 
     gm = GoogleManager(authtype="service",
@@ -67,8 +67,8 @@ def archive_spreadsheet(gm, filemetadata):
 
 
 def process_curated_spreadsheets():
-    secretsPath = conf.get('GOOGLE_SECRETS_FILENAME', None)
-    scopesList = [conf.get('GOOGLE_API_SCOPE', None)]
+    secretsPath = conf.get("GOOGLE_SECRETS_FILENAME", None)
+    scopesList = [conf.get("GOOGLE_API_SCOPE", None)]
     folderId = conf.get("GOOGLE_CURATED_FOLDER_ID", None)
     try:
         gm = GoogleManager(authtype="service",

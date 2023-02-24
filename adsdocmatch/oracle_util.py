@@ -9,9 +9,9 @@ import numpy as np
 import re
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
-config = load_config(proj_home=proj_home)
+conf = load_config(proj_home=proj_home)
 
-logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
+logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=conf.get("LOG_STDOUT", "FALSE"))
 
 
 class OracleUtil():
@@ -233,13 +233,13 @@ class OracleUtil():
 
             return results
 
-        sleep_sec = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
+        sleep_sec = int(conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
         try:
-            num_attempts = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
+            num_attempts = int(conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
             for i in range(num_attempts):
                 response = requests.post(
-                    url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/docmatch',
-                    headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
+                    url=conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/docmatch',
+                    headers={'Authorization': 'Bearer %s' % conf.get('DOCMATCHPIPELINE_API_TOKEN', '')},
                     data=json.dumps(payload),
                     timeout=60
                 )
@@ -383,16 +383,16 @@ class OracleUtil():
         :param matches:
         :return:
         """
-        max_lines_one_call = int(config.get('DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE', 2000))
+        max_lines_one_call = int(conf.get('DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE', 2000))
         data = self.make_params(matches)
         count = 0
         if len(data) > 0:
             for i in range(0, len(data), max_lines_one_call):
                 slice_item = slice(i, i + max_lines_one_call, 1)
                 response = requests.put(
-                    url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/add',
+                    url=conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/add',
                     headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
+                             'Authorization': 'Bearer %s' % conf.get('DOCMATCHPIPELINE_API_TOKEN', '')},
                     data=json.dumps(data[slice_item]),
                     timeout=60
                 )
@@ -433,8 +433,8 @@ class OracleUtil():
         start = 0
         count = 0
         headers = {'Content-type': 'application/json', 'Accept': 'application/json',
-                   'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')}
-        url = config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/query'
+                   'Authorization': 'Bearer %s' % conf.get('DOCMATCHPIPELINE_API_TOKEN', '')}
+        url = conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/query'
         while True:
             params = {'start': start}
             if days:

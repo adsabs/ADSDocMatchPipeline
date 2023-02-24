@@ -8,9 +8,9 @@ import re
 import csv
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
-config = load_config(proj_home=proj_home)
+conf = load_config(proj_home=proj_home)
 
-logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
+logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=conf.get("LOG_STDOUT", "FALSE"))
 
 class MatchMetadata():
 
@@ -321,9 +321,9 @@ class MatchMetadata():
         :param output_filename:
         :return:
         """
-        if docmatch_filename.endswith(config.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default')):
+        if docmatch_filename.endswith(conf.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default')):
             source = 'eprint'
-        elif docmatch_filename.endswith(config.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default')):
+        elif docmatch_filename.endswith(conf.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default')):
             source = 'pub'
         else:
             logger.error('Unable to determine type of result file, no combined file created.')
@@ -342,13 +342,13 @@ class MatchMetadata():
         :param path:
         :return:
         """
-        input_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
-        result_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'))
+        input_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
+        result_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'))
 
         self.batch_match_to_arXiv(input_filename, result_filename)
 
-        classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
-        combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
+        classic_matched_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
+        combined_output_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
 
         if os.path.exists(classic_matched_filename):
             self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
@@ -362,13 +362,13 @@ class MatchMetadata():
         :param path:
         :return:
         """
-        input_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
-        result_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'))
+        input_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
+        result_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'))
 
         self.batch_match_to_pub(input_filename, result_filename)
 
-        classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
-        combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
+        classic_matched_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
+        combined_output_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
 
         if os.path.exists(classic_matched_filename):
             self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
