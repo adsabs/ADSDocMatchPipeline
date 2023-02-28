@@ -331,7 +331,7 @@ class OracleUtil():
             # If curator comment is not in vocabulary; print flag, and drop the row
             comments = ['update', 'add', 'delete']
             if row.curator_comment not in comments:
-                print('Error: Bad curator comment at', row.source_bib)
+                logger.warning('Error: Bad curator comment at', row.source_bib)
                 dt.drop(index, inplace=True)
     
             # Where curator comment is 'update', duplicate row and rewrite actions;
@@ -398,10 +398,10 @@ class OracleUtil():
                 )
                 if response.status_code == 200:
                     json_text = json.loads(response.text)
-                    print("%s:%s" % (slice_item, json_text))
+                    logger.info("%s:%s" % (slice_item, json_text))
                     count += max_lines_one_call
                 else:
-                    print('Oracle returned status code %d'%response.status_code)
+                    logger.error('Oracle returned status code %d'%response.status_code)
                     return 'Stopped...'
             return 'Added %d to database'%count
         return 'No data!'
@@ -444,7 +444,7 @@ class OracleUtil():
                 json_dict = json.loads(response.text)
                 params = json_dict['params']
                 results = json_dict['results']
-                print('[%d, %d]' % (start, start + len(results)))
+                logger.info('[%d, %d]' % (start, start + len(results)))
                 count += len(results)
                 start += params['rows']
                 if not results:
