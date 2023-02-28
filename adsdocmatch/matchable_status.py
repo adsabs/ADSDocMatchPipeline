@@ -18,11 +18,11 @@ class NoResultsException(Exception):
     pass
 
 
-class RefStatusException(Exception):
+class MatchableStatusException(Exception):
     pass
 
 
-def refereed_status(bibstem):
+def matchable_status(bibstem):
     try:
         token = config.get("DOCMATCHPIPELINE_API_TOKEN", None)
         jdb_url = config.get("DOCMATCHPIPELINE_API_JOURNALS_SERVICE_URL", None)
@@ -45,4 +45,4 @@ def refereed_status(bibstem):
         else:
             raise QueryConfigException("Failed to get one or more config values for API search")
     except Exception as err:
-        raise RefStatusException(err)
+        raise MatchableStatusException(err)

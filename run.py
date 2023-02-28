@@ -1,7 +1,8 @@
 import argparse
 import os
 from adsdocmatch.match_w_metadata import MatchMetadata
-from adsdocmatch.slackhandler import SlackPublisher
+from adsdocmatch.slack_handler import SlackPublisher
+from adsdocmatch.oracle_util import OracleUtil
 from adsputils import load_config, setup_logging
 import adsdocmatch.utils as utils
 
@@ -49,6 +50,27 @@ def get_args():
                         action="store_true",
                         default=False,
                         help="Fetch curated files and add to oracle")
+
+    parser.add_argument("-q",
+                        "--query-oracle",
+                        dest="query_oracle",
+                        action="store_true",
+                        default=False,
+                        help="Query oracle for recent matches")
+
+    parser.add_argument("-n",
+                        "--number-of-days",
+                        dest="num_days",
+                        action="store",
+                        default=1,
+                        help="Last N days to query")
+
+    parser.add_argument("-o",
+                        "--output-filename",
+                        dest="output_filename",
+                        action="store",
+                        default="./output.csv",
+                        help="Filename for oracle query output.")
 
     return parser.parse_args()
 
@@ -112,6 +134,15 @@ def main():
                 utils.process_curated_spreadsheets()
             except Exception as err:
                 logger.error("Error adding matches to oracledb: %s" % err)
+
+        elif args.query_oracle:
+            try:
+                query_results = OracleUtil.query(args.output_filename,
+                                                 args.num_days)
+                logger.info(query_results)
+            except Exception as err:
+                logger.error("Error querying oracledb: %s" % err)
+                
         else:
             logger.debug("Nothing to do.")
 
