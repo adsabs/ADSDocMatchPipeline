@@ -449,7 +449,7 @@ class OracleUtil():
                 start += params['rows']
                 if not results:
                     break
-                self.outut_query_matches(output_filename, results)
+                self.output_query_matches(output_filename, results)
         return 'Got %d records from db.' % count
 
     def update_db_curated_matches(self, input_filename):
