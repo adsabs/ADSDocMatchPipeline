@@ -137,7 +137,7 @@ def main():
 
         elif args.query_oracle:
             try:
-                query_results = OracleUtil.query(args.output_filename,
+                query_results = OracleUtil().query(args.output_filename,
                                                  args.num_days)
                 logger.info(query_results)
             except Exception as err:
