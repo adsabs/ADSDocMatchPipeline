@@ -360,7 +360,7 @@ class TestDocMatch(unittest.TestCase):
             fullpath = path + current_dir + filename
             with open(fullpath, 'rb') as arxiv_fp:
                 metadata = self.match_metadata.ARXIV_PARSER.parse(arxiv_fp)
-                assert(self.match_metadata.ORACLE_UTIL.normalize_author_list(metadata['authors']), authors)
+                self.assertEqual(self.match_metadata.ORACLE_UTIL.normalize_author_list(metadata['authors']), authors)
 
     def test_extract_doi(self):
         """ """
@@ -373,7 +373,7 @@ class TestDocMatch(unittest.TestCase):
             fullpath = path + current_dir + filename
             with open(fullpath, 'rb') as arxiv_fp:
                 metadata = self.match_metadata.ARXIV_PARSER.parse(arxiv_fp)
-                assert(self.match_metadata.ORACLE_UTIL.extract_doi(metadata), doi)
+                self.assertEqual(self.match_metadata.ORACLE_UTIL.extract_doi(metadata), doi)
 
     def test_read_google_sheet(self):
         """ """
