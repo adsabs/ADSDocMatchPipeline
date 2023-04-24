@@ -142,7 +142,7 @@ def main():
                 logger.info(query_results)
             except Exception as err:
                 logger.error("Error querying oracledb: %s" % err)
-                
+
         else:
             logger.debug("Nothing to do.")
 

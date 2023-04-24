@@ -35,7 +35,7 @@ def matchable_status(bibstem):
                 data = r.json()
             else:
                 raise FailedQueryException("Journals query failed with status code %s" % r.status_code)
-            refereed = data.get("summary", {}).get("master", {}).get("refereed", None)
+            refereed = data.get("summary", {}).get("master", {}).get("pubtype", None)
             if refereed == "yes":
                 return True
             elif (refereed == "no" or refereed == "na"):
