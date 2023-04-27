@@ -353,18 +353,19 @@ class OracleUtil():
 
         # Format columns (preprint \t publisher \t action) for txt file
         # since eprint is arXiv matched against publisher, while pub is publisher matched against arXiv
-        match_eprint_string = conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint').replace('.xlsx','').replace('.csv','')
-        match_pub_string = conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub').replace('.xlsx','').replace('.csv','')
+        match_eprint_string = conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint')
+        match_pub_string = conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub')
         results = []
+        input_filename_base = input_filename.split('/')[-1].replace('.xlsx','')
         try:
-            if match_eprint_string in input_filename:
+            if match_eprint_string in input_filename_base:
                 results = dt[['source_bib', 'verified_bib', 'curator_comment']]
-            elif match_pub_string in input_filename:
+            elif match_pub_string in input_filename_base:
                 results = dt[['verified_bib', 'source_bib', 'curator_comment']]
         except Exception as err:
             logger.warning('Error extracting results from %s: %s' % (input_filename, err))
 
-        if type(results) != "<class 'pandas.core.frame.DataFrame'>":
+        if type(results) == pd.core.frame.DataFrame:
             if not results.empty:
                 return results.values.tolist()
             else:

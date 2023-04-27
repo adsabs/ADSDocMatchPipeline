@@ -377,8 +377,8 @@ class TestDocMatch(unittest.TestCase):
 
     def test_read_google_sheet(self):
         """ """
-        match_w_pub_filename = os.path.dirname(__file__) + '/stubdata/' + '2023-01-25.compare.xlsx'
-        results = self.match_metadata.ORACLE_UTIL.read_google_sheet(match_w_pub_filename)
+        match_w_eprint_filename = os.path.dirname(__file__) + '/stubdata/' + '2023-01-25.compare_eprint.csv.xlsx'
+        results = self.match_metadata.ORACLE_UTIL.read_google_sheet(match_w_eprint_filename)
         expected = [
             ['2021arXiv210913594W', '2023Quant...7..900W', '1.1'],
             ['2021arXiv211102596P', '2023Quant...7..898P', '1.1'],
@@ -411,8 +411,8 @@ class TestDocMatch(unittest.TestCase):
         ]
         assert(results == expected)
 
-        match_w_eprint_filename = os.path.dirname(__file__) + '/stubdata/' + '2023-01-24.pubcompare.xlsx'
-        results = self.match_metadata.ORACLE_UTIL.read_google_sheet(match_w_eprint_filename)
+        match_w_pub_filename = os.path.dirname(__file__) + '/stubdata/' + '2023-01-24.compare_pub.csv.xlsx'
+        results = self.match_metadata.ORACLE_UTIL.read_google_sheet(match_w_pub_filename)
         expected = [
             ['2023arXiv230108396S', '2023JPhCo...7a5001S', '1.1'],
             ['2022arXiv220911954M', '2022ConPh..63...34M', '1.1'],

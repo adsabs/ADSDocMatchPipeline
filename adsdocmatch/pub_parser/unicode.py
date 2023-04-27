@@ -45,8 +45,8 @@ class UnicodeHandler(UserDict):
 
     """
 
-    re_entity = re.compile('&([a-zA-Z0-9]{2,}?);')
-    re_numentity = re.compile('&#(?P<number>\d+);')
+    re_entity = re.compile(r'&([a-zA-Z0-9]{2,}?);')
+    re_numentity = re.compile(r'&#(?P<number>\d+);')
     re_hexnumentity = re.compile('&#x(?P<hexnum>[0-9a-fA-F]+);')
 
     XML_PREDEFINED_ENTITIES = ('quot', 'amp', 'apos', 'lt', 'gt')
