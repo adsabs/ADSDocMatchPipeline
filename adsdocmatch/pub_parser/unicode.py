@@ -96,7 +96,7 @@ class UnicodeHandler(UserDict):
 
     def sub_entity(self, match):
         """
-    
+
         :param match:
         :return:
         """
@@ -105,7 +105,7 @@ class UnicodeHandler(UserDict):
             ret = eval("u'\\u%04x'" % self[ent].code)
             return ret
         return None
-    
+
     def sub_xml_entity(self, match):
         """
         similar to sub_entity, but preserve the built-in XML predifined entities
@@ -121,18 +121,18 @@ class UnicodeHandler(UserDict):
             return ret
         else:
             raise UnicodeError('Unknown numeric entity: %s' % match.group(0))
-    
-    
+
+
     def numeric_entity_to_unicode(self, match):
-    
+
         entity_number = int(match.group('number'))
         try:
             return self.__unichr(entity_number)
         except ValueError:
             raise UnicodeError('Unknown numeric entity: %s' % match.group(0))
-    
+
     def hexadecimal_entity_to_unicode(self, match):
-    
+
         entity_number = int(match.group('hexnum'), 16)
         try:
             return self.__unichr(entity_number)
@@ -141,7 +141,7 @@ class UnicodeHandler(UserDict):
 
     def ent2u(self, the_entity):
         """
-    
+
         :param the_entity:
         :return:
         """
@@ -149,7 +149,7 @@ class UnicodeHandler(UserDict):
         the_unicode = self.re_numentity.sub(self.numeric_entity_to_unicode, the_unicode)
         the_unicode = self.re_hexnumentity.sub(self.hexadecimal_entity_to_unicode, the_unicode)
         return the_unicode
-    
+
     def ent2xml(self, the_entity):
         """
         translates entities to unicode but keep basic XML entities (such as "&lt;", "&gt;") encoded

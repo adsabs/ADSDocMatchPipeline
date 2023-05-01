@@ -353,8 +353,8 @@ class OracleUtil():
 
         # Format columns (preprint \t publisher \t action) for txt file
         # since eprint is arXiv matched against publisher, while pub is publisher matched against arXiv
-        match_eprint_string = conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint')
-        match_pub_string = conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub')
+        match_eprint_string = conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint').strip('.csv')
+        match_pub_string = conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub').strip('.csv')
         results = []
         input_filename_base = input_filename.split('/')[-1].replace('.xlsx','')
         try:
