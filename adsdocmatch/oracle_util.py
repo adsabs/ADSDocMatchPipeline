@@ -304,7 +304,7 @@ class OracleUtil():
 
     def read_google_sheet(self, input_filename):
         """
-    
+
         :param input_filename:
         :return:
         """
@@ -316,24 +316,24 @@ class OracleUtil():
                 'verified bibcode': 'verified_bib',
                 'matched bibcode (link)': 'matched_bib'}
         dt = dt.rename(columns=cols)
-    
+
         # Drop unneeded rows where curator comment is: null, 'agree', 'disagree', 'no action' or 'verify'
         array = [np.nan, 'agree', 'disagree', 'no action', 'verify']
         dt = dt.loc[~dt['curator_comment'].isin(array)]
-    
+
         # Where verified bibcode is null, insert matched bibcode
         dt['verified_bib'] = dt['verified_bib'].fillna(dt['matched_bib'])
-    
+
         # Set the db actions by given vocabulary (add, delete, or update)
         dt = dt.reset_index()
         for index, row in dt.iterrows():
-    
+
             # If curator comment is not in vocabulary; print flag, and drop the row
             comments = ['update', 'add', 'delete']
             if row.curator_comment not in comments:
                 logger.warning('Error: Bad curator comment at', row.source_bib)
                 dt.drop(index, inplace=True)
-    
+
             # Where curator comment is 'update', duplicate row and rewrite actions;
             #    Assigns delete/-1 for matched bibcode, add/1.1 for verified bibcode
             if row.curator_comment == 'update':
@@ -344,27 +344,38 @@ class OracleUtil():
                            'matched_bib': row.matched_bib}
                 # dt = dt.append(new_row, ignore_index=True)
                 dt = pd.concat([dt, pd.DataFrame.from_dict([new_row])])
-    
+
             # Replace curator comments; 'add':'1.1' and 'delete':'-1'
             if row.curator_comment == 'add':
                 dt = dt.replace(row.curator_comment, "1.1")
             if row.curator_comment == 'delete':
                 dt = dt.replace(row.curator_comment, "-1")
-    
-        # Format columns (preprint \t publisher \t action) for txt file
-        # since compare is arXiv matched against publisher, while pubcompare is publisher matched against arXiv
-        if '.compare' in input_filename:
-            results = dt[['source_bib', 'verified_bib', 'curator_comment']]
-        elif '.pubcompare' in input_filename:
-            results = dt[['verified_bib', 'source_bib', 'curator_comment']]
-        else:
-            results = []
 
-        return results.values.tolist()
-    
+        # Format columns (preprint \t publisher \t action) for txt file
+        # since eprint is arXiv matched against publisher, while pub is publisher matched against arXiv
+        match_eprint_string = conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint').strip('.csv')
+        match_pub_string = conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub').strip('.csv')
+        results = []
+        input_filename_base = input_filename.split('/')[-1].replace('.xlsx','')
+        try:
+            if match_eprint_string in input_filename_base:
+                results = dt[['source_bib', 'verified_bib', 'curator_comment']]
+            elif match_pub_string in input_filename_base:
+                results = dt[['verified_bib', 'source_bib', 'curator_comment']]
+        except Exception as err:
+            logger.warning('Error extracting results from %s: %s' % (input_filename, err))
+
+        if type(results) == pd.core.frame.DataFrame:
+            if not results.empty:
+                return results.values.tolist()
+            else:
+                logger.warning('No results from %s' % input_filename)
+        else:
+            logger.warning('Input file %s is not a valid curated sheet' % input_filename)
+
     def make_params(self, matches):
         """
-    
+
         :param matches:
         :return:
         """
@@ -376,10 +387,10 @@ class OracleUtil():
                 "confidence": match[2]
             })
         return formatted
-    
+
     def add_to_db(self, matches):
         """
-    
+
         :param matches:
         :return:
         """
@@ -405,7 +416,7 @@ class OracleUtil():
                     return 'Stopped...'
             return 'Added %d to database'%count
         return 'No data!'
-    
+
     def output_query_matches(self, filename, results):
         """
 
@@ -419,17 +430,17 @@ class OracleUtil():
 
     def query(self, output_filename, days=None):
         """
-        
-        :param output_filename: 
+
+        :param output_filename:
         :param days: optinal query filter, how many days of update to include in the query, if none, all are included
-        :return: 
+        :return:
         """
         # remove the input file if it exitsted, since the subsequent calls use flag `a`.
         try:
             os.remove(output_filename)
         except OSError:
             pass
-    
+
         start = 0
         count = 0
         headers = {'Content-type': 'application/json', 'Accept': 'application/json',

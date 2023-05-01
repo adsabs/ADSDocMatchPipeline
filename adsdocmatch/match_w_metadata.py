@@ -98,7 +98,7 @@ class MatchMetadata():
         """
         read and parse arXiv metadata file
         return list of bibcodes and scores for the matches in decreasing order
-    
+
         :param filename:
         :return:
         """
@@ -108,11 +108,11 @@ class MatchMetadata():
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
-    
+
     def single_match_to_arXiv(self, pub_filename):
         """
         when user submits a single pub metadata file for matching
-    
+
         :param pub_filename:
         :return:
         """
@@ -120,10 +120,10 @@ class MatchMetadata():
         if results:
             return self.process_results(results, '\t')
         return None
-    
+
     def batch_match_to_arXiv(self, input_filename, result_filename):
         """
-    
+
         :param input_filename: contains list of filenames
         :param result_filename: name of result file to write to
         :return:
@@ -142,7 +142,7 @@ class MatchMetadata():
         """
         read and parse arXiv metadata file
         return list of bibcodes and scores for the matches in decreasing order
-    
+
         :param filename:
         :return:
         """
@@ -178,11 +178,11 @@ class MatchMetadata():
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
-    
+
     def single_match_to_pub(self, arXiv_filename):
         """
         when user submits a single arxiv metadata file for matching
-    
+
         :param arxiv_filename:
         :return:
         """
@@ -190,10 +190,10 @@ class MatchMetadata():
         if results:
             return self.process_results(results, '\t')
         return None
-    
+
     def batch_match_to_pub(self, input_filename, result_filename):
         """
-    
+
         :param input_filename: contains list of filenames
         :param result_filename: name of result file to write to
         :return:
@@ -210,7 +210,7 @@ class MatchMetadata():
 
     def add_metadata_comment(self, results, comments):
         """
-    
+
         :param results:
         :param comments:
         :return:
@@ -224,10 +224,10 @@ class MatchMetadata():
 
     def read_classic_results(self, classic, source):
         """
-        
-        :param classic: 
-        :param source: 
-        :return: 
+
+        :param classic:
+        :param source:
+        :return:
         """
         results = {}
         with open(classic, 'r') as fp:
@@ -239,10 +239,10 @@ class MatchMetadata():
                     elif source == 'pub':
                         results[columns[1]] = columns[0]
         return results
-    
+
     def read_docmatch_results(self, filename):
         """
-    
+
         :param filename:
         :return:
         """
@@ -256,14 +256,14 @@ class MatchMetadata():
 
     def combine_classic_docmatch_results(self, classic_results, docmatch_results):
         """
-    
+
         :param classic_results:
         :param docmatch_results:
         :return:
         """
         combined_results = []
         combined_results.append(['source bibcode (link)','classic bibcode (link)','curator comment','verified bibcode','matched bibcode (link)','comment','label','confidence','matched scores'])
-    
+
         hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")"'
         for nowadays_result in docmatch_results:
             # if there was an error in the csv file, transfer it and move on
@@ -281,10 +281,10 @@ class MatchMetadata():
             except:
                 combined_results.append(nowadays_result)
         return combined_results
-    
+
     def write_combined_results(self, combined_results, output_filename):
         """
-    
+
         :param combined_results:
         :param output_filename:
         :return:

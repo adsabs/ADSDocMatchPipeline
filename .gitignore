@@ -10,6 +10,7 @@ venv/
 bin/
 
 secrets/*
+delete/*
 local_config.py
 
 # Mac specific files

@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import requests
 from adsputils import load_config
 
@@ -21,6 +22,10 @@ class NoResultsException(Exception):
 class MatchableStatusException(Exception):
     pass
 
+# selection criteria expressions from adspy.ArtDefs
+RE_YEAR_START = re.compile(r'^\d')
+RE_VOL_END = re.compile(r'.*\d$')
+
 
 def matchable_status(bibstem):
     try:
@@ -35,11 +40,17 @@ def matchable_status(bibstem):
                 data = r.json()
             else:
                 raise FailedQueryException("Journals query failed with status code %s" % r.status_code)
-            refereed = data.get("summary", {}).get("master", {}).get("refereed", None)
-            if refereed == "yes":
-                return True
-            elif (refereed == "no" or refereed == "na"):
-                return False
+            bibstem = data.get("summary", {}).get("master", {}).get("bibstem", None)
+            pubtype = data.get("summary", {}).get("master", {}).get("pubtype", None)
+            noindex = data.get("summary", {}).get("master", {}).get("not_indexed", True)
+            if (bibstem and pubtype):
+                if pubtype == "Journal" \
+                    and not noindex \
+                    and not re.match(RE_YEAR_START, bibstem) \
+                    and not re.match(RE_VOL_END, bibstem):
+                    return True
+                else:
+                    return False
             else:
                 raise NoResultsException("Bibstem not found in JournalsDB: %s" % bibstem)
         else:
