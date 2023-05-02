@@ -108,7 +108,7 @@ def main():
                         outFile = MatchMetadata().process_match_to_pub(path)
                         filesToUpload.append(outFile)
                     if args.match_to_eprint:
-                        fileList = MatchMetadata().process_match_to_arXiv(path)
+                        outFile = MatchMetadata().process_match_to_arXiv(path)
                         filesToUpload.append(outFile)
                     # If either process created files to upload,
                     # send them to the Google Drive now.
