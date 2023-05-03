@@ -42,6 +42,31 @@ class MatchMetadata():
             logger.error('Unable to open/read input file', e)
         return filenames
 
+    def get_ads_record_filenames(self, filename):
+        """
+        read the list of new records in (classic) collection index,
+        and generate a list of files with appropriate paths and extensions
+        :param filename:
+        :return:
+        """
+        filenames = []
+        try:
+            collection_dirlist = os.path.dirname(filename).split('/')
+            collection_index = collection_dirlist.index('index')
+            collection_text_basepath = "/".join(collection_dirlist[0:collection_index])
+            with open(filename, 'r') as fp:
+                for l in fp.readlines():
+                    file_accno = l.strip('\r\n').split('\t')[1]
+                    accno_prefix = file_accno.split('-')[0]
+                    new_path = os.path.join(collection_text_basepath,
+                                            "text",
+                                            accno_prefix)
+                    new_filename = new_path + "/" + file_accno + ".abs"
+                    filenames.append(os.path.normpath(new_filename))
+        except Exception as err:
+            logger.error('Unable to process collection index list (%s): %s' % (filename, err))
+        return filenames
+
     def process_results(self, results, separator):
         """
 
@@ -128,7 +153,7 @@ class MatchMetadata():
         :param result_filename: name of result file to write to
         :return:
         """
-        filenames = self.get_input_filenames(input_filename)
+        filenames = self.get_ads_record_filenames(input_filename)
         if len(filenames) > 0:
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
