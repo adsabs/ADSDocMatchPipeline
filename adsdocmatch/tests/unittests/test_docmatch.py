@@ -222,7 +222,6 @@ class TestDocMatch(unittest.TestCase):
         input_filename = "%s%s%s" % (path, current_dir, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
         result_filename = "%s%s%s" % (path, current_dir, config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME'])
 
-        print('lolwut i/o: %s /// %s' % (input_filename, result_filename))
         # create input file with list of pub filenames
         eprint_filenames = ['/K47-02665.abs']
         mocked_eprint_filenames = []
@@ -232,7 +231,6 @@ class TestDocMatch(unittest.TestCase):
                 mocked_eprint_filenames.append("%s" % (path+current_dir+filename))
             f.close()
 
-        print('i made it here... "create output file"')
         # create output file
         return_value = [{
             'source_bibcode': '2018ApJS..236...24F',
@@ -248,7 +246,6 @@ class TestDocMatch(unittest.TestCase):
             'source bibcode (link),verified bibcode,matched bibcode (link),label,confidence,matched scores,comment',
             '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/2018ApJS..236...24F/abstract"",""2018ApJS..236...24F"")",,"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/.................../abstract"",""..................."")",Not Match,0,"","No matches with DOI [\'10.3847/1538-4365/aab760\'] in pubnote, trying Abstract. No result from solr with Abstract, trying Title. No result from solr with Title. No document was found in solr matching the request."',
         ]
-        print('i made it here "make sure output file is written properly"')
 
         # make sure output file is written properly
         with open(result_filename, "r") as f:
