@@ -513,9 +513,7 @@ class TestDocMatch(unittest.TestCase):
             "source bibcode (link),verified bibcode,matched bibcode (link),label,confidence,matched scores,comment",
             "['2023arXiv230503053S  status_code=got 502 for the last failed attempt.']"
         ]
-        expected_rerun = [
-            "/Users/gshapurian/code/ADSDocMatchPipeline/adsdocmatch/tests/unittests/stubdata/2305/03053"
-        ]
+        expected_rerun = [eprint_filename]
         self.match_metadata.write_results(result_filename, matches, eprint_filename, rerun_filename)
 
         # also generate error for journalDB and see that it does not get logged
