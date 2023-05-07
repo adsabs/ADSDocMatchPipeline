@@ -8,10 +8,8 @@ logger = setup_logging('docmatch_log_pub_parser')
 
 FIELDPAT = re.compile(r"([A-Za-z][^:]*):\s*(.*)")
 MAX_ABSTRACT_FIELD_LINES = 50000
-# Fields containing entity-encoded content but without ad-hoc handlers
-ENCODED_ABSTRACT_FIELDS = ['Origin', 'Abstract Copyright', 'Instruments']
 # Fieldes containing HTML encoded content
-HTML_ENCODED_ABSTRACT_FIELDS = ['Journal', 'Authors']
+HTML_ENCODED_FIELDS = ['Journal', 'Authors', 'Abstract', 'Title']
 
 class MetadataError(Exception):
     """
@@ -49,6 +47,7 @@ def as_needed(article):
         ("Authors", "authors"),
         ("Title", "title"),
         ("Abstract", "abstract"),
+        ("Journal", "pub"),
         ("Publication Date", "pubdate"),
         ("Bibliographic Code", "bibcode"),
         ("DOI", "doi"),
@@ -125,10 +124,7 @@ def get_pub_metadata(contents):
 
     # now properly encode data in fields which have XML-encoded entities and which do not
     # have their own specific content management/cleanup routine
-    for field in ENCODED_ABSTRACT_FIELDS:
-        if field in article:
-            article[field] = UNICODE_HANDLER.ent2u(article[field])
-    for field in HTML_ENCODED_ABSTRACT_FIELDS:
+    for field in HTML_ENCODED_FIELDS:
         if field in article:
             article[field] = UNICODE_HANDLER.ent2xml(article[field])
 

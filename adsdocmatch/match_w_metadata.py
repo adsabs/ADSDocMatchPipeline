@@ -1,16 +1,18 @@
 import os
-from adsputils import setup_logging, load_config
-from adsdocmatch.pub_parser import get_pub_metadata
-from adsdocmatch.oracle_util import OracleUtil
-from pyingest.parsers.arxiv import ArxivParser
 import time
 import re
 import csv
 
-proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
-conf = load_config(proj_home=proj_home)
+from adsdocmatch.pub_parser import get_pub_metadata
+from adsdocmatch.oracle_util import OracleUtil
+from adsdocmatch.matchable_status import matchable_status
+from pyingest.parsers.arxiv import ArxivParser
+from adsputils import setup_logging, load_config
 
-logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=conf.get("LOG_STDOUT", "FALSE"))
+proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
+config = load_config(proj_home=proj_home)
+
+logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
 
 class MatchMetadata():
 
@@ -22,6 +24,8 @@ class MatchMetadata():
     re_doctype_thesis = re.compile(r'\b(thesis)\b', re.IGNORECASE)
     re_doctype_errata = re.compile(r'(^errat(a|um))\b', re.IGNORECASE)
     re_doctype_bookreview = re.compile(r'\bbook[s|\s|\-]*review[s|ed]*', re.IGNORECASE)
+
+    process_pub_bibstem = {}
 
     ARXIV_PARSER = ArxivParser()
     ORACLE_UTIL = OracleUtil()
@@ -58,11 +62,30 @@ class MatchMetadata():
         # when error, return status_code
         return ['%s %s status_code=%s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''), results[0].get('status_code', ''))]
 
-    def write_results(self, result_filename, matches):
+    def process_pub_metadata(self, metadata):
+        """
+        extract bibstem from the bibcode and ask journal db if it should be matched or not
+
+        :param metadata:
+        :return:
+        """
+        bibstem = metadata.get('bibcode', '')[4:9].strip('.')
+        # not asked journal db yet
+        if self.process_pub_bibstem.get(bibstem, None) == None:
+            try:
+                status = matchable_status(bibstem)
+            except:
+                status = None
+            self.process_pub_bibstem[bibstem] = 1 if status == True else (0 if status == False else -1)
+        return self.process_pub_bibstem[bibstem]
+
+    def write_results(self, result_filename, matches, metadata_filename, rerun_filename):
         """
 
         :param result_filename:
         :param matches:
+        :param metadata_filename:
+        :param rerun_filename:
         :return:
         """
         csv_file = result_filename
@@ -92,6 +115,23 @@ class MatchMetadata():
             else:
                 # it is an error write it out
                 fp.write("%s\n" % match_parts)
+                # only log rerun if it failed to be processed from oracle side
+                if 'status_code' in ' '.join(match_parts):
+                    self.log_failed_match(metadata_filename, rerun_filename)
+        fp.close()
+
+    def log_failed_match(self, metadata_filename, rerun_filename):
+        """
+
+        :param metadata_filename: log this to be processed in later time
+        :param rerun_filename:
+        :return:
+        """
+        if os.path.exists(rerun_filename):
+            fp = open(rerun_filename, 'a')
+        else:
+            fp = open(rerun_filename, 'w')
+        fp.write("%s\n"%metadata_filename)
         fp.close()
 
     def match_to_arXiv(self, filename):
@@ -104,7 +144,14 @@ class MatchMetadata():
         """
         try:
             with open(filename, 'rb') as pub_fp:
-                return self.ORACLE_UTIL.get_matches(get_pub_metadata(pub_fp.read()), 'article')
+                pub_metadata = get_pub_metadata(pub_fp.read())
+                status = self.process_pub_metadata(pub_metadata)
+                if status == 1:
+                    return self.ORACLE_UTIL.get_matches(pub_metadata, 'article')
+                elif status == 0:
+                    return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: do not match.'}]
+                elif status == -1:
+                    return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.'}]
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
@@ -121,11 +168,12 @@ class MatchMetadata():
             return self.process_results(results, '\t')
         return None
 
-    def batch_match_to_arXiv(self, input_filename, result_filename):
+    def batch_match_to_arXiv(self, input_filename, result_filename, rerun_filename):
         """
 
         :param input_filename: contains list of filenames
         :param result_filename: name of result file to write to
+        :param rerun_filename: log filenames that failed to be run later
         :return:
         """
         filenames = self.get_input_filenames(input_filename)
@@ -134,7 +182,7 @@ class MatchMetadata():
                 # one file at a time, parse and score, and then write the result to the file
                 for pub_filename in filenames:
                     matches = self.single_match_to_arXiv(pub_filename)
-                    self.write_results(result_filename, matches)
+                    self.write_results(result_filename, matches, pub_filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)
 
@@ -191,11 +239,12 @@ class MatchMetadata():
             return self.process_results(results, '\t')
         return None
 
-    def batch_match_to_pub(self, input_filename, result_filename):
+    def batch_match_to_pub(self, input_filename, result_filename, rerun_filename):
         """
 
         :param input_filename: contains list of filenames
         :param result_filename: name of result file to write to
+        :param rerun_filename: log filenames that failed to be run later
         :return:
         """
         filenames = self.get_input_filenames(input_filename)
@@ -204,7 +253,7 @@ class MatchMetadata():
                 # one file at a time, parse and score, and then write the result to the file
                 for arXiv_filename in filenames:
                     matches = self.single_match_to_pub(arXiv_filename)
-                    self.write_results(result_filename, matches)
+                    self.write_results(result_filename, matches, arXiv_filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)
 
@@ -300,9 +349,11 @@ class MatchMetadata():
                 # include only the lines with classic bibcode, or matched bibcode
                 elif len(combined_result[1]) > 0 or len(combined_result[4]) > 0:
                     # if there is a classic match see if it agrees or disagrees with oracle
+                    # if oracle has not found any matches, label it as missed
                     try:
                         if len(combined_result[1]) > 0:
-                            combined_result[2] = 'agree' if combined_result[1] == combined_result[4] else 'disagree'
+                            combined_result[2] = 'agree' if combined_result[1] == combined_result[4] else \
+                                'disagree' if len(combined_result[4]) > 0 else 'miss'
                         # if there is a multi match and confidence is high
                         # or if there was no abstract for comparison and confidence is high
                         # mark it to be verified
@@ -321,9 +372,9 @@ class MatchMetadata():
         :param output_filename:
         :return:
         """
-        if docmatch_filename.endswith(conf.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default')):
+        if docmatch_filename.endswith(config.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default')):
             source = 'eprint'
-        elif docmatch_filename.endswith(conf.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default')):
+        elif docmatch_filename.endswith(config.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default')):
             source = 'pub'
         else:
             logger.error('Unable to determine type of result file, no combined file created.')
@@ -342,13 +393,15 @@ class MatchMetadata():
         :param path:
         :return:
         """
-        input_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
-        result_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'))
+        input_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
+        result_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_RESULT_FILENAME', 'default'))
+        # to write filenames into when match failed
+        rerun_filename = os.path.abspath(os.path.join(path, config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
-        self.batch_match_to_arXiv(input_filename, result_filename)
+        self.batch_match_to_arXiv(input_filename, result_filename, rerun_filename)
 
-        classic_matched_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
-        combined_output_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
+        classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
+        combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
 
         if os.path.exists(classic_matched_filename):
             self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
@@ -362,13 +415,15 @@ class MatchMetadata():
         :param path:
         :return:
         """
-        input_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
-        result_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'))
+        input_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_INPUT_FILENAME', 'default'))
+        result_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME', 'default'))
+        # to write filenames into when match failed
+        rerun_filename = os.path.abspath(os.path.join(path, config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
-        self.batch_match_to_pub(input_filename, result_filename)
+        self.batch_match_to_pub(input_filename, result_filename, rerun_filename)
 
-        classic_matched_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
-        combined_output_filename = "%s%s" % (path, conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
+        classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
+        combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
 
         if os.path.exists(classic_matched_filename):
             self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)

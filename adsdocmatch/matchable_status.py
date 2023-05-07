@@ -28,6 +28,11 @@ RE_VOL_END = re.compile(r'.*\d$')
 
 
 def matchable_status(bibstem):
+    """
+
+    :param bibstem:
+    :return:
+    """
     try:
         token = config.get("DOCMATCHPIPELINE_API_TOKEN", None)
         jdb_url = config.get("DOCMATCHPIPELINE_API_JOURNALS_SERVICE_URL", None)
@@ -37,15 +42,15 @@ def matchable_status(bibstem):
             request_url = jdb_url + query
             r = requests.get(request_url, headers=header)
             if r.status_code == 200:
-                data = r.json()
+                data = json.loads(r.text)
             else:
                 raise FailedQueryException("Journals query failed with status code %s" % r.status_code)
             bibstem = data.get("summary", {}).get("master", {}).get("bibstem", None)
-            pubtype = data.get("summary", {}).get("master", {}).get("pubtype", None)
-            noindex = data.get("summary", {}).get("master", {}).get("not_indexed", True)
-            if (bibstem and pubtype):
-                if pubtype == "Journal" \
-                    and not noindex \
+            pub_type = data.get("summary", {}).get("master", {}).get("pubtype", None)
+            no_index = data.get("summary", {}).get("master", {}).get("not_indexed", True)
+            if (bibstem and pub_type):
+                if pub_type == "Journal" \
+                    and not no_index \
                     and not re.match(RE_YEAR_START, bibstem) \
                     and not re.match(RE_VOL_END, bibstem):
                     return True
@@ -55,5 +60,6 @@ def matchable_status(bibstem):
                 raise NoResultsException("Bibstem not found in JournalsDB: %s" % bibstem)
         else:
             raise QueryConfigException("Failed to get one or more config values for API search")
+
     except Exception as err:
         raise MatchableStatusException(err)
