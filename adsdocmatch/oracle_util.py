@@ -354,14 +354,15 @@ class OracleUtil():
         # Set the db actions by given vocabulary (add, delete, or update)
         dt = dt.reset_index()
         for index, row in dt.iterrows():
-            # If curator comment is not in vocabulary; print flag, and drop the row
+            # if curator comment is not in vocabulary; print flag, and drop the row
             comments = ['update', 'add', 'delete']
             if row.curator_comment not in comments:
                 logger.warning('Error: Bad curator comment at', row.source_bib)
                 dt.drop(index, inplace=True)
 
-            # Where curator comment is 'update', duplicate row and rewrite actions;
-            # assigns delete/-1 for mistaken matched bibcode, add/1.1 for verified bibcode
+            # where curator comment is 'update', duplicate row and rewrite actions;
+            # assigns delete/-1 for mistaken matched bibcodes, and add/1.1 for verified bibcode
+            # 5/4/23 set to the confidence values from what we got from oracle
             if row.curator_comment == 'update':
                 dt = dt.replace(row.curator_comment, ads_add)
                 new_row = {'source_bib': row.source_bib,
@@ -372,7 +373,7 @@ class OracleUtil():
                 dt = pd.concat([dt, pd.DataFrame.from_dict([new_row])])
 
             # replace curator comments; 'add':'1.1' and 'delete':'-1'
-            # 5/4/23 sent to the values grabbed from oracle db
+            # 5/4/23 set to the confidence values from what we got from oracle
             if row.curator_comment == 'add':
                 dt = dt.replace(row.curator_comment, ads_add)
             if row.curator_comment == 'delete':

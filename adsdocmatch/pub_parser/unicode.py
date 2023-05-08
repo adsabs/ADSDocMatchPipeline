@@ -94,7 +94,7 @@ class UnicodeHandler(UserDict):
             ustring = "\\U%08x" % value
             return ustring.decode('unicode-escape')
 
-    def sub_entity(self, match):  # pragma: no cover
+    def sub_entity(self, match):
         """
 
         :param match:

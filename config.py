@@ -22,7 +22,7 @@ DOCMATCHPIPELINE_PUB_RESULT_FILENAME = '/matched_pub.output.csv'
 DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME = '/compare_eprint.csv'
 DOCMATCHPIPELINE_PUB_COMBINED_FILENAME = '/compare_pub.csv'
 
-# return file, to log failed filenames
+# filename to log failed metadata filenames
 DOCMATCHPIPELINE_RERUN_FILENAME = '../rerun.input'
 
 # Google Drive integration
@@ -35,6 +35,6 @@ GOOGLE_ARCHIVE_FOLDER_ID = "drive-id-3"
 # Slack integration
 SLACK_WORKFLOW_URL = "https://hooks.slack.com/workflows/a/b/c/d"
 
-# source name to get confidant scores from oracle
+# source name to get confidence scores from the oracle service
 DOCMATCHPIPELINE_SOURCE_ADS = "ADS"
 DOCMATCHPIPELINE_SOURCE_INCORRECT = "incorrect"

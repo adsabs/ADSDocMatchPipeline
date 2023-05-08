@@ -173,7 +173,7 @@ class MatchMetadata():
 
         :param input_filename: contains list of filenames
         :param result_filename: name of result file to write to
-        :param rerun_filename: log filenames that failed to be run later
+        :param rerun_filename: log filenames that failed to be processed here for later reprocessing
         :return:
         """
         filenames = self.get_input_filenames(input_filename)
@@ -244,7 +244,7 @@ class MatchMetadata():
 
         :param input_filename: contains list of filenames
         :param result_filename: name of result file to write to
-        :param rerun_filename: log filenames that failed to be run later
+        :param rerun_filename: log filenames that failed to be processed here for later reprocessing
         :return:
         """
         filenames = self.get_input_filenames(input_filename)
