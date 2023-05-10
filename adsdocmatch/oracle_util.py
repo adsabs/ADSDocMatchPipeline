@@ -19,6 +19,7 @@ logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"),
 
 class OracleUtil():
 
+    # collabration can be listed before or after author list, also the word collabration can appear before or after the name (ie, Collabration, the ALICE, Planck Collaboration).
     COLLABORATION_PAT = re.compile(r"(?P<collaboration>[(\[]*[A-Za-z\s\-\/]+\s[Cc]ollaboration[s]?\s*[A-Z\.]*)(?:[\s.,;)\]]+|$)")
     COMMA_BEFORE_AND = re.compile(r"(,)?(\s+and)", re.IGNORECASE)
     WORDS_ONLY = re.compile(r"\w+")
