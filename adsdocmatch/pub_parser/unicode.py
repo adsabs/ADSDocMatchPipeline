@@ -122,9 +122,12 @@ class UnicodeHandler(UserDict):
         else:
             raise UnicodeError('Unknown numeric entity: %s' % match.group(0))
 
-
     def numeric_entity_to_unicode(self, match):
+        """
 
+        :param match:
+        :return:
+        """
         entity_number = int(match.group('number'))
         try:
             return self.__unichr(entity_number)
@@ -132,13 +135,18 @@ class UnicodeHandler(UserDict):
             raise UnicodeError('Unknown numeric entity: %s' % match.group(0))
 
     def hexadecimal_entity_to_unicode(self, match):
+        """
 
+        :param match:
+        :return:
+        """
         entity_number = int(match.group('hexnum'), 16)
         try:
             return self.__unichr(entity_number)
         except ValueError:
             raise UnicodeError('Unknown hexadecimal entity: %s' % match.group(0))
 
+    # this function is not used, but keep it for now
     def ent2u(self, the_entity):
         """
 

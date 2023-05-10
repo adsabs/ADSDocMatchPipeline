@@ -2,21 +2,25 @@ import os
 import requests
 import json
 import time
-from adsputils import setup_logging, load_config
 from unidecode import unidecode
 import pandas as pd
 import numpy as np
 import re
+import csv
+from pathlib import Path
+
+from adsputils import setup_logging, load_config
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
-conf = load_config(proj_home=proj_home)
+config = load_config(proj_home=proj_home)
 
-logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=conf.get("LOG_STDOUT", "FALSE"))
+logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
 
 
 class OracleUtil():
 
-    COLLABORATION_PAT = re.compile(r"(?P<collaboration>[(\[]*[A-Za-z\s\-\/]+\s[Cc]ollaboration[s]?\s*[A-Z\.]*[\s.,)\]]+)")
+    # collabration can be listed before or after author list, also the word collabration can appear before or after the name (ie, Collabration, the ALICE, Planck Collaboration).
+    COLLABORATION_PAT = re.compile(r"(?P<collaboration>[(\[]*[A-Za-z\s\-\/]+\s[Cc]ollaboration[s]?\s*[A-Z\.]*)(?:[\s.,;)\]]+|$)")
     COMMA_BEFORE_AND = re.compile(r"(,)?(\s+and)", re.IGNORECASE)
     WORDS_ONLY = re.compile(r"\w+")
 
@@ -48,6 +52,18 @@ class OracleUtil():
            LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX, LAST_NAME_PAT.pattern, LAST_NAME_SUFFIX))
 
     REMOVE_AND = re.compile(r"(,?\s+and\s+)", re.IGNORECASE)
+
+    def set_local_config_test(self):
+        """
+        set local config values during testing, not to make multiple attempts or wait
+
+        :param addition:
+        :return:
+        """
+        config.update({
+            'DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS': '1',
+            'DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC': '0'
+        })
 
     def get_authors_last_attempt(self, ref_string):
         """
@@ -108,23 +124,12 @@ class OracleUtil():
         :param ref_string:
         :return:
         """
-        # if there is a collaboration included in the list of authors
-        # remove that to be able to decide if the author list is trailing or ending
-        collaborators_idx, collaborators_len = self.get_collaborators(ref_string)
-
         patterns = [self.TRAILING_INIT_PAT, self.LEADING_INIT_PAT, self.TRAILING_FULL_PAT, self.LEADING_FULL_PAT]
         lengths = [0] * len(patterns)
 
-        # if collaborator is listed before authors
-        if collaborators_idx != 0:
-            for i, pattern in enumerate(patterns):
-                # lengths[i] = len(pattern.findall(ref_string[collaborators_len:]))
-                lengths[i] = self.get_length_matched_authors(ref_string[collaborators_len:],
-                                                        pattern.findall(ref_string[collaborators_len:]))
-        else:
-            for i, pattern in enumerate(patterns):
-                # lengths[i] = len(pattern.findall(ref_string))
-                lengths[i] = self.get_length_matched_authors(ref_string, pattern.findall(ref_string))
+        for i, pattern in enumerate(patterns):
+            # lengths[i] = len(pattern.findall(ref_string))
+            lengths[i] = self.get_length_matched_authors(ref_string, pattern.findall(ref_string))
 
         indices_max = [index for index, value in enumerate(lengths) if value == max(lengths)]
         if len(indices_max) != 1:
@@ -171,11 +176,30 @@ class OracleUtil():
         :param author_string:
         :return:
         """
+        # if there is a collaboration included in the list of authors
+        # remove that to be able to decide if the author list is trailing or ending
+        collaborators_idx, collaborators_len = self.get_collaborators(author_string)
+
+        # if there is a collaborator
+        if collaborators_len > 0:
+            collaborator = author_string[collaborators_idx:collaborators_idx+collaborators_len].strip()
+            # if collaborator is listed before authors
+            if collaborators_idx == 0:
+                author_string = author_string[collaborators_len+1:]
+            else:
+                author_string = author_string[:collaborators_idx]
+        else:
+            collaborator = ""
+
         author_string = unidecode(self.REMOVE_AND.sub(',', author_string))
         pattern = self.get_author_pattern(author_string)
         if pattern:
-            return "; ".join("%s, %s" % (match.group("last"), match.group("first")[0])
+            authors = "; ".join("%s, %s" % (match.group("last"), match.group("first")[0])
                              for match in pattern.finditer(author_string)).strip()
+            if collaborator:
+                return "%s; %s"%(collaborator, authors)
+            else:
+                return authors
 
         authors = self.get_authors_last_attempt(author_string)
         if authors:
@@ -233,13 +257,13 @@ class OracleUtil():
 
             return results
 
-        sleep_sec = int(conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
+        sleep_sec = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
         try:
-            num_attempts = int(conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
+            num_attempts = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
             for i in range(num_attempts):
                 response = requests.post(
-                    url=conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/docmatch',
-                    headers={'Authorization': 'Bearer %s' % conf.get('DOCMATCHPIPELINE_API_TOKEN', '')},
+                    url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/docmatch_add',
+                    headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
                     data=json.dumps(payload),
                     timeout=60
                 )
@@ -308,6 +332,10 @@ class OracleUtil():
         :param input_filename:
         :return:
         """
+        # first get the confidence scores for ADS curated and incorrect from oracle
+        ads_add = str(self.get_source_score(config['DOCMATCHPIPELINE_SOURCE_ADS']))
+        incorrect_delete = str(self.get_source_score(config['DOCMATCHPIPELINE_SOURCE_INCORRECT']))
+
         # Generate DataFrame from input excel file
         df = pd.read_excel(input_filename)
         dt = df[['source bibcode (link)', 'curator comment', 'verified bibcode', 'matched bibcode (link)']]
@@ -317,8 +345,8 @@ class OracleUtil():
                 'matched bibcode (link)': 'matched_bib'}
         dt = dt.rename(columns=cols)
 
-        # Drop unneeded rows where curator comment is: null, 'agree', 'disagree', 'no action' or 'verify'
-        array = [np.nan, 'agree', 'disagree', 'no action', 'verify']
+        # Drop unneeded rows where curator comment is: null, 'agree', 'disagree', 'no action', 'verify', 'miss'
+        array = [np.nan, 'agree', 'disagree', 'no action', 'verify', 'miss']
         dt = dt.loc[~dt['curator_comment'].isin(array)]
 
         # Where verified bibcode is null, insert matched bibcode
@@ -327,40 +355,41 @@ class OracleUtil():
         # Set the db actions by given vocabulary (add, delete, or update)
         dt = dt.reset_index()
         for index, row in dt.iterrows():
-
-            # If curator comment is not in vocabulary; print flag, and drop the row
+            # if curator comment is not in vocabulary; print flag, and drop the row
             comments = ['update', 'add', 'delete']
             if row.curator_comment not in comments:
                 logger.warning('Error: Bad curator comment at', row.source_bib)
                 dt.drop(index, inplace=True)
 
-            # Where curator comment is 'update', duplicate row and rewrite actions;
-            #    Assigns delete/-1 for matched bibcode, add/1.1 for verified bibcode
+            # where curator comment is 'update', duplicate row and rewrite actions;
+            # assigns delete/-1 for mistaken matched bibcodes, and add/1.1 for verified bibcode
+            # 5/4/23 set to the confidence values from what we got from oracle
             if row.curator_comment == 'update':
-                dt = dt.replace(row.curator_comment, "1.1")
+                dt = dt.replace(row.curator_comment, ads_add)
                 new_row = {'source_bib': row.source_bib,
-                           'curator_comment': '-1',
+                           'curator_comment': incorrect_delete,
                            'verified_bib': row.matched_bib,
                            'matched_bib': row.matched_bib}
                 # dt = dt.append(new_row, ignore_index=True)
                 dt = pd.concat([dt, pd.DataFrame.from_dict([new_row])])
 
-            # Replace curator comments; 'add':'1.1' and 'delete':'-1'
+            # replace curator comments; 'add':'1.1' and 'delete':'-1'
+            # 5/4/23 set to the confidence values from what we got from oracle
             if row.curator_comment == 'add':
-                dt = dt.replace(row.curator_comment, "1.1")
+                dt = dt.replace(row.curator_comment, ads_add)
             if row.curator_comment == 'delete':
-                dt = dt.replace(row.curator_comment, "-1")
+                dt = dt.replace(row.curator_comment, incorrect_delete)
 
         # Format columns (preprint \t publisher \t action) for txt file
         # since eprint is arXiv matched against publisher, while pub is publisher matched against arXiv
-        match_eprint_string = conf.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint').strip('.csv')
-        match_pub_string = conf.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub').strip('.csv')
+        eprint_filename = Path(config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint')).stem
+        pub_filename = Path(config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub')).stem
         results = []
         input_filename_base = input_filename.split('/')[-1].replace('.xlsx','')
         try:
-            if match_eprint_string in input_filename_base:
+            if eprint_filename in input_filename_base:
                 results = dt[['source_bib', 'verified_bib', 'curator_comment']]
-            elif match_pub_string in input_filename_base:
+            elif pub_filename in input_filename_base:
                 results = dt[['verified_bib', 'source_bib', 'curator_comment']]
         except Exception as err:
             logger.warning('Error extracting results from %s: %s' % (input_filename, err))
@@ -394,27 +423,27 @@ class OracleUtil():
         :param matches:
         :return:
         """
-        max_lines_one_call = int(conf.get('DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE', 2000))
+        max_lines_one_call = int(config.get('DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE', 2000))
         data = self.make_params(matches)
         count = 0
         if len(data) > 0:
             for i in range(0, len(data), max_lines_one_call):
                 slice_item = slice(i, i + max_lines_one_call, 1)
                 response = requests.put(
-                    url=conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/add',
+                    url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/add',
                     headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % conf.get('DOCMATCHPIPELINE_API_TOKEN', '')},
+                             'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
                     data=json.dumps(data[slice_item]),
                     timeout=60
                 )
                 if response.status_code == 200:
                     json_text = json.loads(response.text)
                     logger.info("%s:%s" % (slice_item, json_text))
-                    count += max_lines_one_call
+                    count += len(data[slice_item])
                 else:
                     logger.error('Oracle returned status code %d'%response.status_code)
                     return 'Stopped...'
-            return 'Added %d to database'%count
+            return 'Added %d records to database.'%count
         return 'No data!'
 
     def output_query_matches(self, filename, results):
@@ -444,8 +473,8 @@ class OracleUtil():
         start = 0
         count = 0
         headers = {'Content-type': 'application/json', 'Accept': 'application/json',
-                   'Authorization': 'Bearer %s' % conf.get('DOCMATCHPIPELINE_API_TOKEN', '')}
-        url = conf.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/query'
+                   'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')}
+        url = config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/query'
         while True:
             params = {'start': start}
             if days:
@@ -471,5 +500,66 @@ class OracleUtil():
         """
         matches = self.read_google_sheet(input_filename)
         if matches:
-            self.add_to_db(matches)
+            return self.add_to_db(matches)
+        return ''
 
+    def get_source_score_list(self):
+        """
+
+        :return:
+        """
+        try:
+            response = requests.get(
+                url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/source_score',
+                headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
+                timeout=60
+            )
+            if response.status_code == 200:
+                source_score = json.loads(response.text)
+                return source_score.get('results', [])
+            else:
+                logger.info('Got %s status_code from a call to oracle, stopping.' % response.status_code)
+        except Exception as e:
+            logger.info('Exception %s, stopping.' % str(e))
+
+        return []
+
+    def get_source_score(self, source):
+        """
+
+        :param source:
+        :return:
+        """
+        try:
+            response = requests.get(
+                url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/confidence/%s'%source,
+                headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
+                timeout=60
+            )
+            if response.status_code == 200:
+                confidence = json.loads(response.text)
+                return confidence.get('confidence', None)
+            else:
+                logger.info('Got %s status_code from a call to oracle, stopping.' % response.status_code)
+        except Exception as e:
+            logger.error('Exception %s, stopping.' % str(e))
+
+        return None
+
+    def update_db_sourced_matches(self, input_filename, source):
+        """
+
+        :param input_filename:
+        :param source:
+        :return:
+        """
+        confidence = self.get_source_score(source)
+        if confidence:
+            matches = []
+            with open(input_filename, 'r') as f:
+                for row in csv.reader(f, delimiter='\t'):
+                    matches.append(row + [confidence])
+            if matches:
+                return self.add_to_db(matches)
+        else:
+            return "Unable to get confidence for source %s from oracle."%source

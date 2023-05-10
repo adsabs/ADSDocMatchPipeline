@@ -1,10 +1,11 @@
 import argparse
 import os
+
 from adsdocmatch.match_w_metadata import MatchMetadata
 from adsdocmatch.slack_handler import SlackPublisher
 from adsdocmatch.oracle_util import OracleUtil
+from adsdocmatch.spreadsheet_util import SpreadsheetUtil
 from adsputils import load_config, setup_logging
-import adsdocmatch.utils as utils
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "./"))
 conf = load_config(proj_home=proj_home)
@@ -21,49 +22,42 @@ def get_args():
                         dest="match_to_pub",
                         action="store_true",
                         default=False,
-                        help="Match eprints to published records")
+                        help="Match eprints to published records.")
 
     parser.add_argument("-me",
                         "--match_to_eprint",
                         dest="match_to_eprint",
                         action="store_true",
                         default=False,
-                        help="Match published records to eprint records")
-
-    parser.add_argument("-d",
-                        "--date",
-                        dest="process_date",
-                        action="store",
-                        default=None,
-                        help="Date to process: YYYY-MM-DD")
+                        help="Match published records to eprint records.")
 
     parser.add_argument("-p",
                         "--data-path",
                         dest="datapath",
                         action="store",
                         default="./data/",
-                        help="Path to matching input file(s)")
+                        help="Path to top level directory to process.")
 
     parser.add_argument("-ao",
                         "--add-to-oracle",
                         dest="add_to_oracle",
                         action="store_true",
                         default=False,
-                        help="Fetch curated files and add to oracle")
+                        help="Fetch curated files and add to oracle.")
 
     parser.add_argument("-q",
                         "--query-oracle",
                         dest="query_oracle",
                         action="store_true",
                         default=False,
-                        help="Query oracle for recent matches")
+                        help="Query oracle for recent matches.")
 
     parser.add_argument("-n",
                         "--number-of-days",
                         dest="num_days",
                         action="store",
                         default=1,
-                        help="Last N days to query")
+                        help="Include the last n days in the query.")
 
     parser.add_argument("-o",
                         "--output-filename",
@@ -71,6 +65,27 @@ def get_args():
                         action="store",
                         default="./output.csv",
                         help="Filename for oracle query output.")
+
+    parser.add_argument("-lss",
+                        "--list-source-score",
+                        dest="list_source_score",
+                        action="store_true",
+                        default=False,
+                        help="List source name and score value for confidence.")
+
+    parser.add_argument("-as",
+                        "--apply-source",
+                        dest="apply_source",
+                        action="store",
+                        default=False,
+                        help="Apply source score before adding matches to oracle.")
+
+    parser.add_argument("-mf",
+                        "--matched-file",
+                        dest="matched_file_to_oracle",
+                        action="store",
+                        default=False,
+                        help="Add tab delimited two column matched bibcodes to oracle with confidence of the source.")
 
     return parser.parse_args()
 
@@ -113,7 +128,7 @@ def main():
                     # If either process created files to upload,
                     # send them to the Google Drive now.
                     for f in filesToUpload:
-                        fileId = utils.upload_spreadsheet(f)
+                        fileId = SpreadsheetUtil().upload(f)
                         logger.info("File available in google drive: %s" % fileId)
                         try:
                             url_post = "https://docs.google.com/spreadsheets/d/%s" % fileId
@@ -128,20 +143,50 @@ def main():
             else:
                 logger.error("Path to records for matching not set, stopping.")
 
-        # via cron: check for files in curated, and process/archive if found
+        # via cron: check for files in curated, and process/archive if found and processed successfully
         elif args.add_to_oracle:
             try:
-                utils.process_curated_spreadsheets()
+                spreadsheet_util = SpreadsheetUtil()
+                oracle_util = OracleUtil()
+
+                for spreadsheet_filename in spreadsheet_util.get_curated_filenames():
+                    try:
+                        filename = spreadsheet_util.download(spreadsheet_filename)
+                        status = oracle_util.update_db_curated_matches(filename)
+                        if status:
+                            spreadsheet_util.archive(spreadsheet_filename)
+                        logger.info("Processed file `%s`. %s" % (spreadsheet_filename, status))
+                    except Exception as err:
+                        logger.warning("Unable to add curated sheet (%s) to local oracledb: %s" % (spreadsheet_filename, err))
+
             except Exception as err:
                 logger.error("Error adding matches to oracledb: %s" % err)
 
         elif args.query_oracle:
             try:
-                query_results = OracleUtil().query(args.output_filename,
-                                                 args.num_days)
+                query_results = OracleUtil().query(args.output_filename, args.num_days)
                 logger.info(query_results)
             except Exception as err:
                 logger.error("Error querying oracledb: %s" % err)
+
+        elif args.list_source_score:
+            try:
+                results = OracleUtil().get_source_score_list()
+                for result in results:
+                    print(result)
+            except Exception as err:
+                logger.error("Error listing source score: %s" % err)
+
+        elif args.matched_file_to_oracle or args.apply_source:
+            if args.matched_file_to_oracle and args.apply_source:
+                try:
+                    status = OracleUtil().update_db_sourced_matches(args.matched_file_to_oracle, args.apply_source)
+                    logger.info("Processed file `%s` using source `%s`. %s" % (args.matched_file_to_oracle, args.apply_source, status))
+                except Exception as err:
+                    logger.error("Error adding matches from %s with source %s to database: %s" % (args.matched_file_to_oracle, args.apply_source, err))
+
+            else:
+                logger.error("Both parameters are need to add matched bibcodes to oracle: file path (-mf) and the source to apply (-as).")
 
         else:
             logger.debug("Nothing to do.")

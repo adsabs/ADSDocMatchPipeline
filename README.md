@@ -44,18 +44,22 @@ If docmatching is being run in parallel with the existing classic matching proce
 This takes all files in the Google directory with identifier set by the config variable ``GOOGLE_CURATED_FOLDER_ID``, downloads each one, processes the data, and sends the results to the /add endpoint of oracle_service.  Following successful download, the files on Google are moved to the directory with identifier set by the config variable ``GOOGLE_ARCHIVE_FOLDER_ID`` for permanent storage.  To run the command, simply use the -oa option of run.py:
 
    ``python3 run.py -oa``
+   
+To manually add matches to the database, include a two column, tab delimited input file, with list of matched bibcodes, and the source of these matches.
+
+   ``python3 run.py -mf "/path/to/input/filename/" -as <source>``
+   
+### Capabilities:
+
+* To list all available source-score use command ``-lss``
+
 
 ### Query oracledb for matches added in the past N days
 
 This queries the oracle_service api to obtain all matches added to oracle over a number of days specified by the user (default = 1), and outputs them to a local filename also specified by the user (default = './output.csv')
 
-   ``python3 run.py -q -n [integer] -o [filename]``
+   ``python3 run.py -q -n <integer> -o <input filename>``
 
-
-### Capabilities:
-
-* To add matches to db, in the input file, the confidence score can be ignored, in which case, the default value of 2.0 is used. However, for the matches to be deleted from db, the confidence score is necessary, since there could be multiple records with the same source and matched bibcodes, but different scores (ie, when abstract is missing from metadata or solr, and is included later on).
-* The input file can contain comments, specified with `#`, which is ignored. Comments can at the beginning of the line, hence no data in the line, or as a fourth column of tab delimited line, with the first 2 to 3 columns containing the data.
 
 # Maintainers
 

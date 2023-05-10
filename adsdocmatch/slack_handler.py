@@ -1,8 +1,9 @@
-import os
 import requests
 import urllib3
-from datetime import datetime
-from adsdocmatch.exceptions import *
+
+
+class SlackPublishException(Exception):
+    pass
 
 
 class SlackPublisher(object):
@@ -22,3 +23,4 @@ class SlackPublisher(object):
             if rQuery.status_code != 200:
                 err = "Slack notification failed -- status code: %s" % rQuery.status_code
                 raise SlackPublishException(err)
+        return True

@@ -2,8 +2,8 @@ LOGGING_LEVEL="WARN"
 LOG_STDOUT=True
 
 DOCMATCHPIPELINE_API_TOKEN = 'api token'
-DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL = 'http://0.0.0.0:5000/v1/oracle'
-DOCMATCHPIPELINE_API_JOURNALS_SERVICE_URL = 'http://0.0.0.0:5000/v1/journals'
+DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL = 'http://0.0.0.0:5000'
+DOCMATCHPIPELINE_API_JOURNALS_SERVICE_URL = 'http://0.0.0.0:5050'
 DOCMATCHPIPELINE_API_MAX_RECORDS_TO_ORACLE = '2000'
 DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS = '10'
 DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC = '1'
@@ -19,8 +19,11 @@ DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME = '/matched_eprint.output.csv'
 DOCMATCHPIPELINE_PUB_RESULT_FILENAME = '/matched_pub.output.csv'
 
 # final filename to be uploaded to google drive
-DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME = 'compare_eprint.csv'
-DOCMATCHPIPELINE_PUB_COMBINED_FILENAME = 'compare_pub.csv'
+DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME = '/compare_eprint.csv'
+DOCMATCHPIPELINE_PUB_COMBINED_FILENAME = '/compare_pub.csv'
+
+# filename to log failed metadata filenames
+DOCMATCHPIPELINE_RERUN_FILENAME = '../rerun.input'
 
 # Google Drive integration
 GOOGLE_SECRETS_FILENAME = "credentials.txt"
@@ -31,3 +34,7 @@ GOOGLE_ARCHIVE_FOLDER_ID = "drive-id-3"
 
 # Slack integration
 SLACK_WORKFLOW_URL = "https://hooks.slack.com/workflows/a/b/c/d"
+
+# source name to get confidence scores from the oracle service
+DOCMATCHPIPELINE_SOURCE_ADS = "ADS"
+DOCMATCHPIPELINE_SOURCE_INCORRECT = "incorrect"
