@@ -49,6 +49,15 @@ class UnicodeHandler(UserDict):
     re_numentity = re.compile(r'&#(?P<number>\d+);')
     re_hexnumentity = re.compile('&#x(?P<hexnum>[0-9a-fA-F]+);')
 
+    # Courtesy of Chase Seibert.
+    # http://bitkickers.blogspot.com/2011/05/stripping-control-characters-in-python.html
+    re_xml_illegal = re.compile(u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])|' + \
+                                u'([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])' % \
+                                (chr(0xd800), chr(0xdbff), chr(0xdc00), chr(0xdfff), chr(0xd800), chr(0xdbff),
+                                 chr(0xdc00), chr(0xdfff), chr(0xd800), chr(0xdbff), chr(0xdc00), chr(0xdfff)))
+    re_control_char = re.compile(r"[\x01-\x08\x0B-\x1F\x7F]")
+    re_white_space = re.compile(r"\s+")
+
     XML_PREDEFINED_ENTITIES = ('quot', 'amp', 'apos', 'lt', 'gt')
 
     def __init__(self):
@@ -170,3 +179,18 @@ class UnicodeHandler(UserDict):
         the_xml = self.re_numentity.sub(self.numeric_entity_to_unicode, the_xml)
         the_xml = self.re_hexnumentity.sub(self.hexadecimal_entity_to_unicode, the_xml)
         return the_xml
+
+    def remove_control_chars(self, input, strict=False):
+        """
+
+        :param input:
+        :param strict:
+        :return:
+        """
+        input = self.re_xml_illegal.sub("", input)
+        if not strict:
+            # map all whitespace to single blank
+            input = self.re_white_space.sub(" ", input)
+        # now remove control characters
+        input = self.re_control_char.sub("", input)
+        return input

@@ -80,6 +80,8 @@ class TestDocMatch(unittest.TestCase):
     def test_match_to_pub_1(self):
         """ test match_to_pub when there are no matches"""
 
+        rerun_filename = os.path.abspath(os.path.join(os.path.dirname(__file__) + '/stubdata', config['DOCMATCHPIPELINE_RERUN_FILENAME']))
+
         return_value = [{
             'source_bibcode': '2017arXiv170100200T',
             'matched_bibcode': '...................',
@@ -89,7 +91,7 @@ class TestDocMatch(unittest.TestCase):
             'comment': 'No matches with Abstract, trying Title. No document was found in solr matching the request.'
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/1701.00200')
+            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/1701.00200', rerun_filename=rerun_filename)
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -100,8 +102,14 @@ class TestDocMatch(unittest.TestCase):
             self.assertEqual(fields[4], '')
             self.assertEqual(fields[5], 'No matches with Abstract, trying Title. No document was found in solr matching the request.')
 
+        # remove the rerun input file, if it was created
+        if os.path.isfile(rerun_filename):
+            os.remove(rerun_filename)
+
     def test_match_to_pub_2(self):
         """ test match_to_pub when a match is detected"""
+
+        rerun_filename = os.path.abspath(os.path.join(os.path.dirname(__file__) + '/stubdata', config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
         return_value = [{
             'source_bibcode': '2018arXiv180101021F',
@@ -112,7 +120,7 @@ class TestDocMatch(unittest.TestCase):
             'comment': ''
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/1801.01021')
+            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/1801.01021', rerun_filename=rerun_filename)
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -123,8 +131,14 @@ class TestDocMatch(unittest.TestCase):
             self.assertEqual(fields[4], "{'abstract': 0.98, 'title': 0.98, 'author': 1, 'year': 1, 'doi': 1}")
             self.assertEqual(fields[5], '')
 
+        # remove the rerun input file, if it was created
+        if os.path.isfile(rerun_filename):
+            os.remove(rerun_filename)
+
     def test_match_to_pub_3(self):
         """ test match_to_pub when match is in db"""
+
+        rerun_filename = os.path.abspath(os.path.join(os.path.dirname(__file__) + '/stubdata', config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
         return_value = [{
             'source_bibcode': '2007arXiv0708.1752V',
@@ -135,7 +149,7 @@ class TestDocMatch(unittest.TestCase):
             'comment': ''
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/0708.1752')
+            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/0708.1752', rerun_filename=rerun_filename)
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -146,8 +160,14 @@ class TestDocMatch(unittest.TestCase):
             self.assertEqual(fields[4], "{}")
             self.assertEqual(fields[5], '')
 
+        # remove the rerun input file, if it was created
+        if os.path.isfile(rerun_filename):
+            os.remove(rerun_filename)
+
     def test_match_to_pub_4(self):
         """ test match_to_pub when multiple matches are detected """
+
+        rerun_filename = os.path.abspath(os.path.join(os.path.dirname(__file__) + '/stubdata', config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
         return_value = [{
             'source_bibcode': '2021arXiv210607251P',
@@ -165,7 +185,7 @@ class TestDocMatch(unittest.TestCase):
             'comment': 'Matching doctype `phdthesis;mastersthesis`. Multi match: 2 of 2.'
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/2106.07251')
+            matches = self.match_metadata.single_match_to_pub(arXiv_filename=os.path.dirname(__file__) + '/stubdata/2106.07251', rerun_filename=rerun_filename)
             self.assertEqual(len(matches), 2)
             expected_values = [
                 ['2021arXiv210607251P','2020PhDT........36P','Match','0.8989977',"{'abstract': None, 'title': 1.0, 'author': 1, 'year': 1}",'Matching doctype `phdthesis;mastersthesis`. Multi match: 1 of 2.'],
@@ -176,6 +196,10 @@ class TestDocMatch(unittest.TestCase):
                 self.assertEqual(len(fields), 6)
                 for i in range(len(fields)):
                     self.assertEqual(fields[i], expected_value[i])
+
+        # remove the rerun input file, if it was created
+        if os.path.isfile(rerun_filename):
+            os.remove(rerun_filename)
 
     def test_batch_match_to_pub(self):
         """ test batch mode of match_to_pub """
