@@ -231,7 +231,7 @@ class MatchMetadata():
                             match_doctype = ['phdthesis', 'mastersthesis']
                 must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
                 print(must_match, metadata.get('class', []))
-                oracle_matches = self.ORACLE_UTIL.get_matches(metadata, 'arXiv', must_match, match_doctype)
+                oracle_matches = self.ORACLE_UTIL.get_matches(metadata, 'eprint', must_match, match_doctype)
                 # before proceeding see if this arXiv article's class is among the ones that ADS archives the
                 # published version if available
                 # hence, it with high probablity should have been matched, if it was not,
