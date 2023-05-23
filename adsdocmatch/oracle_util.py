@@ -228,12 +228,12 @@ class OracleUtil():
             return None
         return list(filter(None, doi))
 
-    def get_matches(self, metadata, doctype, mustmatch=False, match_doctype=None):
+    def get_matches(self, metadata, doctype, must_match=False, match_doctype=None):
         """
 
         :param metadata:
         :param doctype:
-        :param mustmatch:
+        :param must_match:
         :param match_doctype: list of doctypes, if specified only this type of doctype is matched
         :return:
         """
@@ -247,7 +247,7 @@ class OracleUtil():
                        'doctype': doctype,
                        'bibcode': metadata['bibcode'],
                        'doi': self.extract_doi(metadata),
-                       'mustmatch': mustmatch,
+                       'mustmatch': must_match,
                        'match_doctype': match_doctype}
         except KeyError as e:
             results.append({
@@ -381,7 +381,7 @@ class OracleUtil():
                 dt = dt.replace(row.curator_comment, incorrect_delete)
 
         # Format columns (preprint \t publisher \t action) for txt file
-        # since eprint is arXiv matched against publisher, while pub is publisher matched against arXiv
+        # since eprint is arXiv record matched against publisher, while pub is publisher record matched against arXiv
         eprint_filename = Path(config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'eprint')).stem
         pub_filename = Path(config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'pub')).stem
         results = []

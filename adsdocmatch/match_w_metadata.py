@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import date
 import re
 import csv
 
@@ -16,7 +17,10 @@ logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"),
 
 class MatchMetadata():
 
-    MUST_MATCH = ['Astrophysics', 'Physics']
+    MUST_MATCH = [
+        'astro-ph', 'cond-mat', 'gr-qc', 'hep-ex', 'hep-lat', 'hep-ph',
+        'hep-th', 'math-ph', 'nlin', 'nucl-ex', 'nucl-th', 'physics',
+    ]
     DOCTYPE_THESIS = ['phdthesis', 'mastersthesis']
 
     re_admin_notes = re.compile(r'arXiv admin note: (.*)$')
@@ -59,8 +63,11 @@ class MatchMetadata():
                 matches.append(separator.join([str(result.get(field, '')) for field in ['source_bibcode', 'matched_bibcode', 'label', 'confidence', 'score', 'comment']]))
         if matches:
             return matches
-        # when error, return status_code
-        return ['%s %s status_code=%s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''), results[0].get('status_code', ''))]
+        # when error, return status_code if it exists
+        status_code = results[0].get('status_code', '')
+        if status_code:
+            return ['%s %s status_code=%s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''), status_code)]
+        return ['%s %s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''))]
 
     def process_pub_metadata(self, metadata):
         """
@@ -151,7 +158,7 @@ class MatchMetadata():
                 elif status == 0:
                     return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: do not match.'}]
                 elif status == -1:
-                    return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.'}]
+                    return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_code': 404}]
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
@@ -186,16 +193,17 @@ class MatchMetadata():
                     # wait a second before the next attempt
                     time.sleep(1)
 
-    def match_to_pub(self, filename):
+    def match_to_pub(self, arXiv_filename, rerun_filename):
         """
         read and parse arXiv metadata file
         return list of bibcodes and scores for the matches in decreasing order
 
-        :param filename:
+        :param arXiv_filename:
+        :param rerun_filename:
         :return:
         """
         try:
-            with open(filename, 'rb') as arxiv_fp:
+            with open(arXiv_filename, 'rb') as arxiv_fp:
                 metadata = self.ARXIV_PARSER.parse(arxiv_fp)
                 comments = ' '.join(metadata.get('comments', []))
                 # extract doi out of comments if there are any
@@ -221,20 +229,34 @@ class MatchMetadata():
                         match = self.re_doctype_thesis.search("%s %s"%(comments, title))
                         if match:
                             match_doctype = ['phdthesis', 'mastersthesis']
-                mustmatch = any(category in metadata.get('keywords', '') for category in self.MUST_MATCH)
-                return self.add_metadata_comment(self.ORACLE_UTIL.get_matches(metadata, 'eprint', mustmatch, match_doctype), comments)
+                must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
+                print(must_match, metadata.get('class', []))
+                oracle_matches = self.ORACLE_UTIL.get_matches(metadata, 'arXiv', must_match, match_doctype)
+                # before proceeding see if this arXiv article's class is among the ones that ADS archives the
+                # published version if available
+                # hence, it with high probablity should have been matched, if it was not,
+                # log it to be rerun at some later point, but only if it is still considered
+                # matchable (ie, less than number of months since it was published)
+                # comment out until hear from Alberto to activate it
+                # if must_match and len(oracle_matches) == 1 and oracle_matches[0]['matched_bibcode'] == '.' * 19:
+                #     today = date.today()
+                #     pub_date = metadata['pubdate']
+                #     if ((today.year - pub_date.year) * 12 + today.month - pub_date.month) <= config['DOCMATCHPIPELINE_EPRINT_RERUN_MONTHS']:
+                #         self.log_failed_match(arXiv_filename, rerun_filename)
+                return self.add_metadata_comment(oracle_matches, comments)
         except Exception as e:
             logger.error('Exception: %s'%e)
             return
 
-    def single_match_to_pub(self, arXiv_filename):
+    def single_match_to_pub(self, arXiv_filename, rerun_filename):
         """
         when user submits a single arxiv metadata file for matching
 
         :param arxiv_filename:
+        :param rerun_filename:
         :return:
         """
-        results = self.match_to_pub(arXiv_filename)
+        results = self.match_to_pub(arXiv_filename, rerun_filename)
         if results:
             return self.process_results(results, '\t')
         return None
@@ -252,7 +274,7 @@ class MatchMetadata():
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
                 for arXiv_filename in filenames:
-                    matches = self.single_match_to_pub(arXiv_filename)
+                    matches = self.single_match_to_pub(arXiv_filename, rerun_filename)
                     self.write_results(result_filename, matches, arXiv_filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)

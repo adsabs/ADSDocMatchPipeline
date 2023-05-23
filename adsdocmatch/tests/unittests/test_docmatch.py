@@ -44,6 +44,11 @@ class TestDocMatch(unittest.TestCase):
         results = UnicodeHandler().ent2u(entities)
         self.assertEqual(results, expected)
 
+        input = "\ud800 remove \ud810 everything \ud820 except \ud830 these \ud840 non \ud850 control \ud860 chars"
+        expected = "remove everything except these non control chars"
+        results = UnicodeHandler().remove_control_chars(input)
+        self.assertEqual(results, expected)
+
     def test_matchable_status(self):
         """ """
         return_value = {"summary":
