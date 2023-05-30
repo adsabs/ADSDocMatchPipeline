@@ -161,7 +161,7 @@ class MatchMetadata():
                     return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_code': 'unrecognizable bibstem, processing stopped'}]
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_code' : 'exception, , processing stopped'}]
+            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_code' : 'exception, processing stopped'}]
 
     def single_match_to_arXiv(self, pub_filename):
         """
@@ -246,7 +246,7 @@ class MatchMetadata():
                 return self.add_metadata_comment(oracle_matches, comments)
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, arXiv_filename), 'status_code' : 'exception, , processing stopped'}]
+            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, arXiv_filename), 'status_code' : 'exception, processing stopped'}]
 
     def single_match_to_pub(self, arXiv_filename, rerun_filename):
         """
