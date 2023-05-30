@@ -151,17 +151,17 @@ class MatchMetadata():
         """
         try:
             with open(filename, 'rb') as pub_fp:
-                pub_metadata = get_pub_metadata(pub_fp.read())
-                status = self.process_pub_metadata(pub_metadata)
+                metadata = get_pub_metadata(pub_fp.read())
+                status = self.process_pub_metadata(metadata)
                 if status == 1:
-                    return self.ORACLE_UTIL.get_matches(pub_metadata, 'article')
+                    return self.ORACLE_UTIL.get_matches(metadata, 'article')
                 elif status == 0:
-                    return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: do not match.'}]
+                    return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: do not match.'}]
                 elif status == -1:
-                    return [{'source_bibcode': pub_metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_code': 404}]
+                    return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_code': 'unrecognizable bibstem, processing stopped, shall be added to the rerun list.'}]
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return
+            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_code' : 'got exception, processing stopped, shall be added to the rerun list.'}]
 
     def single_match_to_arXiv(self, pub_filename):
         """
@@ -246,7 +246,7 @@ class MatchMetadata():
                 return self.add_metadata_comment(oracle_matches, comments)
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return
+            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, arXiv_filename), 'status_code' : 'exception, processing stopped, added to the rerun list'}]
 
     def single_match_to_pub(self, arXiv_filename, rerun_filename):
         """
