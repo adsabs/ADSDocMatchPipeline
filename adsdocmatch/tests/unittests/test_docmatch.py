@@ -91,7 +91,7 @@ class TestDocMatch(unittest.TestCase):
                 get_mock.return_value = mock_response = mock.Mock()
                 mock_response.status_code = 400
                 mock_response.text = json.dumps(return_value)
-                self.assertEqual (matchable_status(''), False)
+                self.assertEqual(matchable_status(''), False)
         self.assertTrue('Journals query failed with status code 400' in str(context.exception))
 
         return_value = {"Error": "Search failed", "Error Info": "Bibstem '2022SPIE12038' not found."}
