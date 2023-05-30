@@ -323,7 +323,7 @@ class OracleUtil():
         logger.error('From oracle got status code: %d' % status_code)
         results.append({'source_bibcode': metadata['bibcode'],
             'comment' : '%s error' % metadata['bibcode'],
-            'status_code' : "got %d for the last failed attempt." % status_code})
+            'status_code' : "got %d for the last failed attempt, shall be added to rerun list." % status_code})
         return results
 
     def read_google_sheet(self, input_filename):
