@@ -253,7 +253,7 @@ class OracleUtil():
             results.append({
                 'source_bibcode' : metadata['bibcode'],
                 'comment' : 'Exception: KeyError, %s missing.' % str(e),
-                'status_code': 'did not send request to oracle service'})
+                'status_flaw': 'did not send request to oracle service'})
 
             return results
 
@@ -323,7 +323,7 @@ class OracleUtil():
         logger.error('From oracle got status code: %d' % status_code)
         results.append({'source_bibcode': metadata['bibcode'],
             'comment' : '%s error' % metadata['bibcode'],
-            'status_code' : "got %d for the last failed attempt, shall be added to rerun list." % status_code})
+            'status_flaw' : "got %d for the last failed attempt, shall be added to rerun list." % status_code})
         return results
 
     def read_google_sheet(self, input_filename):

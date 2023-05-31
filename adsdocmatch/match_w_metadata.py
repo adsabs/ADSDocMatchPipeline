@@ -63,10 +63,10 @@ class MatchMetadata():
                 matches.append(separator.join([str(result.get(field, '')) for field in ['source_bibcode', 'matched_bibcode', 'label', 'confidence', 'score', 'comment']]))
         if matches:
             return matches
-        # when error, return status_code if it exists
-        status_code = results[0].get('status_code', '')
-        if status_code:
-            return ['%s %s status_code=%s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''), status_code)]
+        # when error, return status_flaw if it exists
+        status_flaw = results[0].get('status_flaw', '')
+        if status_flaw:
+            return ['%s %s status_flaw=%s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''), status_flaw)]
         return ['%s %s' % (results[0].get('source_bibcode', ''), results[0].get('comment', ''))]
 
     def process_pub_metadata(self, metadata):
@@ -123,7 +123,7 @@ class MatchMetadata():
                 # it is an error write it out
                 fp.write("%s\n" % match_parts)
                 # only log rerun if it failed to be processed from oracle side
-                if 'status_code' in ' '.join(match_parts):
+                if 'status_flaw' in ' '.join(match_parts):
                     self.log_failed_match(metadata_filename, rerun_filename)
         fp.close()
 
@@ -158,10 +158,10 @@ class MatchMetadata():
                 elif status == 0:
                     return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: do not match.'}]
                 elif status == -1:
-                    return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_code': 'unrecognizable bibstem, processing stopped, shall be added to the rerun list.'}]
+                    return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_flaw': 'unrecognizable bibstem, processing stopped, shall be added to the rerun list.'}]
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_code' : 'got exception, processing stopped, shall be added to the rerun list.'}]
+            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'got exception, processing stopped, shall be added to the rerun list.'}]
 
     def single_match_to_arXiv(self, pub_filename):
         """
@@ -193,17 +193,16 @@ class MatchMetadata():
                     # wait a second before the next attempt
                     time.sleep(1)
 
-    def match_to_pub(self, arXiv_filename, rerun_filename):
+    def match_to_pub(self, filename):
         """
         read and parse arXiv metadata file
         return list of bibcodes and scores for the matches in decreasing order
 
-        :param arXiv_filename:
-        :param rerun_filename:
+        :param filename:
         :return:
         """
         try:
-            with open(arXiv_filename, 'rb') as arxiv_fp:
+            with open(filename, 'rb') as arxiv_fp:
                 metadata = self.ARXIV_PARSER.parse(arxiv_fp)
                 comments = ' '.join(metadata.get('comments', []))
                 # extract doi out of comments if there are any
@@ -230,7 +229,6 @@ class MatchMetadata():
                         if match:
                             match_doctype = ['phdthesis', 'mastersthesis']
                 must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
-                print(must_match, metadata.get('class', []))
                 oracle_matches = self.ORACLE_UTIL.get_matches(metadata, 'eprint', must_match, match_doctype)
                 # before proceeding see if this arXiv article's class is among the ones that ADS archives the
                 # published version if available
@@ -242,21 +240,20 @@ class MatchMetadata():
                 #     today = date.today()
                 #     pub_date = metadata['pubdate']
                 #     if ((today.year - pub_date.year) * 12 + today.month - pub_date.month) <= config['DOCMATCHPIPELINE_EPRINT_RERUN_MONTHS']:
-                #         self.log_failed_match(arXiv_filename, rerun_filename)
+                #         oracle_matches['status_flaw'] = 'shall be added to the rerun list.'
                 return self.add_metadata_comment(oracle_matches, comments)
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, arXiv_filename), 'status_code' : 'exception, processing stopped, added to the rerun list'}]
+            return [{'source_bibcode': metadata.get('bibcode'), 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'exception, processing stopped, added to the rerun list'}]
 
-    def single_match_to_pub(self, arXiv_filename, rerun_filename):
+    def single_match_to_pub(self, filename):
         """
         when user submits a single arxiv metadata file for matching
 
-        :param arxiv_filename:
-        :param rerun_filename:
+        :param filename:
         :return:
         """
-        results = self.match_to_pub(arXiv_filename, rerun_filename)
+        results = self.match_to_pub(filename)
         if results:
             return self.process_results(results, '\t')
         return None
@@ -273,9 +270,9 @@ class MatchMetadata():
         if len(filenames) > 0:
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
-                for arXiv_filename in filenames:
-                    matches = self.single_match_to_pub(arXiv_filename, rerun_filename)
-                    self.write_results(result_filename, matches, arXiv_filename, rerun_filename)
+                for filename in filenames:
+                    matches = self.single_match_to_pub(filename)
+                    self.write_results(result_filename, matches, filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)
 
@@ -301,14 +298,17 @@ class MatchMetadata():
         :return:
         """
         results = {}
-        with open(classic, 'r') as fp:
-            for line in fp.readlines():
-                if len(line) > 1:
-                    columns = line[:-1].split('\t')
-                    if source == 'eprint':
-                        results[columns[0]] = columns[1]
-                    elif source == 'pub':
-                        results[columns[1]] = columns[0]
+        try:
+            with open(classic, 'r') as fp:
+                for line in fp.readlines():
+                    if len(line) > 1:
+                        columns = line[:-1].split('\t')
+                        if source == 'eprint':
+                            results[columns[0]] = columns[1]
+                        elif source == 'pub':
+                            results[columns[1]] = columns[0]
+        except FileNotFoundError as e:
+            logger.warning('Exception: %s, no classic output file.')
         return results
 
     def read_docmatch_results(self, filename):
@@ -336,21 +336,21 @@ class MatchMetadata():
         combined_results.append(['source bibcode (link)','classic bibcode (link)','curator comment','verified bibcode','matched bibcode (link)','comment','label','confidence','matched scores'])
 
         hyperlink_format = '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/%s/abstract"",""%s"")"'
-        for nowadays_result in docmatch_results:
+        for result in docmatch_results:
             # if there was an error in the csv file, transfer it and move on
-            if len(nowadays_result) == 1:
-                combined_results.append(nowadays_result)
+            if len(result) == 1:
+                combined_results.append(result)
                 continue
             try:
                 # insert two columns: 'classic bibcode (link)','curator comment' between the source and matched bibcode columns
-                classic_bibcode = classic_results.get(nowadays_result[0][-21:-2], '')
+                classic_bibcode = classic_results.get(result[0][-21:-2], '')
                 classic_bibcode_link = hyperlink_format % (classic_bibcode, classic_bibcode) if classic_bibcode else ''
                 # need to format the two linked columns again
-                source_bibcode_link = '"%s"'%nowadays_result[0].replace('"','""')
-                matched_bibcode_link = '"%s"'%nowadays_result[2].replace('"','""') if not nowadays_result[2][-21:-2].startswith('.') else ''
-                combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%nowadays_result[6], nowadays_result[3], nowadays_result[4], '"%s"'%nowadays_result[5]])
+                source_bibcode_link = '"%s"'%result[0].replace('"','""')
+                matched_bibcode_link = '"%s"'%result[2].replace('"','""') if not result[2][-21:-2].startswith('.') else ''
+                combined_results.append([source_bibcode_link, classic_bibcode_link, '', '', matched_bibcode_link, '"%s"'%result[6], result[3], result[4], '"%s"'%result[5]])
             except:
-                combined_results.append(nowadays_result)
+                combined_results.append(result)
         return combined_results
 
     def write_combined_results(self, combined_results, output_filename):
@@ -404,7 +404,7 @@ class MatchMetadata():
 
         classic_results = self.read_classic_results(classic_filename, source)
         docmatch_results = self.read_docmatch_results(docmatch_filename)
-        if classic_results and docmatch_results:
+        if docmatch_results:
             combined_results = self.combine_classic_docmatch_results(classic_results, docmatch_results)
             if combined_results:
                 self.write_combined_results(combined_results, output_filename)
@@ -422,14 +422,12 @@ class MatchMetadata():
 
         self.batch_match_to_arXiv(input_filename, result_filename, rerun_filename)
 
+        # ToDO: once classic is turned off comment the followings lines and
+        # return result_filename to be uploaded to google drive instead
         classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
         combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_PUB_COMBINED_FILENAME', 'default'))
-
-        if os.path.exists(classic_matched_filename):
-            self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
-            return combined_output_filename
-        else:
-            return result_filename
+        self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+        return combined_output_filename
 
     def process_match_to_pub(self, path):
         """
@@ -444,11 +442,9 @@ class MatchMetadata():
 
         self.batch_match_to_pub(input_filename, result_filename, rerun_filename)
 
+        # ToDO: once classic is turned off comment the followings lines and
+        # return result_filename to be uploaded to google drive instead
         classic_matched_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_CLASSIC_MATCHES_FILENAME', 'default'))
         combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
-
-        if os.path.exists(classic_matched_filename):
-            self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
-            return combined_output_filename
-        else:
-            return result_filename
+        self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
+        return combined_output_filename
