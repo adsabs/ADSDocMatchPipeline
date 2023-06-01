@@ -56,7 +56,7 @@ class SpreadsheetUtil():
                       "mtype": "text/csv",
                       "meta_mtype": "application/vnd.google-apps.spreadsheet"}
             # make sure the directory is set to curated
-            self.gm.folderid = conf.get("GOOGLE_CURATED_FOLDER_ID", None)
+            self.gm.folderid = conf.get("GOOGLE_BASEDIR_ID", None)
             return self.gm.upload_file(**kwargs)
 
         except Exception as err:
