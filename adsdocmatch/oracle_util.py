@@ -501,7 +501,7 @@ class OracleUtil():
         matches = self.read_google_sheet(input_filename)
         if matches:
             return self.add_to_db(matches)
-        return ''
+        return 'No curated matches detected to send to db.'
 
     def get_source_score_list(self):
         """
