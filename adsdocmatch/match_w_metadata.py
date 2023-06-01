@@ -158,10 +158,10 @@ class MatchMetadata():
                 elif status == 0:
                     return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: do not match.'}]
                 elif status == -1:
-                    return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_flaw': 'unrecognizable bibstem, processing stopped, shall be added to the rerun list.'}]
+                    return [{'source_bibcode': metadata.get('bibcode'), 'comment': 'from JournalDB: did not recognize the bibcode.', 'status_flaw': 'unrecognizable bibstem -- processing stopped -- shall be added to the rerun list.'}]
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return [{'source_bibcode': 'no bibcode', 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'got exception, processing stopped, shall be added to the rerun list.'}]
+            return [{'source_bibcode': 'no bibcode', 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'got exception -- processing stopped -- shall be added to the rerun list.'}]
 
     def single_match_to_arXiv(self, pub_filename):
         """
@@ -244,7 +244,7 @@ class MatchMetadata():
                 return self.add_metadata_comment(oracle_matches, comments)
         except Exception as e:
             logger.error('Exception: %s'%e)
-            return [{'source_bibcode': 'no bibcode', 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'exception, processing stopped, added to the rerun list'}]
+            return [{'source_bibcode': 'no bibcode', 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'exception -- processing stopped -- added to the rerun list'}]
 
     def single_match_to_pub(self, filename):
         """

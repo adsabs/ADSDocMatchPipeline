@@ -294,8 +294,8 @@ class TestDocMatch(unittest.TestCase):
 
         expected_value = [{
             'source_bibcode': '2018arXiv180101021F',
-            'comment': '2018arXiv180101021F error',
-            'status_flaw': 'got 502 for the last failed attempt, shall be added to rerun list.'
+            'comment': 'Oracle service failure.',
+            'status_flaw': 'got 502 for the last failed attempt -- shall be added to rerun list.'
         }]
 
         with mock.patch('requests.post') as mock_oracle_util:
@@ -333,8 +333,8 @@ class TestDocMatch(unittest.TestCase):
 
         expected_value = [{
             'source_bibcode': '2018arXiv180101021F',
-            'comment': '2018arXiv180101021F error',
-            'status_flaw': 'got 400 for the last failed attempt, shall be added to rerun list.'
+            'comment': 'Oracle service failure.',
+            'status_flaw': 'got 400 for the last failed attempt -- shall be added to rerun list.'
         }]
         with mock.patch('requests.post') as mock_oracle_util:
             mock_oracle_util.return_value = mock_response = mock.Mock()

@@ -570,10 +570,10 @@ class TestDocMatch(unittest.TestCase):
         eprint_filename = "%s%s"% (stubdata_dir, '/2305/03053')
         matches = self.match_metadata.process_results([{
             'source_bibcode': '2023arXiv230503053S',
-            'status_flaw' : "got 502 for the last failed attempt, shall be added to rerun list."}], '\t')
+            'status_flaw' : "got 502 for the last failed attempt -- shall be added to rerun list."}], '\t')
         expected_results = [
             "source bibcode (link),verified bibcode,matched bibcode (link),label,confidence,matched scores,comment",
-            "['2023arXiv230503053S  status_flaw=got 502 for the last failed attempt, shall be added to rerun list.']"
+            "['2023arXiv230503053S  status_flaw=got 502 for the last failed attempt -- shall be added to rerun list.']"
         ]
         expected_rerun = [eprint_filename]
         self.match_metadata.write_results(result_filename, matches, eprint_filename, rerun_filename)

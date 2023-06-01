@@ -322,8 +322,8 @@ class OracleUtil():
         # log it
         logger.error('From oracle got status code: %d' % status_code)
         results.append({'source_bibcode': metadata['bibcode'],
-            'comment' : '%s error' % metadata['bibcode'],
-            'status_flaw' : "got %d for the last failed attempt, shall be added to rerun list." % status_code})
+            'comment' : 'Oracle service failure.',
+            'status_flaw' : "got %d for the last failed attempt -- shall be added to rerun list." % status_code})
         return results
 
     def read_google_sheet(self, input_filename):
