@@ -253,7 +253,7 @@ class OracleUtil():
             results.append({
                 'source_bibcode' : metadata['bibcode'],
                 'comment' : 'Exception: KeyError, %s missing.' % str(e),
-                'status_code': 'did not send request to oracle service'})
+                'status_flaw': 'did not send request to oracle service'})
 
             return results
 
@@ -322,8 +322,8 @@ class OracleUtil():
         # log it
         logger.error('From oracle got status code: %d' % status_code)
         results.append({'source_bibcode': metadata['bibcode'],
-            'comment' : '%s error' % metadata['bibcode'],
-            'status_code' : "got %d for the last failed attempt, shall be added to rerun list." % status_code})
+            'comment' : 'Oracle service failure.',
+            'status_flaw' : "got %d for the last failed attempt -- shall be added to rerun list." % status_code})
         return results
 
     def read_google_sheet(self, input_filename):
@@ -501,7 +501,7 @@ class OracleUtil():
         matches = self.read_google_sheet(input_filename)
         if matches:
             return self.add_to_db(matches)
-        return ''
+        return 'No curated matches detected to send to db.'
 
     def get_source_score_list(self):
         """
