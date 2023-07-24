@@ -357,8 +357,9 @@ class OracleUtil():
         for index, row in dt.iterrows():
             # if curator comment is not in vocabulary; print flag, and drop the row
             comments = ['update', 'add', 'delete']
+            row.curator_comment = row.curator_comment.lower()
             if row.curator_comment not in comments:
-                logger.warning('Error: Bad curator comment at', row.source_bib)
+                logger.warning('Error: Bad curator comment at %s' % row.source_bib)
                 dt.drop(index, inplace=True)
 
             # where curator comment is 'update', duplicate row and rewrite actions;
