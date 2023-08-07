@@ -570,6 +570,17 @@ class TestDocMatch(unittest.TestCase):
         # remove temp files
         os.remove(tmp_output_filename)
 
+    def test_cleanup(self):
+        """ """
+        with mock.patch('requests.get') as mock_oracle_util:
+            mock_oracle_util.return_value = mock_response = mock.Mock()
+            mock_response.status_code = 200
+            result = self.match_metadata.ORACLE_UTIL.cleanup_db()
+            self.assertEqual(result, None)
+            mock_response.status_code = 403
+            result = self.match_metadata.ORACLE_UTIL.cleanup_db()
+            self.assertEqual(result, None)
+
 
 if __name__ == '__main__':
     unittest.main()
