@@ -579,7 +579,10 @@ class TestDocMatch(unittest.TestCase):
             self.assertEqual(result, None)
             mock_response.status_code = 403
             result = self.match_metadata.ORACLE_UTIL.cleanup_db()
-            self.assertEqual(result, None)
+            self.assertEqual(result, 'Error from cleanup_db: Unable to issue cleanup command to oracle_service, service returned 403 on final try')
+            mock_response.status_code = 502
+            result = self.match_metadata.ORACLE_UTIL.cleanup_db()
+            self.assertEqual(result, 'Error from cleanup_db: Unable to issue cleanup command to oracle_service, service returned 502 on final try')
 
 
 if __name__ == '__main__':

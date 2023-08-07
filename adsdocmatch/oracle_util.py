@@ -578,14 +578,13 @@ class OracleUtil():
             for i in range(num_attempts):
                 response = requests.get(
                     url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/cleanup',
-                    headers={'Content-type': 'application/json', 'Accept': 'text/plain',
-                             'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')})
+                    headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')})
                 status_code = response.status_code
                 if status_code == 200:
                     logger.info('Got 200 for status_code at attempt # %d' % (i + 1))
                     break
                 # if got 5xx errors from oracle, per alberto, sleep for five seconds and try again, attempt 3 times
-                elif status_code in [502, 504]:
+                elif status_code in [500, 502, 504]:
                     logger.info('Got %d status_code from oracle, waiting %d second and attempt again.' % (
                     status_code, num_attempts))
                     time.sleep(sleep_sec)
@@ -595,8 +594,9 @@ class OracleUtil():
                     break
             if status_code == 200:
                 logger.info('Cleanup command issued to oracle database.')
+                return
             else:
-                raise Exception('Unable to issue cleanup command to oracle_service')
+                raise Exception('Unable to issue cleanup command to oracle_service, service returned %s on final try' % status_code)
         except Exception as err:
             logger.error("Error from cleanup_db: %s" % err)
-        return
+            return "Error from cleanup_db: %s" % err

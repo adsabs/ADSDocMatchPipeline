@@ -198,7 +198,10 @@ def main():
         elif args.cleanup_oracle:
             try:
                 status = OracleUtil().cleanup_db()
-                logger.info("The cleanup_db command was issued to oracle_service.")
+                if not status:
+                    logger.info("The cleanup_db command was issued to oracle_service.")
+                else:
+                    logger.warning("The cleanup_db command failed: %s" % status)
             except Exception as err:
                 logger.error("Error issuing cleanup_db command to oracle_service: %s" % err)
         else:
