@@ -87,6 +87,13 @@ def get_args():
                         default=False,
                         help="Add tab delimited two column matched bibcodes to oracle with confidence of the source.")
 
+    parser.add_argument("-c",
+                        "--cleanup",
+                        dest="cleanup_oracle",
+                        action="store_true",
+                        default=False,
+                        help="Clean up the db, removing tmp bibcodes and lower confidence of multi matches.")
+
     return parser.parse_args()
 
 
@@ -188,6 +195,12 @@ def main():
             else:
                 logger.error("Both parameters are need to add matched bibcodes to oracle: file path (-mf) and the source to apply (-as).")
 
+        elif args.cleanup_oracle:
+            try:
+                status = OracleUtil().cleanup_db()
+                logger.info("The cleanup_db command was issued to oracle_service.")
+            except Exception as err:
+                logger.error("Error issuing cleanup_db command to oracle_service: %s" % err)
         else:
             logger.debug("Nothing to do.")
 

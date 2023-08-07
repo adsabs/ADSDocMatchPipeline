@@ -573,6 +573,7 @@ class OracleUtil():
         """
       
         try:
+            sleep_sec = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
             num_attempts = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
             for i in range(num_attempts):
                 response = requests.get(
