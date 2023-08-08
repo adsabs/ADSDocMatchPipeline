@@ -594,9 +594,9 @@ class OracleUtil():
                     break
             if status_code == 200:
                 logger.info('Cleanup command issued to oracle database.')
-                return
             else:
-                raise Exception('Unable to issue cleanup command to oracle_service, service returned %s on final try' % status_code)
+                logger.warning('Unable to issue cleanup command to oracle_service, service returned %s on final try' % status_code)
+            return response.text
         except Exception as err:
             logger.error("Error from cleanup_db: %s" % err)
             return "Error from cleanup_db: %s" % err

@@ -575,14 +575,17 @@ class TestDocMatch(unittest.TestCase):
         with mock.patch('requests.get') as mock_oracle_util:
             mock_oracle_util.return_value = mock_response = mock.Mock()
             mock_response.status_code = 200
+            mock_response.text = 'This is a message.'
             result = self.match_metadata.ORACLE_UTIL.cleanup_db()
-            self.assertEqual(result, None)
+            self.assertEqual(result, 'This is a message.')
             mock_response.status_code = 403
+            mock_response.text = 'This is a different message.'
             result = self.match_metadata.ORACLE_UTIL.cleanup_db()
-            self.assertEqual(result, 'Error from cleanup_db: Unable to issue cleanup command to oracle_service, service returned 403 on final try')
+            self.assertEqual(result, 'This is a different message.')
             mock_response.status_code = 502
+            mock_response.text = 'Yet another message.'
             result = self.match_metadata.ORACLE_UTIL.cleanup_db()
-            self.assertEqual(result, 'Error from cleanup_db: Unable to issue cleanup command to oracle_service, service returned 502 on final try')
+            self.assertEqual(result, 'Yet another message.')
 
 
 if __name__ == '__main__':
