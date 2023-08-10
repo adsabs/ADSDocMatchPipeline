@@ -357,8 +357,9 @@ class OracleUtil():
         for index, row in dt.iterrows():
             # if curator comment is not in vocabulary; print flag, and drop the row
             comments = ['update', 'add', 'delete']
+            row.curator_comment = row.curator_comment.lower()
             if row.curator_comment not in comments:
-                logger.warning('Error: Bad curator comment at', row.source_bib)
+                logger.warning('Error: Bad curator comment at %s' % row.source_bib)
                 dt.drop(index, inplace=True)
 
             # where curator comment is 'update', duplicate row and rewrite actions;
@@ -563,3 +564,40 @@ class OracleUtil():
                 return self.add_to_db(matches)
         else:
             return "Unable to get confidence for source %s from oracle."%source
+
+    def cleanup_db(self):
+        """
+
+        :param:
+        :return:
+        """
+      
+        try:
+            sleep_sec = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_SLEEP_SEC', 5))
+            num_attempts = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
+            for i in range(num_attempts):
+                response = requests.get(
+                    url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/cleanup',
+                    headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')})
+                status_code = response.status_code
+                if status_code == 200:
+                    logger.info('Got HTTP Status 200 from oracle at attempt # %d' % (i + 1))
+                    break
+                # if got 5xx errors from oracle, per alberto, sleep for five seconds and try again, attempt 3 times
+                elif status_code in [500, 502, 504]:
+                    logger.info('Got HTTP Status %d from oracle, waiting %d seconds for next attempt...' % (status_code, sleep_sec))
+                    time.sleep(sleep_sec)
+                # any other error, quit
+                else:
+                    logger.info('Got %s status_code from a call to oracle, stopping.' % status_code)
+                    break
+            json_text = json.loads(response.text)
+            details = json_text.get('details', '')
+            if status_code == 200:
+                logger.info('Cleanup command issued to oracle database, received response: %s' % details)
+            else:
+                logger.warning('Unable to issue cleanup command to oracle_service: on the final try, oracle service returned status code %s with details: %s ' % (status_code, details))
+            return details
+        except Exception as err:
+            logger.error("Error from cleanup_db: %s" % err)
+            return "Error from cleanup_db: %s" % err
