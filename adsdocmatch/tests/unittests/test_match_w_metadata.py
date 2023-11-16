@@ -88,8 +88,9 @@ class TestDocMatch(unittest.TestCase):
             'score': '',
             'comment': 'No matches with Abstract, trying Title. No document was found in solr matching the request.'
         }]
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/1701.00200')
+            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/1701.00200', is_ArXiv=is_ArXiv)
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -111,8 +112,9 @@ class TestDocMatch(unittest.TestCase):
             'score': {'abstract': 0.98, 'title': 0.98, 'author': 1, 'year': 1, 'doi': 1},
             'comment': ''
         }]
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/1801.01021')
+            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/1801.01021', is_ArXiv=is_ArXiv)
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -134,8 +136,9 @@ class TestDocMatch(unittest.TestCase):
             'score': {},
             'comment': ''
         }]
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/0708.1752')
+            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/0708.1752', is_ArXiv=is_ArXiv)
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -164,8 +167,9 @@ class TestDocMatch(unittest.TestCase):
             'matched_bibcode': '2021PhDT........26P',
             'comment': 'Matching doctype `phdthesis;mastersthesis`. Multi match: 2 of 2.'
         }]
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/2106.07251')
+            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/2106.07251', is_ArXiv=is_ArXiv)
             self.assertEqual(len(matches), 2)
             expected_values = [
                 ['2021arXiv210607251P','2020PhDT........36P','Match','0.8989977',"{'abstract': None, 'title': 1.0, 'author': 1, 'year': 1}",'Matching doctype `phdthesis;mastersthesis`. Multi match: 1 of 2.'],
@@ -215,8 +219,9 @@ class TestDocMatch(unittest.TestCase):
             '"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/2021arXiv210607251P/abstract"",""2021arXiv210607251P"")",,"=HYPERLINK(""https://ui.adsabs.harvard.edu/abs/2021PhDT........26P/abstract"",""2021PhDT........26P"")",Match,0.8933332,"{\'abstract\': 1.0, \'title\': 1.0, \'author\': 1, \'year\': 1}","Matching doctype `phdthesis;mastersthesis`. Multi match: 2 of 2."',
         ]
 
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            self.match_metadata.batch_match_to_pub(input_filename=input_filename, result_filename=result_filename, rerun_filename=rerun_filename)
+            self.match_metadata.batch_match_to_pub(input_filename=input_filename, result_filename=result_filename, rerun_filename=rerun_filename, is_ArXiv=is_ArXiv)
 
         # make sure output file is written properly
         with open(result_filename, "r") as f:
@@ -476,8 +481,9 @@ class TestDocMatch(unittest.TestCase):
         # for now the function returns the combined file, but the intermidate file is created as well
         # once classic is truned off only the result (intermidate file is created) and returned
         expected_result_filename = "%s%s" % (stubdata_dir, config['DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME'])
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            result_filename = self.match_metadata.process_match_to_pub(os.path.dirname(__file__) + '/stubdata')
+            result_filename = self.match_metadata.process_match_to_pub(os.path.dirname(__file__) + '/stubdata', is_ArXiv)
             self.assertEqual(result_filename, expected_result_filename)
 
         # remove temp files
@@ -526,8 +532,9 @@ class TestDocMatch(unittest.TestCase):
             f.close()
 
         expected_result_filename = "%s%s" % (stubdata_dir, config['DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME'])
+        is_ArXiv = True
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            result_filename = self.match_metadata.process_match_to_pub(os.path.dirname(__file__) + '/stubdata')
+            result_filename = self.match_metadata.process_match_to_pub(os.path.dirname(__file__) + '/stubdata', is_ArXiv)
             self.assertEqual(result_filename, expected_result_filename)
 
         # remove temp files

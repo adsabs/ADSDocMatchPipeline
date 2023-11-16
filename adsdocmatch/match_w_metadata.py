@@ -188,7 +188,7 @@ class MatchMetadata():
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
                 for pub_filename in filenames:
-                    matches = self.single_match_to_arXiv(pub_filename, is_ArXiv)
+                    matches = self.single_match_to_arXiv(pub_filename)
                     self.write_results(result_filename, matches, pub_filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)
