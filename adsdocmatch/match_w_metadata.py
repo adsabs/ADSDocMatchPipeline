@@ -188,12 +188,12 @@ class MatchMetadata():
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
                 for pub_filename in filenames:
-                    matches = self.single_match_to_arXiv(pub_filename)
+                    matches = self.single_match_to_arXiv(pub_filename, is_ArXiv)
                     self.write_results(result_filename, matches, pub_filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)
 
-    def match_to_pub(self, filename):
+    def match_to_pub(self, filename, is_ArXiv):
         """
         read and parse arXiv metadata file
         return list of bibcodes and scores for the matches in decreasing order
@@ -202,8 +202,11 @@ class MatchMetadata():
         :return:
         """
         try:
-            with open(filename, 'rb') as arxiv_fp:
-                metadata = self.ARXIV_PARSER.parse(arxiv_fp)
+            with open(filename, 'rb') as eprint_fp:
+                if is_ArXiv:
+                    metadata = self.ARXIV_PARSER.parse(eprint_fp)
+                else:
+                    metadata = get_pub_metadata(eprint_fp.read())
                 comments = ' '.join(metadata.get('comments', []))
                 # extract doi out of comments if there are any
                 match = self.re_doi.search(comments)
@@ -246,19 +249,19 @@ class MatchMetadata():
             logger.error('Exception: %s'%e)
             return [{'source_bibcode': 'no bibcode', 'comment' : 'Exception: %s in metadata file: %s'%(e, filename), 'status_flaw' : 'exception -- processing stopped -- added to the rerun list'}]
 
-    def single_match_to_pub(self, filename):
+    def single_match_to_pub(self, filename, is_ArXiv):
         """
         when user submits a single arxiv metadata file for matching
 
         :param filename:
         :return:
         """
-        results = self.match_to_pub(filename)
+        results = self.match_to_pub(filename, is_ArXiv)
         if results:
             return self.process_results(results, '\t')
         return None
 
-    def batch_match_to_pub(self, input_filename, result_filename, rerun_filename):
+    def batch_match_to_pub(self, input_filename, result_filename, rerun_filename, is_ArXiv):
         """
 
         :param input_filename: contains list of filenames
@@ -271,7 +274,7 @@ class MatchMetadata():
             if result_filename:
                 # one file at a time, parse and score, and then write the result to the file
                 for filename in filenames:
-                    matches = self.single_match_to_pub(filename)
+                    matches = self.single_match_to_pub(filename, is_ArXiv)
                     self.write_results(result_filename, matches, filename, rerun_filename)
                     # wait a second before the next attempt
                     time.sleep(1)
@@ -429,7 +432,7 @@ class MatchMetadata():
         self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
         return combined_output_filename
 
-    def process_match_to_pub(self, path):
+    def process_match_to_pub(self, path, is_ArXiv):
         """
 
         :param path:
@@ -440,7 +443,7 @@ class MatchMetadata():
         # to write filenames into when match failed
         rerun_filename = os.path.abspath(os.path.join(path, config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
-        self.batch_match_to_pub(input_filename, result_filename, rerun_filename)
+        self.batch_match_to_pub(input_filename, result_filename, rerun_filename, is_ArXiv)
 
         # ToDO: once classic is turned off comment the followings lines and
         # return result_filename to be uploaded to google drive instead

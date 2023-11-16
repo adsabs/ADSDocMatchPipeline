@@ -94,6 +94,13 @@ def get_args():
                         default=False,
                         help="Clean up the db, removing tmp bibcodes and lower confidence of multi matches.")
 
+    parser.add_argument("-pa",
+                        "--is_arxiv",
+                        dest="is_arxiv",
+                        action="store_true",
+                        default=False,
+                        help="Set to true if matching ArXiv, set to false if matching other eprint sources.")
+
     return parser.parse_args()
 
 
@@ -127,7 +134,7 @@ def main():
                     # If no classic match file exists, the oracle match
                     # filename will be returned.
                     if args.match_to_pub:
-                        outFile = MatchMetadata().process_match_to_pub(path)
+                        outFile = MatchMetadata().process_match_to_pub(path, args.is_arxiv)
                         filesToUpload.append(outFile)
                     if args.match_to_eprint:
                         outFile = MatchMetadata().process_match_to_arXiv(path)
