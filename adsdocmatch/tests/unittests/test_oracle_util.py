@@ -51,6 +51,9 @@ class TestDocMatch(unittest.TestCase):
         for collab in collabrations:
             self.assertEqual(self.match_metadata.ORACLE_UTIL.normalize_author_list(collab), 'the ALICE Collaboration; Lijiao, L')
 
+        # only collabration
+        self.assertEqual(self.match_metadata.ORACLE_UTIL.normalize_author_list('the ALICE Collaboration'), 'the ALICE Collaboration')
+
         authors = {
             'Frey, K, Accomazzi, A': 'Frey; Accomazzi',
             'Frey, K., Accomazzi, A.': 'Frey, K; Accomazzi, A',
