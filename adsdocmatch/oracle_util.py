@@ -185,9 +185,9 @@ class OracleUtil():
             collaborator = author_string[collaborators_idx:collaborators_idx+collaborators_len].strip()
             # if collaborator is listed before authors
             if collaborators_idx == 0:
-                author_string = author_string[collaborators_len+1:]
+                author_string = author_string[collaborators_idx+1:]
             else:
-                author_string = author_string[:collaborators_idx]
+                author_string = author_string[:collaborators_len]
         else:
             collaborator = ""
 
