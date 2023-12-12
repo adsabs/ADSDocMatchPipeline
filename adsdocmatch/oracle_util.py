@@ -185,11 +185,15 @@ class OracleUtil():
             collaborator = author_string[collaborators_idx:collaborators_idx+collaborators_len].strip()
             # if collaborator is listed before authors
             if collaborators_idx == 0:
-                author_string = author_string[collaborators_idx+1:]
+                author_string = author_string[collaborators_len+1:].strip()
             else:
-                author_string = author_string[:collaborators_len]
+                author_string = author_string[:collaborators_idx].strip()
         else:
             collaborator = ""
+
+        # if only collaborator
+        if not author_string and collaborator:
+            return collaborator
 
         author_string = unidecode(self.REMOVE_AND.sub(',', author_string))
         pattern = self.get_author_pattern(author_string)
