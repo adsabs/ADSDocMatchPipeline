@@ -181,6 +181,30 @@ class TestDocMatch(unittest.TestCase):
                 for i in range(len(fields)):
                     self.assertEqual(fields[i], expected_value[i])
 
+    def test_es_match_to_pub_1(self):
+        """ test match_to_pub using a non-ArXiv, Earth Science preprint"""
+
+        return_value = [{
+            'source_bibcode': '2021esoar.10507102L',
+            'matched_bibcode': '2021GGG....2209917L',
+            'label': 'Match',
+            'confidence': 0.9981487,
+            'score': {'abstract': None, 'title': 0.95, 'author': 1, 'year': 1},
+            'comment': ''
+        }]
+        is_ArXiv = False
+        with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
+            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/L48-23288.abs', is_ArXiv=is_ArXiv)
+            self.assertEqual(len(matches), 1)
+            fields = matches[0].split('\t')
+            self.assertEqual(len(fields), 6)
+            self.assertEqual(fields[0], '2021esoar.10507102L')
+            self.assertEqual(fields[1], '2021GGG....2209917L')
+            self.assertEqual(fields[2], 'Match')
+            self.assertEqual(fields[3], '0.9981487')
+            self.assertEqual(fields[4], "{'abstract': None, 'title': 0.95, 'author': 1, 'year': 1}")
+            self.assertEqual(fields[5], '')
+
     def test_batch_match_to_pub(self):
         """ test batch mode of match_to_pub """
 
