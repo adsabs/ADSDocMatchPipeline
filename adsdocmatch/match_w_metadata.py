@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import date
 import re
 import csv
 
@@ -203,32 +202,41 @@ class MatchMetadata():
         """
         try:
             with open(filename, 'rb') as arxiv_fp:
-                metadata = self.ARXIV_PARSER.parse(arxiv_fp)
-                comments = ' '.join(metadata.get('comments', []))
-                # extract doi out of comments if there are any
-                match = self.re_doi.search(comments)
-                if match:
-                    metadata['doi'] = match.group(1)
-                else:
-                    doi = metadata.get('properties', {}).get('DOI', None)
-                    if doi:
-                        metadata['doi'] = doi.replace('doi:', '')
-                match_doctype = None
-                title = metadata.get('title')
-                # check title for erratum
-                match = self.re_doctype_errata.search(title)
-                if match:
-                    match_doctype = ['erratum']
-                else:
-                    match = self.re_doctype_bookreview.search(title)
+                journal = filename.strip().split('/')[-5]
+                if journal == 'ArXiv':
+                    metadata = self.ARXIV_PARSER.parse(arxiv_fp)
+                    comments = ' '.join(metadata.get('comments', []))
+                    # extract doi out of comments if there are any
+                    match = self.re_doi.search(comments)
                     if match:
-                        match_doctype = ['bookreview']
+                        metadata['doi'] = match.group(1)
                     else:
-                        # check both comments and title for thesis
-                        match = self.re_doctype_thesis.search("%s %s"%(comments, title))
+                        doi = metadata.get('properties', {}).get('DOI', None)
+                        if doi:
+                            metadata['doi'] = doi.replace('doi:', '')
+                    match_doctype = None
+                    title = metadata.get('title')
+                    # check title for erratum
+                    match = self.re_doctype_errata.search(title)
+                    if match:
+                        match_doctype = ['erratum']
+                    else:
+                        match = self.re_doctype_bookreview.search(title)
                         if match:
-                            match_doctype = ['phdthesis', 'mastersthesis']
-                must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
+                            match_doctype = ['bookreview']
+                        else:
+                            # check both comments and title for thesis
+                            match = self.re_doctype_thesis.search("%s %s" % (comments, title))
+                            if match:
+                                match_doctype = ['phdthesis', 'mastersthesis']
+                    must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
+                else:
+                    metadata = get_pub_metadata(arxiv_fp.read())
+                    # remove the doi, since in this case, oracle thinks it is the publication doi
+                    metadata.pop("doi", None)
+                    match_doctype = None
+                    must_match = False
+                    comments = ''
                 oracle_matches = self.ORACLE_UTIL.get_matches(metadata, 'eprint', must_match, match_doctype)
                 # before proceeding see if this arXiv article's class is among the ones that ADS archives the
                 # published version if available
