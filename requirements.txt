@@ -1,4 +1,3 @@
-git+https://github.com/adsabs/adsabs-pyingest.git@v1.2.2
 git+https://github.com/adsabs/ADSGoogleConnector.git@v0.0.3
 adsputils==1.4.3
 numpy==1.24.2

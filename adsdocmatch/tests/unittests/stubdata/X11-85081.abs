@@ -1,0 +1,22 @@
+Title:              The Unified Astronomy Thesaurus: Semantic Metadata
+                    for Astronomy and Astrophysics
+Authors:            Frey, Katie; Accomazzi, Alberto
+Journal:            eprint arXiv:1801.01021
+Publication Date:   01/2018
+Comments:           Submitted to the Astrophysical Journal Supplements, 10 pages, 3 tables;
+                    doi:10.3847/1538-4365/aab760
+Origin:             ARXIV
+Keywords:           Astrophysics - Instrumentation and Methods for Astrophysics,
+                    Computer Science - Digital Libraries
+Bibliographic Code: 2018arXiv180101021F
+
+                               Abstract
+Several different controlled vocabularies have been developed and used
+by the astronomical community, each designed to serve a specific need
+and a specific group. The Unified Astronomy Thesaurus (UAT) attempts to
+provide a highly structured controlled vocabulary that will be relevant
+and useful across the entire discipline, regardless of content or
+platform. As two major use cases for the UAT include classifying
+articles and data, we examine the UAT in comparison with the
+Astronomical Subject Keywords used by major publications and the JWST
+Science Keywords used by STScI's Astronomer's Proposal Tool.
