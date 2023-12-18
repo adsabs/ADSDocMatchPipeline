@@ -89,7 +89,8 @@ class TestDocMatch(unittest.TestCase):
             'comment': 'No matches with Abstract, trying Title. No document was found in solr matching the request.'
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/1701.00200')
+            arXiv_dir = os.path.dirname(__file__) + '/stubdata/ArXiv/oai/eprints/'
+            matches = self.match_metadata.single_match_to_pub(filename=arXiv_dir + '1701/00200')
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -112,7 +113,8 @@ class TestDocMatch(unittest.TestCase):
             'comment': ''
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/1801.01021')
+            arXiv_dir = os.path.dirname(__file__) + '/stubdata/ArXiv/oai/eprints/'
+            matches = self.match_metadata.single_match_to_pub(filename=arXiv_dir + '1801/01021')
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -135,7 +137,8 @@ class TestDocMatch(unittest.TestCase):
             'comment': ''
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/0708.1752')
+            arXiv_dir = os.path.dirname(__file__) + '/stubdata/ArXiv/oai/eprints/'
+            matches = self.match_metadata.single_match_to_pub(filename=arXiv_dir + '0708/1752')
             self.assertEqual(len(matches), 1)
             fields = matches[0].split('\t')
             self.assertEqual(len(fields), 6)
@@ -165,7 +168,8 @@ class TestDocMatch(unittest.TestCase):
             'comment': 'Matching doctype `phdthesis;mastersthesis`. Multi match: 2 of 2.'
         }]
         with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
-            matches = self.match_metadata.single_match_to_pub(filename=os.path.dirname(__file__) + '/stubdata/2106.07251')
+            arXiv_dir = os.path.dirname(__file__) + '/stubdata/ArXiv/oai/eprints/'
+            matches = self.match_metadata.single_match_to_pub(filename=arXiv_dir + '2106/07251')
             self.assertEqual(len(matches), 2)
             expected_values = [
                 ['2021arXiv210607251P','2020PhDT........36P','Match','0.8989977',"{'abstract': None, 'title': 1.0, 'author': 1, 'year': 1}",'Matching doctype `phdthesis;mastersthesis`. Multi match: 1 of 2.'],
@@ -177,6 +181,57 @@ class TestDocMatch(unittest.TestCase):
                 for i in range(len(fields)):
                     self.assertEqual(fields[i], expected_value[i])
 
+    def test_match_to_earth_science_1(self):
+        """ test match_to_ earth science records that can appear both as eprint and publication """
+        return_value = [{
+            'source_bibcode': '2021esoar.10507102L',
+            'matched_bibcode': '2021GGG....2209917L',
+            'label': 'Match',
+            'confidence': 0.9981487,
+            'score': {'abstract': None, 'title': 0.95, 'author': 1, 'year': 1},
+            'comment': ''
+        }]
+        # treat as eprint
+        with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
+            self.assertEqual(return_value, self.match_metadata.match_to_pub(os.path.dirname(__file__) + '/stubdata/text/L48/L48-23288.abs'))
+
+        return_value = [{
+            'source_bibcode': '2021esoar.10507102L',
+            'matched_bibcode': '...................',
+            'label': 'Not Match',
+            'confidence': 0,
+            'score': '',
+            'comment': "No result from solr with DOI ['10.1002/essoar.10507102.1'] in pubnote. No matches with Abstract, trying Title. No document was found in solr matching the request."
+        }]
+        # now send it as publication
+        with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
+            self.assertEqual(return_value, self.match_metadata.match_to_pub(os.path.dirname(__file__) + '/stubdata/text/L48/L48-23288.abs'))
+
+    def test_match_to_earth_science_2(self):
+        """ test match_to_ earth science records that can appear both as eprint and publication """
+        return_value = [{
+            'source_bibcode': '2022EaArX...X58667B',
+            'matched_bibcode': '2023Natur.622..761B',
+            'label': 'Not Match',
+            'confidence': 0.0110576,
+            'score': {'abstract': 0.88, 'title': 0.42, 'author': 1, 'year': 1},
+            'comment': ''}]
+        # treat as eprint
+        with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
+            self.assertEqual(return_value, self.match_metadata.match_to_pub(os.path.dirname(__file__) + '/stubdata/text/L52/L52-28159.abs'))
+
+        return_value = [{
+            'source_bibcode': '2022EaArX...X58667B',
+            'matched_bibcode': '...................',
+            'label': 'Not Match',
+            'confidence': 0,
+            'score': '',
+            'comment': "No result from solr with DOI ['10.31223/x58667'] in pubnote. No matches with Abstract, trying Title. No document was found in solr matching the request."
+        }]
+        # now send it as publication
+        with mock.patch.object(self.match_metadata.ORACLE_UTIL, 'get_matches', return_value=return_value):
+            self.assertEqual(return_value, self.match_metadata.match_to_pub(os.path.dirname(__file__) + '/stubdata/text/L52/L52-28159.abs'))
+
     def test_batch_match_to_pub(self):
         """ test batch mode of match_to_pub """
 
@@ -187,7 +242,7 @@ class TestDocMatch(unittest.TestCase):
         rerun_filename = os.path.abspath(os.path.join(stubdata_dir, config['DOCMATCHPIPELINE_RERUN_FILENAME']))
 
         # create input file with list of eprint filenames
-        eprint_filenames = ['/2106.07251']
+        eprint_filenames = ['/ArXiv/oai/eprints/2106/07251']
         with open(input_filename, "w") as f:
             for filename in eprint_filenames:
                 f.write("%s\n"%(stubdata_dir+filename))
@@ -450,7 +505,7 @@ class TestDocMatch(unittest.TestCase):
         # create input file with list of eprint filenames
         stubdata_dir = os.path.dirname(__file__) + '/stubdata'
         input_filename = "%s%s" % (stubdata_dir, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
-        eprint_filenames = ['/2106.07251']
+        eprint_filenames = ['/ArXiv/oai/eprints/2106/07251']
         with open(input_filename, "w") as f:
             for filename in eprint_filenames:
                 f.write("%s\n"%(stubdata_dir+filename))
@@ -491,7 +546,7 @@ class TestDocMatch(unittest.TestCase):
         # create input file with list of eprint filenames
         stubdata_dir = os.path.dirname(__file__) + '/stubdata'
         input_filename = "%s%s" % (stubdata_dir, config['DOCMATCHPIPELINE_INPUT_FILENAME'])
-        eprint_filenames = ['/2106.07251']
+        eprint_filenames = ['/ArXiv/oai/eprints/2106/07251']
         with open(input_filename, "w") as f:
             for filename in eprint_filenames:
                 f.write("%s\n" % (stubdata_dir + filename))
@@ -567,7 +622,7 @@ class TestDocMatch(unittest.TestCase):
         stubdata_dir = os.path.dirname(__file__) + '/stubdata'
         result_filename = "%s%s" % (stubdata_dir, config['DOCMATCHPIPELINE_EPRINT_RESULT_FILENAME'])
         rerun_filename = os.path.abspath(os.path.join(stubdata_dir, config['DOCMATCHPIPELINE_RERUN_FILENAME']))
-        eprint_filename = "%s%s"% (stubdata_dir, '/2305/03053')
+        eprint_filename = "%s%s"% (stubdata_dir, '/ArXiv/oai/eprints/2305/03053')
         matches = self.match_metadata.process_results([{
             'source_bibcode': '2023arXiv230503053S',
             'status_flaw' : "got 502 for the last failed attempt -- shall be added to rerun list."}], '\t')

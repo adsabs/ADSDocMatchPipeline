@@ -32,10 +32,10 @@ class TestDocMatch(unittest.TestCase):
 
     def test_normalize_author_list(self):
         """ """
-        eprint_filenames = ['/2106.07251', '/1701.00200', '/1801.01021', '/2106.07251']
-        stubdata_dir = os.path.dirname(__file__) + '/stubdata'
+        eprint_filenames = ['/2106/07251', '/1701/00200', '/1801/01021', '/2312/08579']
+        stubdata_dir = os.path.dirname(__file__) + '/stubdata/ArXiv/oai/eprints'
 
-        expected_authors = ['Proxauf, B', 'Tang, X', 'Frey, K; Accomazzi, A', 'Proxauf, B']
+        expected_authors = ['Proxauf, B', 'Tang, X', 'Frey, K; Accomazzi, A', 'Shapurian, G; Kurtz, M; Accomazzi, A']
         for filename, authors in zip(eprint_filenames, expected_authors):
             fullpath = stubdata_dir + filename
             with open(fullpath, 'rb') as arxiv_fp:
@@ -70,10 +70,10 @@ class TestDocMatch(unittest.TestCase):
 
     def test_extract_doi(self):
         """ """
-        eprint_filenames = ['/2106.07251', '/1701.00200', '/1801.01021', '/2106.07251']
-        stubdata_dir = os.path.dirname(__file__) + '/stubdata'
+        eprint_filenames = ['/2106/07251', '/1701/00200', '/1801/01021', '/2312/08579']
+        stubdata_dir = os.path.dirname(__file__) + '/stubdata/ArXiv/oai/eprints'
 
-        expected_dois = [['10.53846/goediss-8502'], None, ['10.3847/1538-4365/aab760'], ['10.53846/goediss-8502']]
+        expected_dois = [['10.53846/goediss-8502'], None, ['10.3847/1538-4365/aab760'], None]
         for filename, doi in zip(eprint_filenames, expected_dois):
             fullpath = stubdata_dir + filename
             with open(fullpath, 'rb') as arxiv_fp:
