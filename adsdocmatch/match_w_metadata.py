@@ -89,8 +89,8 @@ class MatchMetadata():
         :param metadata:
         :return:
         """
-        comments = metadata.get('arXiv_comments', '')
-        if comments:
+        if metadata.get("origin", "") == 'ARXIV':
+            comments = metadata.get('comments', '')
             # extract doi out of comments if there are any
             match = self.re_doi.search(comments)
             if match:
@@ -116,6 +116,8 @@ class MatchMetadata():
                         match_doctype = ['phdthesis', 'mastersthesis']
             must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
         else:
+            # in this matching, doi is the doi to match
+            # hence remove it since this is the record's doi
             metadata.pop("doi", None)
             match_doctype = None
             must_match = False
