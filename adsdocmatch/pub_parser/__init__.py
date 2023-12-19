@@ -51,7 +51,8 @@ def as_needed(article):
         ("Publication Date", "pubdate"),
         ("Bibliographic Code", "bibcode"),
         ("DOI", "doi"),
-        ("arXiv_comments", "arXiv_comments")
+        ("Comments", "comments"),
+        ("Origin", "origin")
     ]
     return_record = {}
     for src_key, dest_key in field_mappings:
@@ -131,9 +132,5 @@ def get_pub_metadata(contents):
 
     switch_date = article['Publication Date'].split('/')
     article['Publication Date'] = switch_date[1] + '/' + switch_date[0]
-
-    if 'Origin' in fields_found_in_file:
-        if article['Origin'] == 'ARXIV':
-            article['arXiv_comments'] = article.get('Comments', '')
 
     return as_needed(article)
