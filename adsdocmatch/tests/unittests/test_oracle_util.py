@@ -79,7 +79,9 @@ class TestDocMatch(unittest.TestCase):
             fullpath = stubdata_dir + filename
             with open(fullpath, 'rb') as arxiv_fp:
                 metadata = get_pub_metadata(arxiv_fp.read())
-                metadata, _, _, _ = self.match_metadata.parse_arXiv_comments(metadata)
+                to_match_doi = self.match_metadata.parse_pub_doi_from_arXiv_record(metadata.get('comments', ''), metadata.get('properties', {}))
+                if to_match_doi:
+                    metadata['doi'] = to_match_doi
                 self.assertEqual(self.match_metadata.ORACLE_UTIL.extract_doi(metadata), doi)
 
     def test_read_google_sheet(self):

@@ -83,47 +83,6 @@ class MatchMetadata():
             self.process_pub_bibstem[bibstem] = 1 if status == True else (0 if status == False else -1)
         return self.process_pub_bibstem[bibstem]
 
-    def parse_arXiv_comments(self, metadata):
-        """
-
-        :param metadata:
-        :return:
-        """
-        if metadata.get("origin", "") == 'ARXIV':
-            comments = metadata.get('comments', '')
-            # extract doi out of comments if there are any
-            match = self.re_doi.search(comments)
-            if match:
-                metadata['doi'] = match.group(1)
-            else:
-                doi = metadata.get('properties', {}).get('DOI', None)
-                if doi:
-                    metadata['doi'] = doi.replace('doi:', '')
-            match_doctype = None
-            title = metadata.get('title')
-            # check title for erratum
-            match = self.re_doctype_errata.search(title)
-            if match:
-                match_doctype = ['erratum']
-            else:
-                match = self.re_doctype_bookreview.search(title)
-                if match:
-                    match_doctype = ['bookreview']
-                else:
-                    # check both comments and title for thesis
-                    match = self.re_doctype_thesis.search("%s %s" % (comments, title))
-                    if match:
-                        match_doctype = ['phdthesis', 'mastersthesis']
-            must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for ads_archive_class in self.MUST_MATCH)
-        else:
-            # in this matching, doi is the doi to match
-            # hence remove it since this is the record's doi
-            metadata.pop("doi", None)
-            match_doctype = None
-            must_match = False
-            comments = ''
-        return metadata, comments, must_match, match_doctype
-
     def write_results(self, result_filename, matches, metadata_filename, rerun_filename):
         """
 
@@ -231,6 +190,21 @@ class MatchMetadata():
                     # wait a second before the next attempt
                     time.sleep(1)
 
+    def parse_pub_doi_from_arXiv_record(self, comments, properties):
+        """
+
+        :param comments:
+        :param properties:
+        :return:
+        """
+        match = self.re_doi.search(comments)
+        if match:
+            return match.group(1)
+        else:
+            doi = properties.get('DOI', None)
+            if doi:
+                return doi.replace('doi:', '')
+        return
     def match_to_pub(self, filename):
         """
         read and parse arXiv metadata file
@@ -242,7 +216,36 @@ class MatchMetadata():
         try:
             with open(filename, 'rb') as arxiv_fp:
                 metadata = get_pub_metadata(arxiv_fp.read())
-                metadata, comments, must_match, match_doctype = self.parse_arXiv_comments(metadata)
+                if metadata.get("origin", "") == 'ARXIV':
+                    comments = metadata.get('comments', '')
+                    # extract doi to match if available
+                    doi = self.parse_pub_doi_from_arXiv_record(comments, metadata.get('properties', {}))
+                    if doi:
+                        metadata['doi'] = doi
+                    match_doctype = None
+                    title = metadata.get('title')
+                    # check title for erratum
+                    match = self.re_doctype_errata.search(title)
+                    if match:
+                        match_doctype = ['erratum']
+                    else:
+                        match = self.re_doctype_bookreview.search(title)
+                        if match:
+                            match_doctype = ['bookreview']
+                        else:
+                            # check both comments and title for thesis
+                            match = self.re_doctype_thesis.search("%s %s" % (comments, title))
+                            if match:
+                                match_doctype = ['phdthesis', 'mastersthesis']
+                    must_match = any(ads_archive_class in arxiv_class for arxiv_class in metadata.get('class', []) for
+                                     ads_archive_class in self.MUST_MATCH)
+                else:
+                    # in this matching, doi is the doi to match
+                    # hence remove it since this is the record's doi
+                    metadata.pop("doi", None)
+                    match_doctype = None
+                    must_match = False
+                    comments = ''
                 oracle_matches = self.ORACLE_UTIL.get_matches(metadata, 'eprint', must_match, match_doctype)
                 # before proceeding see if this arXiv article's class is among the ones that ADS archives the
                 # published version if available
@@ -462,13 +465,3 @@ class MatchMetadata():
         combined_output_filename = "%s%s" % (path, config.get('DOCMATCHPIPELINE_EPRINT_COMBINED_FILENAME', 'default'))
         self.merge_classic_docmatch_results(classic_matched_filename, result_filename, combined_output_filename)
         return combined_output_filename
-
-if __name__ == '__main__':
-    print(MatchMetadata().match_to_pub('/proj/ads/abstracts/gen/text/L48/L48-23288.abs'))
-    print(MatchMetadata().match_to_arXiv('/proj/ads/abstracts/gen/text/L48/L48-23288.abs'))
-
-    '''
-/proj/ads/abstracts/gen/text/L52/L52-28159.abs
-/proj/ads/abstracts/gen/text/L48/L48-23288.abs
-/proj/ads/abstracts/sources/ArXiv/oai/arXiv.org/2306/02768
-'''
