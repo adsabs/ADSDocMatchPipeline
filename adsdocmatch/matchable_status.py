@@ -37,7 +37,7 @@ def matchable_status(bibstem):
         token = config.get("DOCMATCHPIPELINE_API_TOKEN", None)
         jdb_url = config.get("DOCMATCHPIPELINE_API_JOURNALS_SERVICE_URL", None)
         if token and jdb_url:
-            header = {"Authorization": "Bearer:%s" % token}
+            header = {"Authorization": "Bearer %s" % token}
             query = "/summary/" + bibstem
             request_url = jdb_url + query
             r = requests.get(request_url, headers=header)
