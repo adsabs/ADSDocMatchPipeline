@@ -2,9 +2,7 @@ import argparse
 import os
 
 from adsdocmatch.match_w_metadata import MatchMetadata
-from adsdocmatch.slack_handler import SlackPublisher
 from adsdocmatch.oracle_util import OracleUtil
-from adsdocmatch.spreadsheet_util import SpreadsheetUtil
 from adsputils import load_config, setup_logging
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "./"))
@@ -18,14 +16,14 @@ def get_args():
     parser = argparse.ArgumentParser("Docmatch processing and curation management")
 
     parser.add_argument("-mp",
-                        "--match_to_pub",
+                        "--match-to-pub",
                         dest="match_to_pub",
                         action="store_true",
                         default=False,
                         help="Match eprints to published records.")
 
     parser.add_argument("-me",
-                        "--match_to_eprint",
+                        "--match-to-eprint",
                         dest="match_to_eprint",
                         action="store_true",
                         default=False,
@@ -37,13 +35,6 @@ def get_args():
                         action="store",
                         default="./data/",
                         help="Path to top level directory to process.")
-
-    parser.add_argument("-ao",
-                        "--add-to-oracle",
-                        dest="add_to_oracle",
-                        action="store_true",
-                        default=False,
-                        help="Fetch curated files and add to oracle.")
 
     parser.add_argument("-q",
                         "--query-oracle",
@@ -120,54 +111,14 @@ def main():
                 path = conf.get("EPRINT_BASE_DIRECTORY", "./") + "/" + args.date
             if path:
                 try:
-                    filesToUpload = []
-                    # if successful, process_match returns the filename to
-                    # be uploaded to google.  If a classic match file
-                    # exists, the comparison filename will be returned.
-                    # If no classic match file exists, the oracle match
-                    # filename will be returned.
                     if args.match_to_pub:
                         outFile = MatchMetadata().process_match_to_pub(path)
-                        filesToUpload.append(outFile)
                     if args.match_to_eprint:
                         outFile = MatchMetadata().process_match_to_arXiv(path)
-                        filesToUpload.append(outFile)
-                    # If either process created files to upload,
-                    # send them to the Google Drive now.
-                    for f in filesToUpload:
-                        fileId = SpreadsheetUtil().upload(f)
-                        logger.info("File available in google drive: %s" % fileId)
-                        try:
-                            url_post = "https://docs.google.com/spreadsheets/d/%s" % fileId
-                            url_slack = conf.get("SLACK_WORKFLOW_URL","")
-                            slack = SlackPublisher(slackurl=url_slack,
-                                                   slackvar="url")
-                            slack.publish(url_post)
-                        except Exception as err:
-                            logger.warning("Failed to send notification to Slack: %s" % err)
                 except Exception as err:
-                        logger.warning("Match to pub/upload failed: %s" % err)
+                    logger.error("Doc matching failed for path %s: %s" % (path, err))
             else:
                 logger.error("Path to records for matching not set, stopping.")
-
-        # via cron: check for files in curated, and process/archive if found and processed successfully
-        elif args.add_to_oracle:
-            try:
-                spreadsheet_util = SpreadsheetUtil()
-                oracle_util = OracleUtil()
-
-                for spreadsheet_filename in spreadsheet_util.get_curated_filenames():
-                    try:
-                        filename = spreadsheet_util.download(spreadsheet_filename)
-                        status = oracle_util.update_db_curated_matches(filename)
-                        if status:
-                            spreadsheet_util.archive(spreadsheet_filename)
-                        logger.info("Processed file `%s`. %s" % (spreadsheet_filename, status))
-                    except Exception as err:
-                        logger.warning("Unable to add curated sheet (%s) to local oracledb: %s" % (spreadsheet_filename, err))
-
-            except Exception as err:
-                logger.error("Error adding matches to oracledb: %s" % err)
 
         elif args.query_oracle:
             try:
