@@ -1,0 +1,20 @@
+# User submitted preprint links, one per line, tab-separated values:
+# preprint bibcode	published bibcode
+
+# matthew.templeton@cfa.harvard.edu
+2024ABCDE9999L...1T	2024QRSTU1111....1T
+
+# someone@random.internet.domain
+2020ABCDE9995L...1T	2019QRSTU1107....1T
+
+    # This is a comment line with leading spaces
+
+# someone.else@cfa.harvard.edu
+# submitting malformed data
+2013arXiv1305.1234T2013ApJ..8888Q...1T
+
+# that a curator then fixes but forgets to delete the previous....
+2013arXiv1305.1234T	2013ApJ..8888Q...1T
+
+# note this isn't bibcode specific, it's just expecting two tab-sep columns...
+hello	world

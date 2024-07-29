@@ -85,6 +85,27 @@ def get_args():
                         default=False,
                         help="Clean up the db, removing tmp bibcodes and lower confidence of multi matches.")
 
+    parser.add_argument("-do",
+                        "--dump_oracle",
+                        dest="dump_oracle",
+                        action="store_true",
+                        default=False,
+                        help="Trigger a query and download of the entire oracle database, to a filename specified in config.")
+
+    parser.add_argument("-us",
+                        "--load-user-submitted",
+                        dest="load_curated_file",
+                        action="store_true",
+                        default=False,
+                        help="Submit the current user-submitted list to oracle, and empty the file contents into the frozen file.")
+
+    parser.add_argument("-uk",
+                        "--load-matches-kill",
+                        dest="load_matches_kill",
+                        action="store_true",
+                        default=False,
+                        help="Submit the current curated matches.kill list to oracle.")
+
     return parser.parse_args()
 
 
@@ -156,6 +177,23 @@ def main():
             except Exception as err:
                 logger.error("Error issuing cleanup_db command to oracle_service: %s" % err)
 
+        # daily: process and archive user submissions
+        elif args.load_curated_file:
+            OracleUtil().load_curated_file()
+
+        # daily: process matches.kill without archiving
+        elif args.load_matches_kill:
+            input_filename = conf.get("DOCMATCHPIPELINE_MATCHES_KILL_FILE", "")
+            frozen_filename = conf.get("DOCMATCHPIPELINE_MATCHES_KILL_FROZEN_FILE", "")
+            if input_filename:
+                OracleUtil().load_curated_file(input_filename=input_filename, frozen_filename=frozen_filename, input_score=-1.0, do_backup=False)
+
+        # daily: dump the oracle database to file
+        elif args.dump_oracle:
+            try:
+                OracleUtil().dump_oracledb()
+            except Exception as err:
+                logger.error("Error dumping oracle db to file: %s" % err)
         else:
             logger.debug("Nothing to do.")
 
