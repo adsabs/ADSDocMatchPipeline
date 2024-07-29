@@ -83,15 +83,16 @@ def dedup_pairs(input_pairs):
 def read_user_submitted(input_filename):
     try:
         input_pairs=[]
+        failed_lines=[]
         with open(input_filename, "r") as fc:
             for line in fc.readlines():
                 if not re.search(r"^\s?#", line):
                     try:
                         (pre, pub) = line.strip().split('\t')
                     except:
-                        pass
+                        failed_lines.append(line)
                     else:
                         input_pairs.append((pre,pub))
-        return input_pairs
+        return input_pairs, failed_lines
     except Exception as err:
         raise UserSubmittedException(err)

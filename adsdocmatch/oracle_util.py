@@ -499,13 +499,10 @@ class OracleUtil():
         return 'Got %d records from db.' % count
 
     def dump_oracledb(self):
-        try:
-            daily_file = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_FILE', '/tmp/oracle_dump.tsv')
-            daily_maxage = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_AGE', 9999)
-            result = self.query(daily_file, days=daily_maxage)
-            logger.info('Query returns: %s; Oracle db successfully dumped to file: %s' % (result, daily_file))
-        except Exception as err:
-            logger.info('Exception %s, stopping.' % str(err))
+        daily_file = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_FILE', '/tmp/oracle_dump.tsv')
+        daily_maxage = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_AGE', 9999)
+        result = self.query(daily_file, days=daily_maxage)
+        logger.info('Query returns: %s; Oracle db successfully dumped to file: %s' % (result, daily_file))
 
 
     def update_db_curated_matches(self, input_filename):
@@ -621,7 +618,9 @@ class OracleUtil():
         if not input_filename:
             input_filename = config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FILE", "/tmp/user_submitted.list")
             frozen_filename = config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FROZEN_FILE", "/tmp/user_submitted_frozen.list")
-        input_pairs = utils.read_user_submitted(input_filename)
+        input_pairs, failed_lines = utils.read_user_submitted(input_filename)
+        if failed_lines:
+            logger.warning("read_user_submitted found %s failing lines: %s" % (str(len(failed_lines)), str(failed_lines)))
         try:
             while input_pairs:
                 (upload_rows, retry_rows) = utils.dedup_pairs(input_pairs)
