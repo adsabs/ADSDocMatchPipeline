@@ -57,5 +57,5 @@ class TestDocMatch(unittest.TestCase):
                               ("2020ABCDE9995L...1T", "2019QRSTU1107....1T"),
                               ("2013arXiv1305.1234T", "2013ApJ..8888Q...1T"),
                               ("hello", "world")]
-        input_pairs_test = utils.read_user_submitted(user_sub_test_file)
+        input_pairs_test, failed_lines = utils.read_user_submitted(user_sub_test_file)
         self.assertEqual(input_pairs_test, input_pairs_result)
