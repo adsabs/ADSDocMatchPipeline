@@ -1,4 +1,4 @@
-pip<24.1
+pip<24.2
 git+https://github.com/adsabs/ADSGoogleConnector.git@v0.0.3
 adsputils==1.4.3
 numpy==1.24.2
