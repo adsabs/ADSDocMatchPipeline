@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import re
 import csv
+import adsdocmatch.utils as utils
 from pathlib import Path
 
 from adsputils import setup_logging, load_config
@@ -497,6 +498,13 @@ class OracleUtil():
                 self.output_query_matches(output_filename, results)
         return 'Got %d records from db.' % count
 
+    def dump_oracledb(self):
+        daily_file = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_FILE', '/tmp/oracle_dump.tsv')
+        daily_maxage = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_AGE', 9999)
+        result = self.query(daily_file, days=daily_maxage)
+        logger.info('Query returns: %s; Oracle db successfully dumped to file: %s' % (result, daily_file))
+
+
     def update_db_curated_matches(self, input_filename):
         """
 
@@ -605,3 +613,37 @@ class OracleUtil():
         except Exception as err:
             logger.error("Error from cleanup_db: %s" % err)
             return "Error from cleanup_db: %s" % err
+
+    def load_curated_file(self, input_filename=None, frozen_filename=None, input_score=1.0, do_backup=True):
+        if not input_filename:
+            input_filename = config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FILE", "/tmp/user_submitted.list")
+            frozen_filename = config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FROZEN_FILE", "/tmp/user_submitted_frozen.list")
+        input_pairs, failed_lines = utils.read_user_submitted(input_filename)
+        if failed_lines:
+            logger.warning("read_user_submitted found %s failing lines: %s" % (str(len(failed_lines)), str(failed_lines)))
+        try:
+            while input_pairs:
+                (upload_rows, retry_rows) = utils.dedup_pairs(input_pairs)
+                match_upload = [[x, y, input_score] for (x, y) in upload_rows]
+                for pair in match_upload:
+                    try:
+                        result = self.add_to_db([pair])
+                        logger.info("Result from add_to_db: %s" % result)
+                    except Exception as err:
+                        logger.warning("Unable to add result (%s): %s" % (pair, result))
+                if retry_rows:
+                    input_pairs = retry_rows
+                else:
+                    input_pairs = []
+        except Exception as err:
+            logger.error("Failure adding user submitted data: %s" % err)
+        else:
+            if do_backup:
+                try:
+                    utils.backup_to_frozen(input_filename, frozen_filename)
+                except Exception as err:
+                    logger.error("Backup to frozen file failed: %s" % err)
+                else:
+                    logger.info("Contents of %s successfully backed up to %s" % (input_filename, frozen_filename))
+            else:
+                logger.info("Backup not triggered for %s, stopping." % input_filename)
