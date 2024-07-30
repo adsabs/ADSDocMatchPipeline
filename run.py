@@ -6,9 +6,9 @@ from adsdocmatch.oracle_util import OracleUtil
 from adsputils import load_config, setup_logging
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "./"))
-conf = load_config(proj_home=proj_home)
+config = load_config(proj_home=proj_home)
 
-logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=conf.get("LOG_STDOUT", "FALSE"))
+logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
 
 
 def get_args():
@@ -129,7 +129,7 @@ def main():
             if args.datapath:
                 path = args.datapath
             elif args.date:
-                path = conf.get("EPRINT_BASE_DIRECTORY", "./") + "/" + args.date
+                path = config.get("EPRINT_BASE_DIRECTORY", "./") + "/" + args.date
             if path:
                 try:
                     if args.match_to_pub:
@@ -183,8 +183,8 @@ def main():
 
         # daily: process matches.kill without archiving
         elif args.load_matches_kill:
-            input_filename = conf.get("DOCMATCHPIPELINE_MATCHES_KILL_FILE", "")
-            frozen_filename = conf.get("DOCMATCHPIPELINE_MATCHES_KILL_FROZEN_FILE", "")
+            input_filename = config.get("DOCMATCHPIPELINE_PUBLISHED_DIR", "/tmp/") + config.get("DOCMATCHPIPELINE_MATCHES_KILL_FILE", "matches.kill")
+            frozen_filename = config.get("DOCMATCHPIPELINE_PUBLISHED_DIR", "/tmp/") + config.get("DOCMATCHPIPELINE_MATCHES_KILL_FROZEN_FILE", "matches.kill.frozen")
             if input_filename:
                 OracleUtil().load_curated_file(input_filename=input_filename, frozen_filename=frozen_filename, input_score=-1.0, do_backup=False)
 

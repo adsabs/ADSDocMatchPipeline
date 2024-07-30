@@ -4,9 +4,9 @@ from adsputils import load_config, setup_logging
 
 
 proj_home = os.path.realpath(os.path.join(os.path.dirname(__file__), "../"))
-conf = load_config(proj_home=proj_home)
+config = load_config(proj_home=proj_home)
 
-logger = setup_logging("docmatching", level=conf.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=conf.get("LOG_STDOUT", "FALSE"))
+logger = setup_logging("docmatching", level=config.get("LOGGING_LEVEL", "WARN"), proj_home=proj_home, attach_stdout=config.get("LOG_STDOUT", "FALSE"))
 
 
 class GoogleUploadException(Exception):
@@ -29,9 +29,9 @@ class SpreadsheetUtil():
 
         """
         # initially directory is set to top level
-        folderId = conf.get("GOOGLE_BASEDIR_ID", None)
-        secretsPath = conf.get("GOOGLE_SECRETS_FILENAME", None)
-        scopesList = [conf.get("GOOGLE_API_SCOPE", None)]
+        folderId = config.get("GOOGLE_BASEDIR_ID", None)
+        secretsPath = config.get("GOOGLE_SECRETS_FILENAME", None)
+        scopesList = [config.get("GOOGLE_API_SCOPE", None)]
 
         try:
             self.gm = GoogleManager(authtype="service",
@@ -56,7 +56,7 @@ class SpreadsheetUtil():
                       "mtype": "text/csv",
                       "meta_mtype": "application/vnd.google-apps.spreadsheet"}
             # make sure the directory is set to curated
-            self.gm.folderid = conf.get("GOOGLE_BASEDIR_ID", None)
+            self.gm.folderid = config.get("GOOGLE_BASEDIR_ID", None)
             return self.gm.upload_file(**kwargs)
 
         except Exception as err:
@@ -72,7 +72,7 @@ class SpreadsheetUtil():
             kwargs = {"fileId": metadata.get("id", None),
                       "export_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
             data = self.gm.export_sheet_contents(**kwargs)
-            xls_filename = conf.get("DOCMATCHPIPELINE_DATA_PATH", "./") + metadata.get("name", None) + ".xlsx"
+            xls_filename = config.get("DOCMATCHPIPELINE_DATA_PATH", "./") + metadata.get("name", None) + ".xlsx"
             with open(xls_filename, "wb") as fx:
                 fx.write(data)
             return xls_filename
@@ -89,13 +89,13 @@ class SpreadsheetUtil():
         try:
             # reparent curated to archive on Google Drive, ...
             file_id = metadata.get("id", None)
-            old_parent = conf.get("GOOGLE_CURATED_FOLDER_ID", None)
+            old_parent = config.get("GOOGLE_CURATED_FOLDER_ID", None)
             kwargs = {"fileId": file_id,
                       "removeParents": old_parent,
-                      "addParents": conf.get("GOOGLE_ARCHIVE_FOLDER_ID", None)}
+                      "addParents": config.get("GOOGLE_ARCHIVE_FOLDER_ID", None)}
             if old_parent in metadata.get("parents", []):
                 # make sure the directory is set to top level
-                self.gm.folderid = conf.get("GOOGLE_BASEDIR_ID", None)
+                self.gm.folderid = config.get("GOOGLE_BASEDIR_ID", None)
                 self.gm.reparent_file(**kwargs)
 
         except Exception as err:
@@ -107,5 +107,5 @@ class SpreadsheetUtil():
         :return:
         """
         # make sure the directory is set to curated
-        self.gm.folderid = conf.get("GOOGLE_CURATED_FOLDER_ID", None)
+        self.gm.folderid = config.get("GOOGLE_CURATED_FOLDER_ID", None)
         return self.gm.list_files()

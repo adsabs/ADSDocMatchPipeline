@@ -499,8 +499,8 @@ class OracleUtil():
         return 'Got %d records from db.' % count
 
     def dump_oracledb(self):
-        daily_file = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_FILE', '/tmp/oracle_dump.tsv')
-        daily_maxage = config.get('DOCMATCHPIPELINE_ORACLE_DUMP_AGE', 9999)
+        daily_file = config.get("DOCMATCHPIPELINE_PUBLISHED_DIR", "/tmp/") + config.get("DOCMATCHPIPELINE_ORACLE_DUMP_FILE", "oracle_dump.tsv")
+        daily_maxage = config.get("DOCMATCHPIPELINE_ORACLE_DUMP_AGE", 9999)
         result = self.query(daily_file, days=daily_maxage)
         logger.info('Query returns: %s; Oracle db successfully dumped to file: %s' % (result, daily_file))
 
@@ -616,8 +616,8 @@ class OracleUtil():
 
     def load_curated_file(self, input_filename=None, frozen_filename=None, input_score=1.0, do_backup=True):
         if not input_filename:
-            input_filename = config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FILE", "/tmp/user_submitted.list")
-            frozen_filename = config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FROZEN_FILE", "/tmp/user_submitted_frozen.list")
+            input_filename = config.get("DOCMATCHPIPELINE_PUBLISHED_DIR", "/tmp/") + config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FILE", "user_submitted.list")
+            frozen_filename = config.get("DOCMATCHPIPELINE_PUBLISHED_DIR", "/tmp/") + config.get("DOCMATCHPIPELINE_USER_SUBMITTED_FROZEN_FILE", "/tmp/user_submitted_frozen.list")
         input_pairs, failed_lines = utils.read_user_submitted(input_filename)
         if failed_lines:
             logger.warning("read_user_submitted found %s failing lines: %s" % (str(len(failed_lines)), str(failed_lines)))
