@@ -40,7 +40,7 @@ DOCMATCHPIPELINE_SOURCE_ADS = "ADS"
 DOCMATCHPIPELINE_SOURCE_INCORRECT = "incorrect"
 
 # how many months to log the arXiv article that was not matched, among the classes of the arXiv that should have been matched
-DOCMATCHPIPELINE_EPRINT_RERUN_MONTHS = 1
+DOCMATCHPIPELINE_EPRINT_RERUN_MONTHS = 12
 
 # backend maintenance directory and files
 # define the correct DOCMATCHPIPELINE_PUBLISHED_DIR in deployment yamls
