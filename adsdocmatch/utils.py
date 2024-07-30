@@ -3,10 +3,8 @@ import os
 import pwd
 import re
 from datetime import datetime
-from adsputils import load_config
 
 proj_home = os.path.realpath(os.path.dirname(__file__)+ "/../")
-conf = load_config(proj_home=proj_home)
 
 class BackupFileException(Exception):
     pass
