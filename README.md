@@ -63,5 +63,5 @@ This queries the oracle_service api to obtain all matches added to oracle over a
 
 # Maintainers
 
-* Golnaz Shapurian, ADS
+* Golnaz
 * Matthew Templeton, ADS
