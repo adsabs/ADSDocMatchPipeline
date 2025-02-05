@@ -281,7 +281,7 @@ class OracleUtil():
                 # if got 5xx errors from oracle, per alberto, sleep for five seconds and try again, attempt 3 times
                 elif status_code in [502, 504]:
                     logger.info('Got %d status_code from oracle, waiting %d second and attempt again.' % (
-                    status_code, num_attempts))
+                    status_code, time_scaled))
                     time.sleep(time_scaled)
                 # any other error, quit
                 else:
