@@ -1,5 +1,5 @@
 git+https://github.com/adsabs/ADSGoogleConnector.git@v0.0.3
-adsputils==1.4.3
-numpy==1.24.2
-openpyxl==3.1.0
+adsputils==1.5.5
+numpy==1.24.4
+openpyxl==3.1.5
 pandas==1.5.3

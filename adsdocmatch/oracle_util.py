@@ -1,3 +1,4 @@
+import math
 import os
 import requests
 import json
@@ -266,6 +267,7 @@ class OracleUtil():
         try:
             num_attempts = int(config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_ATTEMPTS', 5))
             for i in range(num_attempts):
+                time_scaled = int(sleep_sec*math.exp(i/3.) + 0.5)
                 response = requests.post(
                     url=config.get('DOCMATCHPIPELINE_API_ORACLE_SERVICE_URL', 'http://localhost') + '/docmatch_add',
                     headers={'Authorization': 'Bearer %s' % config.get('DOCMATCHPIPELINE_API_TOKEN', '')},
@@ -279,8 +281,8 @@ class OracleUtil():
                 # if got 5xx errors from oracle, per alberto, sleep for five seconds and try again, attempt 3 times
                 elif status_code in [502, 504]:
                     logger.info('Got %d status_code from oracle, waiting %d second and attempt again.' % (
-                    status_code, num_attempts))
-                    time.sleep(sleep_sec)
+                    status_code, time_scaled))
+                    time.sleep(time_scaled)
                 # any other error, quit
                 else:
                     logger.info('Got %s status_code from a call to oracle, stopping.' % status_code)
